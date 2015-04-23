@@ -12,14 +12,17 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import bob.sun.mpod.controller.OnTickListener;
+
 /**
  * Created by bob.sun on 2015/4/23.
  */
 public class WheelView extends View implements GestureDetector.OnGestureListener {
-    Point center;
-    int radiusOut,radiusIn;
-    Paint paintOut, paintIn;
-    GestureDetector gestureDetector;
+    private Point center;
+    private int radiusOut,radiusIn;
+    private Paint paintOut, paintIn;
+    private GestureDetector gestureDetector;
+    private OnTickListener onTickListener;
     private float startDeg = Float.NaN;
     public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -130,13 +133,14 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
                 int ticks = (int) (Math.signum(deltaDeg)
                         * Math.floor(Math.abs(deltaDeg) / degPerTick));
                 if(ticks == 1){
+                    onTickListener.onNextTick();
                     Log.e("Ticks","Next");
                 }
                 if(ticks == -1){
                     Log.e("Ticks","Previous");
+                    onTickListener.onPreviousTick();
                 }
             }
-
             return true;
         } else {
             return false;
@@ -152,4 +156,9 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
     public boolean onFling(MotionEvent event, MotionEvent event2, float v, float v2) {
         return false;
     }
+
+    public void setOnTickListener(OnTickListener listener){
+        this.onTickListener = listener;
+    }
+
 }
