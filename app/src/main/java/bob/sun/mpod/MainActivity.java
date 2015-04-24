@@ -1,17 +1,28 @@
 package bob.sun.mpod;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import bob.sun.mpod.fragments.MainMenu;
+
 
 public class MainActivity extends ActionBarActivity {
+    FragmentManager fragmentManager;
+    MainMenu mainMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
+        mainMenu = (MainMenu) fragmentManager.findFragmentByTag("mainMenu");
+        if(mainMenu == null){
+            mainMenu = new MainMenu();
+            fragmentManager.beginTransaction().add(mainMenu,"mainMenu").commit();
+        }
     }
 
 
