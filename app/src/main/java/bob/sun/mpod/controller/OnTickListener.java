@@ -1,7 +1,7 @@
 package bob.sun.mpod.controller;
 
 /**
- * Created by bob.sun on 2015/4/23.
+ * Created by sunkuan on 2015/4/23.
  */
 public interface OnTickListener {
     public void onNextTick();

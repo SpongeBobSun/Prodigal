@@ -14,8 +14,7 @@
         android:layout_height="0dp"
         android:layout_weight="1.0"
         android:layout_marginBottom="16dp"
-        android:id="@+id/id_screen_fragment_container"
-        android:background="@color/material_blue_grey_800">
+        android:id="@+id/id_screen_fragment_container">
 
     </FrameLayout>
     <LinearLayout
@@ -28,6 +27,7 @@
         <bob.sun.mpod.view.WheelView
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1.0"/>
+            android:layout_weight="1.0"
+            android:id="@+id/id_wheel_view"/>
     </LinearLayout>
 </LinearLayout>

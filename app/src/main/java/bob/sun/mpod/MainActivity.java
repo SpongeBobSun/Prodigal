@@ -7,22 +7,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import bob.sun.mpod.fragments.MainMenu;
+import bob.sun.mpod.view.WheelView;
 
 
 public class MainActivity extends ActionBarActivity {
-    FragmentManager fragmentManager;
-    MainMenu mainMenu;
-
+    private FragmentManager fragmentManager;
+    private MainMenu mainMenu;
+    private WheelView wheelView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
-        mainMenu = (MainMenu) fragmentManager.findFragmentByTag("mainMenu");
+        mainMenu = (MainMenu) fragmentManager.findFragmentById(R.id.id_screen_fragment_container);
         if(mainMenu == null){
             mainMenu = new MainMenu();
-            fragmentManager.beginTransaction().add(mainMenu,"mainMenu").commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.id_screen_fragment_container,mainMenu,"mainMenu").commit();
         }
+        wheelView = (WheelView) findViewById(R.id.id_wheel_view);
+        wheelView.setOnTickListener(mainMenu);
     }
 
 

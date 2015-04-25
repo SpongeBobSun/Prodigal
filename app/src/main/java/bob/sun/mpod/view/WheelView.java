@@ -133,12 +133,14 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
                 int ticks = (int) (Math.signum(deltaDeg)
                         * Math.floor(Math.abs(deltaDeg) / degPerTick));
                 if(ticks == 1){
-                    onTickListener.onNextTick();
+                    if(onTickListener !=null)
+                        onTickListener.onNextTick();
                     Log.e("Ticks","Next");
                 }
                 if(ticks == -1){
                     Log.e("Ticks","Previous");
-                    onTickListener.onPreviousTick();
+                    if(onTickListener !=null)
+                        onTickListener.onPreviousTick();
                 }
             }
             return true;
