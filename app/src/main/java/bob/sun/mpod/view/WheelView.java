@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -100,6 +101,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
     @Override
     public boolean onDown(MotionEvent event) {
         float x = event.getX() / ((float) getWidth());
+//        float x = event.getX() / ((float) getHeight());
         float y = event.getY() / ((float) getHeight());
 
         startDeg = xyToDegrees(x, y);
@@ -126,22 +128,38 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
         if (!Float.isNaN(startDeg)) {
             float currentDeg = xyToDegrees(eventB.getX() / getWidth(),
                     eventB.getY() / getHeight());
+//            float currentDeg = xyToDegrees(eventB.getX() / getHeight(),
+//                    eventB.getY() / getHeight());
 
             if (!Float.isNaN(currentDeg)) {
-                float degPerTick = 36f;
+                float degPerTick = 72f;
                 float deltaDeg = startDeg - currentDeg;
+                if(Math.abs(deltaDeg) < 72f){
+                    return true;
+                }
                 int ticks = (int) (Math.signum(deltaDeg)
                         * Math.floor(Math.abs(deltaDeg) / degPerTick));
-                if(ticks == 1){
+//                          * (Math.abs(deltaDeg) / degPerTick));
+                if(ticks <= -1){
+                    Log.e("Ticks","Next");
                     if(onTickListener !=null)
                         onTickListener.onNextTick();
-                    Log.e("Ticks","Next");
+                    blockUIThread();
                 }
-                if(ticks == -1){
+                if(ticks >= 1){
                     Log.e("Ticks","Previous");
                     if(onTickListener !=null)
                         onTickListener.onPreviousTick();
+                    blockUIThread();
                 }
+//                for(int i = 0; i < Math.abs(ticks);i++){
+//                    if(ticks > 0){
+//                        onTickListener.onNextTick();
+//                    }
+//                    if(ticks < 0){
+//                        onTickListener.onPreviousTick();
+//                    }
+//                }
             }
             return true;
         } else {
@@ -163,4 +181,14 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
         this.onTickListener = listener;
     }
 
+    private void blockUIThread(){
+//        synchronized (this){
+//            try {
+//                wait(300);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        SystemClock.sleep(200);
+    }
 }

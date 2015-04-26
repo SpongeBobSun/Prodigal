@@ -20,7 +20,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.0"
-            android:id="@+id/id_list_view_main_menu"/>
+            android:id="@+id/id_list_view_main_menu"
+            android:listSelector="@drawable/selector_menu_item"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
