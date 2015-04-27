@@ -100,8 +100,8 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onDown(MotionEvent event) {
-        float x = event.getX() / ((float) getWidth());
-//        float x = event.getX() / ((float) getHeight());
+//        float x = event.getX() / ((float) getWidth());
+        float x = (event.getX() - (getWidth() - getHeight())/2) / ((float) getHeight());
         float y = event.getY() / ((float) getHeight());
 
         startDeg = xyToDegrees(x, y);
@@ -126,7 +126,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
     @Override
     public boolean onScroll(MotionEvent eventA, MotionEvent eventB, float v, float v2) {
         if (!Float.isNaN(startDeg)) {
-            float currentDeg = xyToDegrees(eventB.getX() / getWidth(),
+            float currentDeg = xyToDegrees((eventB.getX() - (getWidth() - getHeight())/2) / ((float) getHeight()),
                     eventB.getY() / getHeight());
 //            float currentDeg = xyToDegrees(eventB.getX() / getHeight(),
 //                    eventB.getY() / getHeight());
@@ -140,14 +140,16 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
                 int ticks = (int) (Math.signum(deltaDeg)
                         * Math.floor(Math.abs(deltaDeg) / degPerTick));
 //                          * (Math.abs(deltaDeg) / degPerTick));
-                if(ticks <= -1){
+                if(ticks == 1){
                     Log.e("Ticks","Next");
+                    startDeg = currentDeg;
                     if(onTickListener !=null)
                         onTickListener.onNextTick();
                     blockUIThread();
                 }
-                if(ticks >= 1){
+                if(ticks == -1){
                     Log.e("Ticks","Previous");
+                    startDeg = currentDeg;
                     if(onTickListener !=null)
                         onTickListener.onPreviousTick();
                     blockUIThread();
