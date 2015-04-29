@@ -6,8 +6,4 @@ package bob.sun.mpod.controller;
 public interface OnTickListener {
     public void onNextTick();
     public void onPreviousTick();
-    public void onMenu();
-    public void onPlay();
-    public void onNext();
-    public void onPrevious();
 }

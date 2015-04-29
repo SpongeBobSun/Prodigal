@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import bob.sun.mpod.R;
+import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.model.MenuAdapter;
 
@@ -71,23 +72,4 @@ public class MainMenu extends Fragment implements OnTickListener {
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 
-    @Override
-    public void onMenu() {
-
-    }
-
-    @Override
-    public void onPlay() {
-
-    }
-
-    @Override
-    public void onNext() {
-
-    }
-
-    @Override
-    public void onPrevious() {
-
-    }
 }
