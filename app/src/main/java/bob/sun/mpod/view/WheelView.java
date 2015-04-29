@@ -128,7 +128,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
         if (!Float.isNaN(startDeg)) {
             float currentDeg = xyToDegrees((eventB.getX() - (getWidth() - getHeight())/2) / ((float) getHeight()),
                     eventB.getY() / getHeight());
-//            float currentDeg = xyToDegrees(eventB.getX() / getHeight(),
+//            float currentDeg = xyToDegrees(eventB.getX() / getWidth(),
 //                    eventB.getY() / getHeight());
 
             if (!Float.isNaN(currentDeg)) {

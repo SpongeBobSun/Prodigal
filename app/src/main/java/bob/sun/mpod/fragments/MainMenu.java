@@ -38,16 +38,17 @@ public class MainMenu extends Fragment implements OnTickListener {
             return;
         }
         listView.setItemChecked(currentItemIndex, false);
-        listView.getChildAt(currentItemIndex).setBackgroundColor(Color.TRANSPARENT);
         currentItemIndex+=1;
         listView.requestFocus();
-        listView.setItemChecked(currentItemIndex, true);
-        listView.setSelection(currentItemIndex);
-        if(listView.getChildAt(currentItemIndex) != null){
-            listView.getChildAt(currentItemIndex).setBackgroundColor(Color.GRAY);
-            return;
-        }
-        listView.smoothScrollToPosition(currentItemIndex);
+        listView.post(new Runnable() {
+            @Override
+            public void run() {
+                listView.setItemChecked(currentItemIndex, true);
+                listView.setSelection(currentItemIndex);
+                listView.smoothScrollToPosition(currentItemIndex);
+            }
+        });
+        MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 
     @Override
@@ -57,13 +58,17 @@ public class MainMenu extends Fragment implements OnTickListener {
             return;
         }
         listView.setItemChecked(currentItemIndex, false);
-        listView.getChildAt(currentItemIndex).setBackgroundColor(Color.TRANSPARENT);
         currentItemIndex -= 1;
         listView.requestFocus();
-        listView.setItemChecked(currentItemIndex, true);
-        listView.setSelection(currentItemIndex);
-        listView.getChildAt(currentItemIndex).setBackgroundColor(Color.GRAY);
+        listView.post(new Runnable() {
+            @Override
+            public void run() {
+                listView.setItemChecked(currentItemIndex, true);
+                listView.setSelection(currentItemIndex);
+            }
+        });
         listView.smoothScrollToPosition(currentItemIndex);
+        MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 
     @Override
