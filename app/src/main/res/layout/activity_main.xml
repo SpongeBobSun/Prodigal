@@ -21,13 +21,97 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:orientation="vertical"
         android:id="@+id/id_wheel_container"
+        android:orientation="vertical"
         android:layout_marginTop="16dp">
-        <bob.sun.mpod.view.WheelView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1.0"
-            android:id="@+id/id_wheel_view"/>
+            android:layout_weight="1.0">
+            <bob.sun.mpod.view.WheelView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/id_wheel_view"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:layout_gravity="center">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_alignParentTop="true"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textSize="20dp"
+                        android:text="Menu"
+                        android:textStyle="bold"
+                        android:layout_marginTop="7dp"
+                        android:id="@+id/id_menu_button"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/linearLayout">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textSize="20dp"
+                        android:text=">||"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="7dp"
+                        android:id="@+id/id_play_button"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginLeft="59dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textSize="20dp"
+                        android:text="P"
+                        android:textStyle="bold"
+                        android:id="@+id/id_previous_button"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginRight="59dp"
+                    android:layout_alignBottom="@+id/linearLayout"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="59dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:textSize="20dp"
+                        android:text=">>|"
+                        android:textStyle="bold"
+                        android:id="@+id/id_next_button"
+                        />
+                </LinearLayout>
+            </RelativeLayout>
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>
