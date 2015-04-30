@@ -8,4 +8,5 @@ public interface OnButtonListener {
     public void onPlay();
     public void onNext();
     public void onPrevious();
+    public void onSelect();
 }

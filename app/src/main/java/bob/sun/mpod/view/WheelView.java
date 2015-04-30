@@ -1,6 +1,7 @@
 package bob.sun.mpod.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 
 /**
@@ -25,6 +27,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
     private GestureDetector gestureDetector;
     private OnTickListener onTickListener;
     private float startDeg = Float.NaN;
+    private OnButtonListener onButtonListener;
     public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         center = new Point();
@@ -91,9 +94,19 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        float width = getWidth();
+        float height = getHeight();
+
         if (gestureDetector.onTouchEvent(event)) {
             return true;
-        } else {
+        } else if((event.getAction() == MotionEvent.ACTION_UP)&&
+                (Math.pow(event.getX() - getWidth() / 2f,2) + Math.pow(event.getY() - getHeight() / 2f,2) <= radiusIn*radiusIn )) {
+            if(onButtonListener !=null)
+                onButtonListener.onSelect();
+            return true;
+        }else if(event.getAction() == MotionEvent.ACTION_DOWN){
+            return true;
+        }else{
             return super.onTouchEvent(event);
         }
     }
@@ -171,6 +184,9 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
         this.onTickListener = listener;
     }
 
+    public void setOnButtonListener(OnButtonListener listener){
+        this.onButtonListener = listener;
+    }
     private void blockUIThread(){
         SystemClock.sleep(200);
     }

@@ -44,11 +44,12 @@ public class MainMenu extends Fragment implements OnTickListener {
         listView.post(new Runnable() {
             @Override
             public void run() {
-                listView.setItemChecked(currentItemIndex, true);
+//                listView.setItemChecked(currentItemIndex, true);
                 listView.setSelection(currentItemIndex);
-                listView.smoothScrollToPosition(currentItemIndex);
             }
         });
+        if(currentItemIndex > listView.getLastVisiblePosition())
+            listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 
@@ -68,7 +69,8 @@ public class MainMenu extends Fragment implements OnTickListener {
                 listView.setSelection(currentItemIndex);
             }
         });
-        listView.smoothScrollToPosition(currentItemIndex);
+        if(currentItemIndex < listView.getFirstVisiblePosition())
+            listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 

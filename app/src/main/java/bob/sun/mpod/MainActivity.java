@@ -1,7 +1,10 @@
 package bob.sun.mpod;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
@@ -13,8 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.fragments.MainMenu;
+import bob.sun.mpod.model.MediaLibrary;
+import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.view.WheelView;
 
@@ -37,11 +44,20 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     .add(R.id.id_screen_fragment_container,mainMenu,"mainMenu").commit();
         }
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
+        wheelView.setOnButtonListener(this);
+
         wheelView.setOnTickListener(mainMenu);
 
         initOnButtonListener();
 
         startService();
+
+        //UT for MeidaLibrary
+        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs();
+        for(SongBean bean : list){
+            Log.e(bean.getTitle(),bean.getFileName());
+        }
+
     }
 
     private void initOnButtonListener(){
@@ -73,6 +89,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 onNext();
             }
         });
+
+
     }
 
     private void startService(){
@@ -101,6 +119,11 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         super.onPause();
         unbindService(serviceConnection);
     }
+//    @Override
+//    protected void onDestroy(){
+//        super.onDestroy();
+//        unbindService(serviceConnection);
+//    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -141,5 +164,10 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     @Override
     public void onPrevious() {
         Log.e("mPod","onPrevious");
+    }
+
+    @Override
+    public void onSelect(){
+        Log.e("mPod","onSelect");
     }
 }
