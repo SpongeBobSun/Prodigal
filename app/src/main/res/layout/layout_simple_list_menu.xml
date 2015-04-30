@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:id="@+id/id_text_view_main_menu_bar"
+        android:text="mPod"
+        android:textStyle="bold"
+        android:textSize="12dp"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:id="@+id/id_list_view_main_menu"
+            android:listSelector="@drawable/selector_menu_item"/>
+</LinearLayout>

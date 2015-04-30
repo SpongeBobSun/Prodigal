@@ -52,12 +52,14 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
         startService();
 
-        //UT for MeidaLibrary
-        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getSongsByAlbum("sdcard");
-        for(SongBean bean : list){
-            Log.e(bean.getArtist(),bean.getFileName());
-//            Log.e("Albums",bean);
-        }
+        MediaLibrary.getStaticInstance(this);
+
+//        //UT for MeidaLibrary
+//        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getSongsByAlbum("sdcard");
+//        for(SongBean bean : list){
+//            Log.e(bean.getArtist(),bean.getFileName());
+////            Log.e("Albums",bean);
+//        }
 
     }
 
