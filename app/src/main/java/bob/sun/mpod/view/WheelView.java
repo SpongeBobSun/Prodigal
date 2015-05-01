@@ -60,7 +60,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     private float xyToDegrees(float x, float y) {
         float distanceFromCenter = PointF.length((x - 0.5f), (y - 0.5f));
-        if (distanceFromCenter < 0.1f
+        if (distanceFromCenter < 0.15f
                 || distanceFromCenter > 0.5f) { // ignore center and out of bounds events
             return Float.NaN;
         } else {
@@ -113,11 +113,14 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onDown(MotionEvent event) {
-        float x = (event.getX() - (getWidth() - getHeight())/2) / ((float) getHeight());
-        float y = event.getY() / ((float) getHeight());
+//        float x = (event.getX() - center.x) / ((float) getHeight());
+//        float y = event.getY() / ((float) getHeight());
+
+        float x = event.getX() / (center.x * 2);
+        float y = event.getY() / (center.y * 2);
 
         startDeg = xyToDegrees(x, y);
-        Log.d("deg = ", "" + startDeg);
+//        Log.d("deg = ", "" + startDeg);
         if (! Float.isNaN(startDeg)) {
             return true;
         } else {
