@@ -1,19 +1,17 @@
 package bob.sun.mpod.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 
 import bob.sun.mpod.R;
-import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.model.MenuAdapter;
+import bob.sun.mpod.model.SelectionDetail;
 
 /**
  * Created by sunkuan on 2015/4/23.
@@ -28,6 +26,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         listView.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currentItemIndex = 0;
+        listView.setItemChecked(currentItemIndex, true);
         return ret;
     }
 
@@ -74,4 +73,12 @@ public class MainMenu extends Fragment implements OnTickListener {
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
     }
 
+    @Override
+    public SelectionDetail getCurrentSelection(){
+        SelectionDetail ret = new SelectionDetail();
+        ret.setMenuType(ret.MENU_TPYE_MAIN);
+        ret.setDataType(ret.DATA_TYPE_STRING);
+        ret.setData(((MenuAdapter.MenuMeta) listView.getAdapter().getItem(currentItemIndex)).itemName);
+        return ret;
+    }
 }

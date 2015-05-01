@@ -55,7 +55,7 @@ public class MenuAdapter {
         mainMenuAdapter.notifyDataSetChanged();
     }
 
-    class MenuMeta{
+    public class MenuMeta{
         public String itemName;
         public boolean highlight;
         public MenuMeta(String arg1,boolean arg2){

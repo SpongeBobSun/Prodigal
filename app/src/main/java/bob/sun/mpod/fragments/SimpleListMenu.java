@@ -10,8 +10,8 @@ import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleMenuAdatper;
-import bob.sun.mpod.model.MenuAdapter;
+import bob.sun.mpod.controller.SimpleAdatperByTitle;
+import bob.sun.mpod.model.SelectionDetail;
 
 /**
  * Created by sunkuan on 15/4/30.
@@ -19,7 +19,7 @@ import bob.sun.mpod.model.MenuAdapter;
 public class SimpleListMenu extends Fragment implements OnTickListener {
 
     private ListView listView;
-    private SimpleMenuAdatper adatper;
+    private SimpleAdatperByTitle adatper;
     int currentItemIndex;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -36,7 +36,7 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
         return ret;
     }
 
-    public void setAdatper(SimpleMenuAdatper adatper){
+    public void setAdatper(SimpleAdatperByTitle adatper){
         this.adatper = adatper;
     }
 
@@ -81,5 +81,10 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
         if(currentItemIndex < listView.getFirstVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
         adatper.HighlightItem(currentItemIndex);
+    }
+
+    @Override
+    public SelectionDetail getCurrentSelection() {
+        return null;
     }
 }

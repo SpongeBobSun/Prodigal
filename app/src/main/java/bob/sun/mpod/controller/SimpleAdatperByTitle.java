@@ -11,22 +11,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import bob.sun.mpod.R;
+import bob.sun.mpod.model.SongBean;
 
 /**
  * Created by sunkuan on 15/4/30.
  */
-public class SimpleMenuAdatper extends ArrayAdapter {
+public class SimpleAdatperByTitle extends ArrayAdapter {
     private Context appContext;
     private int resource;
-    private ArrayList<MenuMeta> list;
-    public SimpleMenuAdatper(Context context, int resource,ArrayList list) {
-        super(context, resource);
+    private ArrayList<MenuMeta> metaList;
+    private ArrayList<SongBean> list;
+    public SimpleAdatperByTitle(Context context, int resource, ArrayList list) {
+        super(context, resource,list);
         appContext = context;
         this.resource = resource;
-        this.list = new ArrayList<MenuMeta>();
+        this.list = list;
+        metaList = new ArrayList<>();
         Iterator iterator = list.iterator();
         while (iterator.hasNext()){
-            list.add(new MenuMeta((String) iterator.next(),false));
+            metaList.add(new MenuMeta(((SongBean) iterator.next()).getTitle(),false));
         }
     }
 
@@ -38,7 +41,7 @@ public class SimpleMenuAdatper extends ArrayAdapter {
                     .inflate(R.layout.item_simple_list_view, parent, false);
         }
         TextView textView = (TextView) ret.findViewById(R.id.id_itemlistview_textview);
-        textView.setText(list.get(posistion).itemName);
+        textView.setText(list.get(posistion).getTitle());
         return ret;
     }
 

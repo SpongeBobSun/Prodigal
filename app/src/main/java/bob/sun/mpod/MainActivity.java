@@ -1,10 +1,7 @@
 package bob.sun.mpod;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
@@ -14,14 +11,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import bob.sun.mpod.controller.OnButtonListener;
+import bob.sun.mpod.controller.OnTickListener;
+import bob.sun.mpod.controller.SimpleAdatperByTitle;
 import bob.sun.mpod.fragments.MainMenu;
+import bob.sun.mpod.fragments.SimpleListMenu;
 import bob.sun.mpod.model.MediaLibrary;
-import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.view.WheelView;
 
@@ -29,24 +26,24 @@ import bob.sun.mpod.view.WheelView;
 public class MainActivity extends ActionBarActivity implements OnButtonListener {
     private FragmentManager fragmentManager;
     private MainMenu mainMenu;
+    private SimpleListMenu songsList;
+    private SimpleListMenu artistsList;
+    private SimpleListMenu albumsList;
     private WheelView wheelView;
     private ServiceConnection serviceConnection;
     private PlayerService playerService;
+    private OnTickListener currentTickObject;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragmentManager = getSupportFragmentManager();
-        mainMenu = (MainMenu) fragmentManager.findFragmentById(R.id.id_screen_fragment_container);
-        if(mainMenu == null){
-            mainMenu = new MainMenu();
-            fragmentManager.beginTransaction()
-                    .add(R.id.id_screen_fragment_container,mainMenu,"mainMenu").commit();
-        }
+
+        initFragments();
+
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
         wheelView.setOnButtonListener(this);
-
         wheelView.setOnTickListener(mainMenu);
+        this.currentTickObject = mainMenu;
 
         initOnButtonListener();
 
@@ -61,6 +58,22 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 ////            Log.e("Albums",bean);
 //        }
 
+    }
+
+    private void initFragments(){
+        fragmentManager = getSupportFragmentManager();
+        mainMenu = (MainMenu) fragmentManager.findFragmentByTag("mainMenu");
+        if(mainMenu == null){
+            mainMenu = new MainMenu();
+            fragmentManager.beginTransaction()
+                    .add(R.id.id_screen_fragment_container,mainMenu,"mainMenu").commit();
+        }
+        songsList = (SimpleListMenu) fragmentManager.findFragmentByTag("songsList");
+        if(songsList == null){
+            songsList = new SimpleListMenu();
+            songsList.setAdatper(new SimpleAdatperByTitle(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST)));
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,songsList,"songsList").hide(songsList).commit();
+        }
     }
 
     private void initOnButtonListener(){
@@ -171,6 +184,29 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
     @Override
     public void onSelect(){
-        Log.e("mPod","onSelect");
+        SelectionDetail detail = currentTickObject.getCurrentSelection();
+        switch (detail.getMenuType()){
+            case SelectionDetail.MENU_TPYE_MAIN:
+                switch ((String) detail.getData()){
+                    case "Songs":
+                        fragmentManager.beginTransaction().hide(mainMenu).show(songsList).commit();
+                        break;
+                    case "Artist":
+
+                        break;
+                    case "Albums":
+
+                        break;
+                }
+                break;
+            case SelectionDetail.MENU_TYPE_ARTIST:
+                break;
+            case SelectionDetail.MENU_TYPE_ALBUM:
+                break;
+            case SelectionDetail.MENU_TYPE_SONGS:
+                break;
+            default:
+                break;
+        }
     }
 }

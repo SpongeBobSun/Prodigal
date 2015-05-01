@@ -1,5 +1,7 @@
 package bob.sun.mpod.controller;
 
+import bob.sun.mpod.model.SelectionDetail;
+
 /**
  * Created by sunkuan on 15/4/29.
  */
