@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -12,13 +13,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
+
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.controller.SimpleAdatperByTitle;
+import bob.sun.mpod.controller.SimpleListMenuAdapter;
 import bob.sun.mpod.fragments.MainMenu;
 import bob.sun.mpod.fragments.SimpleListMenu;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
+import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.view.WheelView;
 
@@ -33,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private ServiceConnection serviceConnection;
     private PlayerService playerService;
     private OnTickListener currentTickObject;
+    private Fragment currentFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +57,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
         MediaLibrary.getStaticInstance(this);
 
-//        //UT for MeidaLibrary
-//        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getSongsByAlbum("sdcard");
-//        for(SongBean bean : list){
-//            Log.e(bean.getArtist(),bean.getFileName());
-////            Log.e("Albums",bean);
-//        }
+        //UT for MeidaLibrary
+        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST);
+        for(SongBean bean : list){
+            Log.e(bean.getArtist(),bean.getFileName());
+//            Log.e("Albums",bean);
+        }
 
     }
 
@@ -71,9 +77,16 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         songsList = (SimpleListMenu) fragmentManager.findFragmentByTag("songsList");
         if(songsList == null){
             songsList = new SimpleListMenu();
-            songsList.setAdatper(new SimpleAdatperByTitle(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST)));
+            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
+            adapter.setArrayList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST),SimpleListMenuAdapter.SORT_TYPE_TITLE);
+            songsList.setAdatper(adapter);
+//            songsList.setAdatper(new SimpleAdatperByTitle(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST)));
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,songsList,"songsList").hide(songsList).commit();
         }
+
+
+        currentFragment = mainMenu;
+        return;
     }
 
     private void initOnButtonListener(){
@@ -189,7 +202,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             case SelectionDetail.MENU_TPYE_MAIN:
                 switch ((String) detail.getData()){
                     case "Songs":
-                        fragmentManager.beginTransaction().hide(mainMenu).show(songsList).commit();
+                        fragmentManager.beginTransaction().hide(currentFragment).show(songsList).commit();
+                        currentFragment = songsList;
                         break;
                     case "Artist":
 

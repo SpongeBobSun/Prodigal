@@ -11,6 +11,7 @@ import android.widget.ListView;
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.controller.SimpleAdatperByTitle;
+import bob.sun.mpod.controller.SimpleListMenuAdapter;
 import bob.sun.mpod.model.SelectionDetail;
 
 /**
@@ -19,7 +20,7 @@ import bob.sun.mpod.model.SelectionDetail;
 public class SimpleListMenu extends Fragment implements OnTickListener {
 
     private ListView listView;
-    private SimpleAdatperByTitle adatper;
+    private SimpleListMenuAdapter adatper;
     int currentItemIndex;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -36,7 +37,7 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
         return ret;
     }
 
-    public void setAdatper(SimpleAdatperByTitle adatper){
+    public void setAdatper(SimpleListMenuAdapter adatper){
         this.adatper = adatper;
     }
 
