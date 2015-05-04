@@ -19,6 +19,7 @@ import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.controller.SimpleListMenuAdapter;
 import bob.sun.mpod.fragments.MainMenu;
+import bob.sun.mpod.fragments.NowPlayingFragment;
 import bob.sun.mpod.fragments.SimpleListMenu;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
@@ -33,6 +34,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private SimpleListMenu songsList;
     private SimpleListMenu artistsList;
     private SimpleListMenu albumsList;
+    private NowPlayingFragment nowPlayingFragment;
     private WheelView wheelView;
     private ServiceConnection serviceConnection;
     private PlayerService playerService;
@@ -82,6 +84,14 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,songsList,"songsList").hide(songsList).commit();
         }
 
+        nowPlayingFragment = (NowPlayingFragment) fragmentManager.findFragmentByTag("nowPlayingFragment");
+        if(nowPlayingFragment == null){
+            nowPlayingFragment = new NowPlayingFragment();
+            fragmentManager.beginTransaction().
+                    add(R.id.id_screen_fragment_container,nowPlayingFragment,"nowPlayingFragment")
+                    .hide(nowPlayingFragment)
+                    .commit();
+        }
 
         currentFragment = mainMenu;
         return;
@@ -211,6 +221,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     case "Albums":
 
                         break;
+                    case "Now Playing":
+                        fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
+                        currentFragment = nowPlayingFragment;
+                        this.currentTickObject = nowPlayingFragment;
+                        wheelView.setOnTickListener(nowPlayingFragment);
+                        break;
                 }
                 break;
             case SelectionDetail.MENU_TYPE_ARTIST:
@@ -218,6 +234,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             case SelectionDetail.MENU_TYPE_ALBUM:
                 break;
             case SelectionDetail.MENU_TYPE_SONGS:
+                nowPlayingFragment.setSong((SongBean) detail.getData());
+                fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
+                currentFragment = nowPlayingFragment;
+                this.currentTickObject = nowPlayingFragment;
+                wheelView.setOnTickListener(nowPlayingFragment);
+                
                 break;
             default:
                 break;

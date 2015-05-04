@@ -88,4 +88,8 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                 return "";
         }
     }
+
+    public int getType() {
+        return type;
+    }
 }
