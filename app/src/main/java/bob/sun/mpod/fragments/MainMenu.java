@@ -26,7 +26,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         listView.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currentItemIndex = 0;
-        listView.setItemChecked(currentItemIndex, true);
+        MenuAdapter.getStaticInstance(null).HighlightItem(0);
         return ret;
     }
 

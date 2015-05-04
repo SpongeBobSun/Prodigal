@@ -6,13 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleAdatperByTitle;
 import bob.sun.mpod.controller.SimpleListMenuAdapter;
+import bob.sun.mpod.model.MenuAdapter;
 import bob.sun.mpod.model.SelectionDetail;
+import bob.sun.mpod.model.SongBean;
 
 /**
  * Created by sunkuan on 15/4/30.
@@ -23,17 +25,15 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
     private SimpleListMenuAdapter adatper;
     int currentItemIndex;
     @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup parent,
                              Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_simple_list_menu, parent, false);
         listView = (ListView) ret.findViewById(R.id.id_list_view_main_menu);
         listView.setAdapter(adatper);
+        currentItemIndex = 0;
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        adatper.HighlightItem(0);
         return ret;
     }
 
@@ -86,6 +86,10 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
 
     @Override
     public SelectionDetail getCurrentSelection() {
-        return null;
+        SelectionDetail ret = new SelectionDetail();
+        ret.setMenuType(ret.MENU_TYPE_SONGS);
+        ret.setDataType(ret.DATA_TYPE_SONG);
+        ret.setData(listView.getAdapter().getItem(currentItemIndex));
+        return ret;
     }
 }

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleAdatperByTitle;
 import bob.sun.mpod.controller.SimpleListMenuAdapter;
 import bob.sun.mpod.fragments.MainMenu;
 import bob.sun.mpod.fragments.SimpleListMenu;
@@ -58,11 +57,11 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         MediaLibrary.getStaticInstance(this);
 
         //UT for MeidaLibrary
-        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST);
-        for(SongBean bean : list){
-            Log.e(bean.getArtist(),bean.getFileName());
+//        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST);
+//        for(SongBean bean : list){
+//            Log.e(bean.getArtist(),bean.getFileName());
 //            Log.e("Albums",bean);
-        }
+//        }
 
     }
 
@@ -78,9 +77,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         if(songsList == null){
             songsList = new SimpleListMenu();
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
-            adapter.setArrayList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST),SimpleListMenuAdapter.SORT_TYPE_TITLE);
+            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
             songsList.setAdatper(adapter);
-//            songsList.setAdatper(new SimpleAdatperByTitle(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST)));
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,songsList,"songsList").hide(songsList).commit();
         }
 
@@ -204,6 +202,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     case "Songs":
                         fragmentManager.beginTransaction().hide(currentFragment).show(songsList).commit();
                         currentFragment = songsList;
+                        this.currentTickObject = songsList;
+                        wheelView.setOnTickListener(songsList);
                         break;
                     case "Artist":
 
