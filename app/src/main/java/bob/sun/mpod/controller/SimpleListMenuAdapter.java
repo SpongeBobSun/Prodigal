@@ -71,6 +71,9 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
         }
     }
     public void HighlightItem(int position){
+        if (metaList.size() == 0){
+            return;
+        }
         metaList.get(lastPosistion).highlight = false;
         lastPosistion = position;
         metaList.get(position).highlight = true;

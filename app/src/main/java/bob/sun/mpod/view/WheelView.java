@@ -20,7 +20,7 @@ import bob.sun.mpod.controller.OnTickListener;
 /**
  * Created by bob.sun on 2015/4/23.
  */
-public class WheelView extends View implements GestureDetector.OnGestureListener {
+public class WheelView extends View {
     private Point center;
     private int radiusOut,radiusIn;
     private Paint paintOut, paintIn;
@@ -37,7 +37,7 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
         paintIn.setColor(Color.WHITE);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-        gestureDetector = new GestureDetector(context,this);
+//        gestureDetector = new GestureDetector(context,this);
     }
 
     @Override
@@ -94,93 +94,62 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        float width = getWidth();
-        float height = getHeight();
 
-        if (gestureDetector.onTouchEvent(event)) {
-            return true;
-        } else if((event.getAction() == MotionEvent.ACTION_UP)&&
-                (Math.pow(event.getX() - getWidth() / 2f,2) + Math.pow(event.getY() - getHeight() / 2f,2) <= radiusIn*radiusIn )) {
-            if(onButtonListener !=null)
-                onButtonListener.onSelect();
-            return true;
-        }else if(event.getAction() == MotionEvent.ACTION_DOWN){
-            return true;
-        }else{
-            return super.onTouchEvent(event);
-        }
-    }
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                float x = event.getX() / (center.x * 2);
+                float y = event.getY() / (center.y * 2);
 
-    @Override
-    public boolean onDown(MotionEvent event) {
-//        float x = (event.getX() - center.x) / ((float) getHeight());
-//        float y = event.getY() / ((float) getHeight());
+                startDeg = xyToDegrees(x, y);
+                Log.d("deg = ", "" + startDeg);
+                if (Float.isNaN(startDeg)) {
+                    return false;
+                }
+                return true;
 
-        float x = event.getX() / (center.x * 2);
-        float y = event.getY() / (center.y * 2);
+            case MotionEvent.ACTION_MOVE:
+                if (!Float.isNaN(startDeg)) {
+                    float currentDeg = xyToDegrees((event.getX() - (getWidth() - getHeight())/2) / ((float) getHeight()),
+                            event.getY() / getHeight());
 
-        startDeg = xyToDegrees(x, y);
-//        Log.d("deg = ", "" + startDeg);
-        if (! Float.isNaN(startDeg)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+                    if (!Float.isNaN(currentDeg)) {
+                        float degPerTick = 72f;
+                        float deltaDeg = startDeg - currentDeg;
+                        if(Math.abs(deltaDeg) < 72f){
+                            return true;
+                        }
+                        int ticks = (int) (Math.signum(deltaDeg)
+                                * Math.floor(Math.abs(deltaDeg) / degPerTick));
+                        if(ticks == 1){
+                            Log.e("Ticks","Next");
+                            startDeg = currentDeg;
+                            if(onTickListener !=null)
+                                onTickListener.onNextTick();
+                        }
+                        if(ticks == -1){
+                            Log.e("Ticks","Previous");
+                            startDeg = currentDeg;
+                            if(onTickListener !=null)
+                                onTickListener.onPreviousTick();
+                        }
+                    }
+                    startDeg = currentDeg;
+                    return true;
+                } else {
+                    return false;
+                }
 
-    @Override
-    public void onShowPress(MotionEvent event) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent eventA, MotionEvent eventB, float v, float v2) {
-        if (!Float.isNaN(startDeg)) {
-            float currentDeg = xyToDegrees((eventB.getX() - (getWidth() - getHeight())/2) / ((float) getHeight()),
-                    eventB.getY() / getHeight());
-
-            if (!Float.isNaN(currentDeg)) {
-                float degPerTick = 72f;
-                float deltaDeg = startDeg - currentDeg;
-                if(Math.abs(deltaDeg) < 72f){
+            case MotionEvent.ACTION_UP:
+                if ((Math.pow(event.getX() - getWidth() / 2f,2) + Math.pow(event.getY() - getHeight() / 2f,2) <= radiusIn*radiusIn )){
+                    if(onButtonListener !=null)
+                        onButtonListener.onSelect();
                     return true;
                 }
-                int ticks = (int) (Math.signum(deltaDeg)
-                        * Math.floor(Math.abs(deltaDeg) / degPerTick));
-                if(ticks == 1){
-                    Log.e("Ticks","Next");
-                    startDeg = currentDeg;
-                    if(onTickListener !=null)
-                        onTickListener.onNextTick();
-//                    blockUIThread();
-                }
-                if(ticks == -1){
-                    Log.e("Ticks","Previous");
-                    startDeg = currentDeg;
-                    if(onTickListener !=null)
-                        onTickListener.onPreviousTick();
-//                    blockUIThread();
-                }
-            }
-            return true;
-        } else {
-            return false;
+                //TODO
+                return true;
+            default:
+                return super.onTouchEvent(event);
         }
-    }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event, MotionEvent event2, float v, float v2) {
-        return false;
     }
 
     public void setOnTickListener(OnTickListener listener){
@@ -189,8 +158,5 @@ public class WheelView extends View implements GestureDetector.OnGestureListener
 
     public void setOnButtonListener(OnButtonListener listener){
         this.onButtonListener = listener;
-    }
-    private void blockUIThread(){
-        SystemClock.sleep(200);
     }
 }
