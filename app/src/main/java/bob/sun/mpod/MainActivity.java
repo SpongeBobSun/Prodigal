@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
@@ -40,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private PlayerService playerService;
     private OnTickListener currentTickObject;
     private Fragment currentFragment;
+    private Stack<Fragment> fragmentStack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     .hide(nowPlayingFragment)
                     .commit();
         }
-
+        fragmentStack = new Stack<>();
         currentFragment = mainMenu;
         return;
     }
@@ -146,21 +148,17 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         this.bindService(intent,serviceConnection,BIND_AUTO_CREATE);
     }
 
+//    @Override
+//    protected void onStart(){
+//        super.onStart();
+//        startService();
+//    }
     @Override
-    protected void onStart(){
-        super.onStart();
-        startService();
-    }
-    @Override
-    protected void onStop(){
-        super.onPause();
+    protected void onDestroy(){
+        super.onDestroy();
         unbindService(serviceConnection);
     }
-//    @Override
-//    protected void onDestroy(){
-//        super.onDestroy();
-//        unbindService(serviceConnection);
-//    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -186,6 +184,14 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     @Override
     public void onMenu() {
         Log.e("mPod","onMenu");
+        if(fragmentStack.isEmpty())
+            return;
+        Fragment fragment = fragmentStack.pop();
+        fragmentManager.beginTransaction()
+                .hide(currentFragment).show(fragment).commit();
+        currentFragment = fragment;
+        currentTickObject = (OnTickListener) fragment;
+        wheelView.setOnTickListener((OnTickListener) fragment);
     }
 
     @Override
@@ -210,6 +216,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             case SelectionDetail.MENU_TPYE_MAIN:
                 switch ((String) detail.getData()){
                     case "Songs":
+                        fragmentStack.push(currentFragment);
                         fragmentManager.beginTransaction().hide(currentFragment).show(songsList).commit();
                         currentFragment = songsList;
                         this.currentTickObject = songsList;
@@ -222,6 +229,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
                         break;
                     case "Now Playing":
+                        fragmentStack.push(currentFragment);
                         fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                         currentFragment = nowPlayingFragment;
                         this.currentTickObject = nowPlayingFragment;
@@ -239,7 +247,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 currentFragment = nowPlayingFragment;
                 this.currentTickObject = nowPlayingFragment;
                 wheelView.setOnTickListener(nowPlayingFragment);
-                
+
+                Intent intent = new Intent(this,PlayerService.class);
+                intent.putExtra("CMD",PlayerService.CMD_PLAY);
+                intent.putExtra("DATA",((SongBean) detail.getData()).getFilePath());
+                startService(intent);
+
                 break;
             default:
                 break;

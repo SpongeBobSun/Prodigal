@@ -38,6 +38,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         switch (intent.getIntExtra("CMD",-1)){
             case CMD_PLAY:
                 String fileName = intent.getStringExtra("DATA");
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.stop();
+                }
                 mediaPlayer.reset();
                 try {
                     mediaPlayer.setDataSource(fileName);
@@ -68,12 +71,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         return null;
     }
 
-    @Override
-    public boolean onUnbind(Intent intent){
-        mediaPlayer.reset();
-        mediaPlayer.release();
-        return super.onUnbind(intent);
-    }
+//    @Override
+//    public boolean onUnbind(Intent intent){
+//        mediaPlayer.reset();
+//        mediaPlayer.release();
+//        return super.onUnbind(intent);
+//    }
     @Override
     public void onDestroy() {
         try{
