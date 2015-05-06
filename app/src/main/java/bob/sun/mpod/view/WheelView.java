@@ -24,7 +24,6 @@ public class WheelView extends View {
     private Point center;
     private int radiusOut,radiusIn;
     private Paint paintOut, paintIn;
-    private GestureDetector gestureDetector;
     private OnTickListener onTickListener;
     private float startDeg = Float.NaN;
     private OnButtonListener onButtonListener;
@@ -37,7 +36,6 @@ public class WheelView extends View {
         paintIn.setColor(Color.WHITE);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-//        gestureDetector = new GestureDetector(context,this);
     }
 
     @Override
@@ -101,10 +99,10 @@ public class WheelView extends View {
                 float y = event.getY() / (center.y * 2);
 
                 startDeg = xyToDegrees(x, y);
-                Log.d("deg = ", "" + startDeg);
-                if (Float.isNaN(startDeg)) {
-                    return false;
-                }
+//                Log.d("deg = ", "" + startDeg);
+//                if (Float.isNaN(startDeg)) {
+//                    return false;
+//                }
                 return true;
 
             case MotionEvent.ACTION_MOVE:

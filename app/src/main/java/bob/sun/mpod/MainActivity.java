@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
         MediaLibrary.getStaticInstance(this);
 
-        //UT for MeidaLibrary
+        //Unit Test for MeidaLibrary
 //        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST);
 //        for(SongBean bean : list){
 //            Log.e(bean.getArtist(),bean.getFileName());
@@ -94,6 +94,25 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     .hide(nowPlayingFragment)
                     .commit();
         }
+
+        artistsList = (SimpleListMenu) fragmentManager.findFragmentByTag("artistsList");
+        if (artistsList == null){
+            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllArtists());
+            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ARTIST);
+            artistsList = new SimpleListMenu();
+            artistsList.setAdatper(adapter);
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,artistsList,"artistsList").hide(artistsList).commit();
+        }
+
+        albumsList = (SimpleListMenu) fragmentManager.findFragmentByTag("albumList");
+        if (albumsList == null){
+            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllAlbums());
+            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
+            albumsList = new SimpleListMenu();
+            albumsList.setAdatper(adapter);
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,albumsList,"albumList").hide(albumsList).commit();
+        }
+
         fragmentStack = new Stack<>();
         currentFragment = mainMenu;
         return;
@@ -222,11 +241,19 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         this.currentTickObject = songsList;
                         wheelView.setOnTickListener(songsList);
                         break;
-                    case "Artist":
-
+                    case "Artists":
+                        fragmentStack.push(currentFragment);
+                        fragmentManager.beginTransaction().hide(currentFragment).show(artistsList).commit();
+                        currentFragment = artistsList;
+                        this.currentTickObject = artistsList;
+                        wheelView.setOnTickListener(artistsList);
                         break;
                     case "Albums":
-
+                        fragmentStack.push(currentFragment);
+                        fragmentManager.beginTransaction().hide(currentFragment).show(albumsList).commit();
+                        currentFragment = albumsList;
+                        this.currentTickObject = albumsList;
+                        wheelView.setOnTickListener(albumsList);
                         break;
                     case "Now Playing":
                         fragmentStack.push(currentFragment);

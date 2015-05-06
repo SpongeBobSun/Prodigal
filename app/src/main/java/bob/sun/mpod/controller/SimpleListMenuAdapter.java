@@ -43,6 +43,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
         while (iterator.hasNext()){
             metaList.add(new MenuMeta(getTiltleFromBean(iterator.next()),false));
         }
+
         this.notifyDataSetChanged();
     }
 
@@ -82,9 +83,9 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
     private String getTiltleFromBean(Object bean){
         switch (type){
             case SORT_TYPE_ARTIST :
-                return ((SongBean) bean).getArtist();
+                return (String) bean;
             case SORT_TYPE_ALBUM :
-                return ((SongBean) bean).getAlbum();
+                return (String) bean;
             case SORT_TYPE_TITLE :
                 return ((SongBean) bean).getTitle();
             default:

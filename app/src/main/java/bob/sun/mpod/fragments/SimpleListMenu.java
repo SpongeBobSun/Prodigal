@@ -87,6 +87,9 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
     @Override
     public SelectionDetail getCurrentSelection() {
         SelectionDetail ret = new SelectionDetail();
+        if (adatper.getCount() == 0){
+            return ret;
+        }
         switch (adatper.getType()){
             case SimpleListMenuAdapter.SORT_TYPE_TITLE:
                 ret.setMenuType(ret.MENU_TYPE_SONGS);
