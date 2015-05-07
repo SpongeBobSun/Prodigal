@@ -177,4 +177,20 @@ public class MediaLibrary {
         return ret;
     }
 
+    public ArrayList<String> getAllGenre(){
+        ArrayList ret = new ArrayList<String>();
+        Cursor cursor;
+        cursor = contentResolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        while(cursor.moveToNext()){
+            ret.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.GenresColumns.NAME)));
+        }
+        cursor.close();
+        return ret;
+    }
+
 }

@@ -16,6 +16,7 @@ import android.view.View;
 
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
+import bob.sun.mpod.utils.VibrateUtil;
 
 /**
  * Created by bob.sun on 2015/4/23.
@@ -123,12 +124,14 @@ public class WheelView extends View {
                             startDeg = currentDeg;
                             if(onTickListener !=null)
                                 onTickListener.onNextTick();
+                            VibrateUtil.getStaticInstance(null).TickVibrate();
                         }
                         if(ticks == -1){
                             Log.e("Ticks","Previous");
                             startDeg = currentDeg;
                             if(onTickListener !=null)
                                 onTickListener.onPreviousTick();
+                            VibrateUtil.getStaticInstance(null).TickVibrate();
                         }
                     }
                     startDeg = currentDeg;

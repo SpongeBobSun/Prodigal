@@ -3,6 +3,7 @@ package bob.sun.mpod.service;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.IBinder;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.IOException;
  */
 public class PlayerService extends Service implements MediaPlayer.OnCompletionListener {
     private MediaPlayer mediaPlayer;
+    private final ServiceBinder binder = new ServiceBinder();
 
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -51,7 +53,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 }
                 break;
             case CMD_PAUSE:
-                if (!mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()){
                    mediaPlayer.pause();
                 }
                 break;
@@ -68,7 +70,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
 //    @Override
@@ -87,4 +89,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
     }
 
+    public boolean isPlaying(){
+        return mediaPlayer.isPlaying();
+    }
+
+    public class ServiceBinder extends Binder{
+        public Service getService(){return PlayerService.this;}
+    }
 }

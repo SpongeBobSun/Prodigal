@@ -3,6 +3,7 @@ package bob.sun.mpod;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +27,7 @@ import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
 
 
@@ -47,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        VibrateUtil.getStaticInstance(this);
+
         initFragments();
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
@@ -61,11 +65,11 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         MediaLibrary.getStaticInstance(this);
 
         //Unit Test for MeidaLibrary
-//        ArrayList<SongBean> list = MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST);
-//        for(SongBean bean : list){
+        ArrayList<String> list = MediaLibrary.getStaticInstance(this).getAllGenre();
+        for(String bean : list){
 //            Log.e(bean.getArtist(),bean.getFileName());
-//            Log.e("Albums",bean);
-//        }
+            Log.e("Albums",bean);
+        }
 
     }
 
@@ -155,7 +159,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                playerService = (PlayerService) service;
+
+                playerService = (PlayerService) ((PlayerService.ServiceBinder) service).getService();
             }
 
             @Override
@@ -215,7 +220,18 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
     @Override
     public void onPlay() {
-        Log.e("mPod","onPlay");
+        if(playerService == null){
+            Intent intent = new Intent(this,PlayerService.class);
+            this.bindService(intent,serviceConnection,BIND_AUTO_CREATE);
+        }
+        if (playerService.isPlaying() == true){
+            Intent intent = new Intent(this,PlayerService.class);
+            intent.putExtra("CMD",PlayerService.CMD_PAUSE);
+            startService(intent);
+        }else{
+            //TODO
+            //Add resume & pick play logic here.
+        }
     }
 
     @Override
@@ -269,6 +285,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             case SelectionDetail.MENU_TYPE_ALBUM:
                 break;
             case SelectionDetail.MENU_TYPE_SONGS:
+                fragmentStack.push(currentFragment);
                 nowPlayingFragment.setSong((SongBean) detail.getData());
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;
