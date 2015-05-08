@@ -97,8 +97,14 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
                 ret.setData(adatper.getItem(currentItemIndex));
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_ARTIST:
+                ret.setMenuType(ret.MENU_TYPE_ARTIST);
+                ret.setData(ret.DATA_TYPE_STRING);
+                ret.setData(adatper.getItem(currentItemIndex));
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_ALBUM:
+                ret.setMenuType(ret.MENU_TYPE_ALBUM);
+                ret.setData(ret.DATA_TYPE_STRING);
+                ret.setData(adatper.getItem(currentItemIndex));
                 break;
         }
         return ret;

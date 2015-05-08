@@ -90,19 +90,33 @@ public class MediaLibrary {
     }
 
     public ArrayList<String> getAlbumsByArtist(String artist){
+
         ArrayList ret = new ArrayList<String>();
         Cursor cursor;
+        String artistId;
+        cursor = contentResolver.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
+                new String[]{"_id"},
+                "artist=?",
+                new String[]{artist},
+                null);
+        if(!cursor.moveToNext()){
+            return ret;
+        }
+        artistId = ""+(cursor.getInt(cursor.getColumnIndexOrThrow("_id")));
+        cursor.close();
+
         cursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 null,
-                null,
-                null,
-                null
-        );
+                "artist_id=?",
+                new String[]{artistId},
+                "artist_id asc");
+
         while(cursor.moveToNext()){
-            ret.add(cursor.getString(cursor.getColumnIndexOrThrow("artist")));
+            ret.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.AlbumColumns.ALBUM)));
         }
         cursor.close();
         return ret;
+
     }
     public ArrayList<SongBean> getAllSongs(int order){
         ArrayList ret = new ArrayList<SongBean>();

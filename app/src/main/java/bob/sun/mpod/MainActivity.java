@@ -3,7 +3,6 @@ package bob.sun.mpod;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -205,14 +204,24 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         return super.onOptionsItemSelected(item);
     }
 
+    //TODO
+    //INITIAL & SAVE ALL FRAGMENT.
     @Override
     public void onMenu() {
         Log.e("mPod","onMenu");
         if(fragmentStack.isEmpty())
             return;
+
         Fragment fragment = fragmentStack.pop();
-        fragmentManager.beginTransaction()
-                .hide(currentFragment).show(fragment).commit();
+//        if(currentFragment != mainMenu || currentFragment != artistsList
+//        || currentFragment != albumsList || currentFragment != nowPlayingFragment
+//        || currentFragment != songsList){
+//            fragmentManager.beginTransaction()
+//                    .remove(currentFragment).show(fragment).commit();
+//        }else {
+            fragmentManager.beginTransaction()
+                    .hide(currentFragment).show(fragment).commit();
+//        }
         currentFragment = fragment;
         currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
@@ -251,36 +260,30 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             case SelectionDetail.MENU_TPYE_MAIN:
                 switch ((String) detail.getData()){
                     case "Songs":
-                        fragmentStack.push(currentFragment);
-                        fragmentManager.beginTransaction().hide(currentFragment).show(songsList).commit();
-                        currentFragment = songsList;
-                        this.currentTickObject = songsList;
-                        wheelView.setOnTickListener(songsList);
+                        switchFragmentTo(songsList);
                         break;
                     case "Artists":
-                        fragmentStack.push(currentFragment);
-                        fragmentManager.beginTransaction().hide(currentFragment).show(artistsList).commit();
-                        currentFragment = artistsList;
-                        this.currentTickObject = artistsList;
-                        wheelView.setOnTickListener(artistsList);
+                        switchFragmentTo(artistsList);
                         break;
                     case "Albums":
-                        fragmentStack.push(currentFragment);
-                        fragmentManager.beginTransaction().hide(currentFragment).show(albumsList).commit();
-                        currentFragment = albumsList;
-                        this.currentTickObject = albumsList;
-                        wheelView.setOnTickListener(albumsList);
+                        switchFragmentTo(albumsList);
                         break;
                     case "Now Playing":
-                        fragmentStack.push(currentFragment);
-                        fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
-                        currentFragment = nowPlayingFragment;
-                        this.currentTickObject = nowPlayingFragment;
-                        wheelView.setOnTickListener(nowPlayingFragment);
+                        switchFragmentTo(nowPlayingFragment);
                         break;
                 }
                 break;
             case SelectionDetail.MENU_TYPE_ARTIST:
+                SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,
+                        R.layout.item_simple_list_view,
+                        MediaLibrary.getStaticInstance(this)
+                                .getAlbumsByArtist((String) detail.getData()));
+                SimpleListMenu menu = new SimpleListMenu();
+                menu.setAdatper(adapter);
+                adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
+                fragmentManager.beginTransaction()
+                        .add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
+                switchFragmentTo(menu);
                 break;
             case SelectionDetail.MENU_TYPE_ALBUM:
                 break;
@@ -301,5 +304,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             default:
                 break;
         }
+    }
+    private void switchFragmentTo(Fragment fragment){
+        fragmentStack.push(currentFragment);
+        fragmentManager.beginTransaction().hide(currentFragment).show(fragment).commit();
+        currentFragment = fragment;
+        this.currentTickObject = (OnTickListener) fragment;
+        wheelView.setOnTickListener((OnTickListener) fragment);
     }
 }
