@@ -37,6 +37,11 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private SimpleListMenu artistsList;
     private SimpleListMenu albumsList;
     private NowPlayingFragment nowPlayingFragment;
+
+    private SimpleListMenu artistsAlbumList;
+    private SimpleListMenu artistsAlbumSongList;
+    private SimpleListMenu albumSongList;
+
     private WheelView wheelView;
     private ServiceConnection serviceConnection;
     private PlayerService playerService;
@@ -213,15 +218,16 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             return;
 
         Fragment fragment = fragmentStack.pop();
-//        if(currentFragment != mainMenu || currentFragment != artistsList
-//        || currentFragment != albumsList || currentFragment != nowPlayingFragment
-//        || currentFragment != songsList){
-//            fragmentManager.beginTransaction()
-//                    .remove(currentFragment).show(fragment).commit();
-//        }else {
+
+        if(currentFragment != mainMenu && currentFragment != artistsList
+        && currentFragment != albumsList && currentFragment != nowPlayingFragment
+        && currentFragment != songsList){
+            fragmentManager.beginTransaction()
+                    .remove(currentFragment).show(fragment).commit();
+        }else {
             fragmentManager.beginTransaction()
                     .hide(currentFragment).show(fragment).commit();
-//        }
+        }
         currentFragment = fragment;
         currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
@@ -274,18 +280,28 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 }
                 break;
             case SelectionDetail.MENU_TYPE_ARTIST:
-                SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,
+                SimpleListMenuAdapter artistAdapter = new SimpleListMenuAdapter(this,
                         R.layout.item_simple_list_view,
                         MediaLibrary.getStaticInstance(this)
                                 .getAlbumsByArtist((String) detail.getData()));
-                SimpleListMenu menu = new SimpleListMenu();
-                menu.setAdatper(adapter);
-                adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
+                SimpleListMenu artistMenu = new SimpleListMenu();
+                artistMenu.setAdatper(artistAdapter);
+                artistAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
                 fragmentManager.beginTransaction()
-                        .add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
-                switchFragmentTo(menu);
+                        .add(R.id.id_screen_fragment_container,artistMenu).hide(artistMenu).commit();
+                switchFragmentTo(artistMenu);
                 break;
             case SelectionDetail.MENU_TYPE_ALBUM:
+                SimpleListMenuAdapter albumAdapter = new SimpleListMenuAdapter(this,
+                        R.layout.item_simple_list_view,
+                        MediaLibrary.getStaticInstance(this)
+                                .getSongsByAlbum((String)detail.getData()));
+                SimpleListMenu albumMenu = new SimpleListMenu();
+                albumMenu.setAdatper(albumAdapter);
+                albumAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                fragmentManager.beginTransaction()
+                        .add(R.id.id_screen_fragment_container,albumMenu).hide(albumMenu).commit();
+                switchFragmentTo(albumMenu);
                 break;
             case SelectionDetail.MENU_TYPE_SONGS:
                 fragmentStack.push(currentFragment);
