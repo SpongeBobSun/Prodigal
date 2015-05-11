@@ -1,5 +1,7 @@
 package bob.sun.mpod.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by sunkuan on 15/5/1.
  */
@@ -19,6 +21,8 @@ public class SelectionDetail {
     private Object data;
     private int superType;
     private int subType;
+    private ArrayList<SongBean> playlist;
+    private int indexOfList;
 
     public int getMenuType() {
         return menuType;
@@ -60,4 +64,19 @@ public class SelectionDetail {
         this.subType = subType;
     }
 
+    public ArrayList<SongBean> getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(ArrayList<SongBean> playlist) {
+        this.playlist = playlist;
+    }
+
+    public int getIndexOfList() {
+        return indexOfList;
+    }
+
+    public void setIndexOfList(int indexOfList) {
+        this.indexOfList = indexOfList;
+    }
 }

@@ -96,4 +96,8 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
     public int getType() {
         return type;
     }
+
+    public ArrayList<SongBean> getList() {
+        return list;
+    }
 }

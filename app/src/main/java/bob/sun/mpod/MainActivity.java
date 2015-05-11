@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -209,8 +210,6 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         return super.onOptionsItemSelected(item);
     }
 
-    //TODO
-    //INITIAL & SAVE ALL FRAGMENT.
     @Override
     public void onMenu() {
         Log.e("mPod","onMenu");
@@ -241,27 +240,40 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         }
         if (playerService.isPlaying() == true){
             Intent intent = new Intent(this,PlayerService.class);
-            intent.putExtra("CMD",PlayerService.CMD_PAUSE);
+            intent.putExtra("CMD", PlayerService.CMD_PAUSE);
             startService(intent);
         }else{
             //TODO
             //Add resume & pick play logic here.
+            Intent intent = new Intent(this,PlayerService.class);
+            intent.putExtra("CMD",PlayerService.CMD_RESUME);
+            startService(intent);
         }
     }
 
     @Override
     public void onNext() {
         Log.e("mPod","onNext");
+        Intent intent = new Intent(this,PlayerService.class);
+        intent.putExtra("CMD",PlayerService.CMD_NEXT);
+        startService(intent);
     }
 
     @Override
     public void onPrevious() {
         Log.e("mPod","onPrevious");
+        Intent intent = new Intent(this,PlayerService.class);
+        intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
+        startService(intent);
     }
 
     @Override
     public void onSelect(){
         SelectionDetail detail = currentTickObject.getCurrentSelection();
+        if (detail == null){
+            Toast.makeText(this,"SelectionDetail is NULL",Toast.LENGTH_LONG).show();
+            return;
+        }
         switch (detail.getMenuType()){
             case SelectionDetail.MENU_TPYE_MAIN:
                 switch ((String) detail.getData()){
@@ -314,7 +326,9 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 Intent intent = new Intent(this,PlayerService.class);
                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
                 intent.putExtra("DATA",((SongBean) detail.getData()).getFilePath());
+                intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
+                playerService.setPlayList(detail.getPlaylist());
 
                 break;
             default:
