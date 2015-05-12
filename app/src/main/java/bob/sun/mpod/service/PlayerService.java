@@ -9,6 +9,7 @@ import android.os.IBinder;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.SongBean;
 
 /**
@@ -19,6 +20,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private final ServiceBinder binder = new ServiceBinder();
     private ArrayList<SongBean> playlist;
     private int index;
+    private PlayingListener playingListener;
 
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -103,6 +105,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
+            playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,6 +121,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
+            playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,5 +159,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         playlist = list;
     }
 
-
+    public void setPlayingListener(PlayingListener playingListener) {
+        this.playingListener = playingListener;
+    }
 }

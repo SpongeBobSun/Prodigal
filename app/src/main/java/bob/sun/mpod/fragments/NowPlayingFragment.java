@@ -1,5 +1,8 @@
 package bob.sun.mpod.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,13 +12,15 @@ import android.widget.TextView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
+import bob.sun.mpod.controller.PlayingListener;
+import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
 
 /**
  * Created by sunkuan on 15/5/4.
  */
-public class NowPlayingFragment extends Fragment implements OnTickListener{
+public class NowPlayingFragment extends Fragment implements OnTickListener,PlayingListener{
     SongBean song;
     View view;
     @Override
@@ -48,5 +53,15 @@ public class NowPlayingFragment extends Fragment implements OnTickListener{
     @Override
     public SelectionDetail getCurrentSelection() {
         return null;
+    }
+
+    @Override
+    public void onSongChanged(SongBean bean) {
+        setSong(bean);
+    }
+
+    @Override
+    public void onProcessChanged(int process) {
+
     }
 }

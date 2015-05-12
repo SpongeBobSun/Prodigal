@@ -166,6 +166,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             public void onServiceConnected(ComponentName name, IBinder service) {
 
                 playerService = (PlayerService) ((PlayerService.ServiceBinder) service).getService();
+                playerService.setPlayingListener(nowPlayingFragment);
             }
 
             @Override
