@@ -231,6 +231,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         currentFragment = fragment;
         currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
+
+        VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
     @Override
@@ -250,6 +252,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             intent.putExtra("CMD",PlayerService.CMD_RESUME);
             startService(intent);
         }
+        VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
     @Override
@@ -258,6 +261,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_NEXT);
         startService(intent);
+        VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
     @Override
@@ -266,10 +270,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
         startService(intent);
+        VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
     @Override
     public void onSelect(){
+        VibrateUtil.getStaticInstance(null).TickVibrate();
         SelectionDetail detail = currentTickObject.getCurrentSelection();
         if (detail == null){
             Toast.makeText(this,"SelectionDetail is NULL",Toast.LENGTH_LONG).show();
