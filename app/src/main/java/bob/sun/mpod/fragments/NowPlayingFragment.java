@@ -16,6 +16,7 @@ import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.utils.VolumeUtil;
 
 /**
  * Created by sunkuan on 15/5/4.
@@ -42,12 +43,12 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
 
     @Override
     public void onNextTick() {
-
+        VolumeUtil.getStaticInstance(getActivity()).raiseVolume();
     }
 
     @Override
     public void onPreviousTick() {
-
+        VolumeUtil.getStaticInstance(getActivity()).reduceVolume();
     }
 
     @Override
