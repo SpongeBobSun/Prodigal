@@ -21,6 +21,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
     public static final int SORT_TYPE_ARTIST = 0;
     public static final int SORT_TYPE_TITLE = 1;
     public static final int SORT_TYPE_ALBUM = 2;
+    public static final int SORT_TYPE_GENRE = 3;
 
 
     private ArrayList<SongBean> list;
@@ -88,6 +89,8 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                 return (String) bean;
             case SORT_TYPE_TITLE :
                 return ((SongBean) bean).getTitle();
+            case SORT_TYPE_GENRE :
+                return (String) bean;
             default:
                 return "";
         }

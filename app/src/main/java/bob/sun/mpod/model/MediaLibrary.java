@@ -207,4 +207,30 @@ public class MediaLibrary {
         return ret;
     }
 
+    public ArrayList<String> getArtistsByGenre(String genre){
+        ArrayList ret = new ArrayList<String>();
+        Cursor cursor;
+        cursor = contentResolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+                new String[]{"_id"},
+                "name=?",
+                new String[]{genre},
+                null);
+        if(!cursor.moveToNext()){
+            return ret;
+        }
+        Long genreId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+        cursor.close();
+        cursor = contentResolver.query(MediaStore.Audio.Genres.Members.getContentUri("external",genreId),
+                new String[]{"distinct "+MediaStore.Audio.Genres.Members.ARTIST},
+                null,
+                null,
+                null
+        );
+        while(cursor.moveToNext()){
+            ret.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.Members.ARTIST)));
+        }
+        cursor.close();
+        return ret;
+    }
+
 }

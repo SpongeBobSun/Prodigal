@@ -11,6 +11,7 @@ public class SelectionDetail {
     public static final int MENU_TYPE_ARTIST = 2;
     public static final int MENU_TYPE_ALBUM = 3;
     public static final int MENU_TYPE_SONGS = 4;
+    public static final int MENU_TYPE_GENRES = 5;
 
     public static final int DATA_TYPE_STRING = 1;
     public static final int DATA_TYPE_SONG = 2;

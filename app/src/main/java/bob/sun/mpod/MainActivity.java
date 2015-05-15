@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private SimpleListMenu songsList;
     private SimpleListMenu artistsList;
     private SimpleListMenu albumsList;
+    private SimpleListMenu genresList;
     private NowPlayingFragment nowPlayingFragment;
 
     private SimpleListMenu artistsAlbumList;
@@ -70,10 +71,10 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         MediaLibrary.getStaticInstance(this);
 
         //Unit Test for MeidaLibrary
-        ArrayList<String> list = MediaLibrary.getStaticInstance(this).getAllGenre();
+        ArrayList<String> list = MediaLibrary.getStaticInstance(this).getArtistsByGenre("Rock");
         for(String bean : list){
 //            Log.e(bean.getArtist(),bean.getFileName());
-            Log.e("Albums",bean);
+            Log.e("Artists - ",bean);
         }
 
     }
@@ -120,6 +121,15 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             albumsList = new SimpleListMenu();
             albumsList.setAdatper(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,albumsList,"albumList").hide(albumsList).commit();
+        }
+
+        genresList = (SimpleListMenu) fragmentManager.findFragmentByTag("genresList");
+        if (genresList == null){
+            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllGenre());
+            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_GENRE);
+            genresList = new SimpleListMenu();
+            genresList.setAdatper(adapter);
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,genresList,"genresList").hide(genresList).commit();
         }
 
         fragmentStack = new Stack<>();
@@ -221,7 +231,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
         if(currentFragment != mainMenu && currentFragment != artistsList
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
-        && currentFragment != songsList){
+        && currentFragment != songsList && currentFragment != genresList){
             fragmentManager.beginTransaction()
                     .remove(currentFragment).show(fragment).commit();
         }else {
@@ -293,6 +303,9 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     case "Albums":
                         switchFragmentTo(albumsList);
                         break;
+                    case "Genres":
+                        switchFragmentTo(genresList);
+                        break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
                         break;
@@ -321,6 +334,18 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,albumMenu).hide(albumMenu).commit();
                 switchFragmentTo(albumMenu);
+                break;
+            case SelectionDetail.MENU_TYPE_GENRES:
+                SimpleListMenuAdapter genresAdapter = new SimpleListMenuAdapter(this,
+                        R.layout.item_simple_list_view,
+                        MediaLibrary.getStaticInstance(this)
+                                .getArtistsByGenre((String) detail.getData()));
+                SimpleListMenu genresMenu = new SimpleListMenu();
+                genresMenu.setAdatper(genresAdapter);
+                genresAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ARTIST);
+                fragmentManager.beginTransaction()
+                        .add(R.id.id_screen_fragment_container,genresMenu).hide(genresMenu).commit();
+                switchFragmentTo(genresMenu);
                 break;
             case SelectionDetail.MENU_TYPE_SONGS:
                 fragmentStack.push(currentFragment);
