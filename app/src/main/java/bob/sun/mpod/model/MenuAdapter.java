@@ -33,8 +33,9 @@ public class MenuAdapter {
         mainMenuItems.add(new MenuMeta("Songs",false));
         mainMenuItems.add(new MenuMeta("Playlist",false));
         mainMenuItems.add(new MenuMeta("Genres",false));
-        mainMenuItems.add(new MenuMeta("Now Playing",false));
+        mainMenuItems.add(new MenuMeta("Shuffle Songs",false));
         mainMenuItems.add(new MenuMeta("Setting",false));
+        mainMenuItems.add(new MenuMeta("Now Playing",false));
     }
     public static MenuAdapter getStaticInstance(Context context){
         if (staticInstance == null){

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
 import bob.sun.mpod.controller.OnButtonListener;
@@ -308,6 +309,17 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
+                        break;
+                    case "Shuffle Songs":
+                        switchFragmentTo(nowPlayingFragment);
+                        Intent intent = new Intent(this,PlayerService.class);
+                        ArrayList playList = MediaLibrary.getStaticInstance(this).shuffleList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
+                        intent.putExtra("CMD",PlayerService.CMD_PLAY);
+                        intent.putExtra("DATA",((SongBean) playList.get(new Random().nextInt(playList.size()))).getFilePath());
+                        intent.putExtra("INDEX",detail.getIndexOfList());
+                        startService(intent);
+                        playerService.setPlayList(playList);
+
                         break;
                 }
                 break;

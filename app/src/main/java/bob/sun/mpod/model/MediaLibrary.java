@@ -7,6 +7,7 @@ import android.media.browse.MediaBrowser;
 import android.provider.MediaStore;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by sunkuan on 15/4/30.
@@ -233,4 +234,11 @@ public class MediaLibrary {
         return ret;
     }
 
+    public ArrayList<SongBean> shuffleList(ArrayList<SongBean> originalList){
+        ArrayList<SongBean> ret = new ArrayList<>();
+        while(originalList.size() >0 ){
+            ret.add(originalList.remove(new Random().nextInt(originalList.size())));
+        }
+        return ret;
+    }
 }
