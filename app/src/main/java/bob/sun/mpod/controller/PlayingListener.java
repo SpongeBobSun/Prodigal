@@ -7,5 +7,5 @@ import bob.sun.mpod.model.SongBean;
  */
 public interface PlayingListener {
     public void onSongChanged(SongBean bean);
-    public void onProcessChanged(int process);
+    public void onProcessChanged(int current, int total);
 }

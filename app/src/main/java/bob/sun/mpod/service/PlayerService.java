@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.SystemClock;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import bob.sun.mpod.controller.PlayingListener;
+import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.utils.PreferenceUtil;
 
 /**
  * Created by sunkuan on 15/4/29.
@@ -21,6 +24,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private ArrayList<SongBean> playlist;
     private int index;
     private PlayingListener playingListener;
+    private Thread progressThread;
 
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -41,7 +45,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(this);
-
+        progressThread = new Thread(new ProgressRunnable());
     }
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
@@ -57,6 +61,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     mediaPlayer.setDataSource(fileName);
                     mediaPlayer.prepare();
                     mediaPlayer.start();
+                    progressThread.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -64,11 +69,13 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
                    mediaPlayer.pause();
+                   progressThread.stop();
                 }
                 break;
             case CMD_RESUME:
                 if (!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
+                    progressThread.start();
                 }
                 break;
             case CMD_NEXT:
@@ -105,7 +112,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-            playingListener.onSongChanged(playlist.get(index));
+            progressThread.stop();
+            progressThread.start();
+            if (playingListener != null)
+                playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,7 +131,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-            playingListener.onSongChanged(playlist.get(index));
+            progressThread.stop();
+            progressThread.start();
+            if (playingListener != null )
+                playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -161,5 +174,23 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     public void setPlayingListener(PlayingListener playingListener) {
         this.playingListener = playingListener;
+    }
+
+    private class ProgressRunnable implements Runnable{
+        int total;
+        int current;
+        @Override
+        public void run() {
+            while (true) {
+                total = mediaPlayer.getDuration();
+                if(total == 0)
+                    continue;
+                current = mediaPlayer.getCurrentPosition();
+                if (playingListener == null)
+                    continue;
+                playingListener.onProcessChanged(current , total);
+                SystemClock.sleep(1000);
+            }
+        }
     }
 }
