@@ -315,8 +315,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         Intent intent = new Intent(this,PlayerService.class);
                         ArrayList playList = MediaLibrary.getStaticInstance(this).shuffleList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                         intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                        intent.putExtra("DATA",((SongBean) playList.get(new Random().nextInt(playList.size()))).getFilePath());
-                        intent.putExtra("INDEX",detail.getIndexOfList());
+                        intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
+                        intent.putExtra("INDEX",0);
                         startService(intent);
                         playerService.setPlayList(playList);
 

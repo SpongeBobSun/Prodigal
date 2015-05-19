@@ -61,7 +61,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     mediaPlayer.setDataSource(fileName);
                     mediaPlayer.prepare();
                     mediaPlayer.start();
-                    progressThread.start();
+                    if (playingListener!=null)
+                        playingListener.onSongChanged(playlist.get(index));
+                    if (!progressThread.isAlive())
+                        progressThread.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -69,13 +72,13 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
                    mediaPlayer.pause();
-                   progressThread.stop();
+//                   progressThread.stop();
                 }
                 break;
             case CMD_RESUME:
                 if (!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
-                    progressThread.start();
+//                    progressThread.start();
                 }
                 break;
             case CMD_NEXT:
@@ -112,8 +115,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-            progressThread.stop();
-            progressThread.start();
+//            progressThread.stop();
+//            progressThread.start();
             if (playingListener != null)
                 playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
@@ -131,8 +134,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-            progressThread.stop();
-            progressThread.start();
+//            progressThread.stop();
+//            progressThread.start();
             if (playingListener != null )
                 playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {

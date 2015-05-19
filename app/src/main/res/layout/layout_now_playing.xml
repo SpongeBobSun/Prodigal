@@ -69,11 +69,11 @@
         android:layout_weight="1.0"
         android:orientation="horizontal"
         android:id="@+id/id_bottom_bar_container">
-        <View
+        <bob.sun.mpod.view.ProgressView
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:background="@color/material_blue_grey_800"
             android:layout_weight="1.0"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:id="@+id/id_progress_view"/>
     </LinearLayout>
 </LinearLayout>

@@ -18,6 +18,7 @@ import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.utils.VolumeUtil;
+import bob.sun.mpod.view.ProgressView;
 
 /**
  * Created by sunkuan on 15/5/4.
@@ -25,6 +26,7 @@ import bob.sun.mpod.utils.VolumeUtil;
 public class NowPlayingFragment extends Fragment implements OnTickListener,PlayingListener{
     SongBean song;
     View view;
+    ProgressView progressView;
     @Override
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup parent,
@@ -40,6 +42,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_title)).setText(song.getTitle());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
+        progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
     }
 
     @Override
@@ -64,6 +67,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
 
     @Override
     public void onProcessChanged(int current, int total) {
-
+        if (progressView != null )
+            this.progressView.onProcessChanged(current, total);
     }
 }
