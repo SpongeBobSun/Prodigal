@@ -46,13 +46,11 @@
                     android:gravity="center"
                     android:layout_alignParentTop="true"
                     >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:textSize="20dp"
-                        android:text="Menu"
-                        android:textStyle="bold"
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:layout_marginTop="7dp"
+                        android:src="@drawable/menu"
                         android:id="@+id/id_menu_button"
                         />
                 </LinearLayout>
@@ -64,13 +62,11 @@
                     android:gravity="center"
                     android:layout_alignParentBottom="true"
                     android:id="@+id/linearLayout">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:textSize="20dp"
-                        android:text=">||"
-                        android:textStyle="bold"
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="35dp"
                         android:layout_marginBottom="7dp"
+                        android:src="@drawable/button"
                         android:id="@+id/id_play_button"
                         />
                 </LinearLayout>
@@ -84,12 +80,10 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:textSize="20dp"
-                        android:text="P"
-                        android:textStyle="bold"
+                        android:src="@drawable/prev"
                         android:id="@+id/id_previous_button"
                         />
                 </LinearLayout>
@@ -104,12 +98,10 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="59dp">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:textSize="20dp"
-                        android:text=">>|"
-                        android:textStyle="bold"
+                        android:src="@drawable/next"
                         android:id="@+id/id_next_button"
                         />
                 </LinearLayout>
