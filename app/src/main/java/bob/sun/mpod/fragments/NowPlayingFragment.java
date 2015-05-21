@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import bob.sun.mpod.R;
@@ -43,6 +44,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
         progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
+        ((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover)).setImageBitmap(MediaLibrary.getStaticInstance(getActivity()).getCoverImageBySong(songBean.getId()));
     }
 
     @Override

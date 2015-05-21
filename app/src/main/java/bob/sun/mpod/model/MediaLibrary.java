@@ -1,13 +1,21 @@
 package bob.sun.mpod.model;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.browse.MediaBrowser;
+import android.net.Uri;
 import android.provider.MediaStore;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
+
+import bob.sun.mpod.R;
 
 /**
  * Created by sunkuan on 15/4/30.
@@ -240,5 +248,33 @@ public class MediaLibrary {
             ret.add(originalList.remove(new Random().nextInt(originalList.size())));
         }
         return ret;
+    }
+
+    public Bitmap getCoverImageBySong(long songId){
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/media/" + songId + "/albumart");
+//        Uri uri = ContentUris.withAppendedId(sArtworkUri, songId);
+        ContentResolver res = appContext.getContentResolver();
+        InputStream in = null;
+        try {
+            in = res.openInputStream(sArtworkUri);
+            return BitmapFactory.decodeStream(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+        }
+    }
+
+    public Bitmap getCoverImageByAlbum(long albumId){
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
+        ContentResolver res = appContext.getContentResolver();
+        InputStream in = null;
+        try {
+            in = res.openInputStream(uri);
+            return BitmapFactory.decodeStream(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+        }
     }
 }

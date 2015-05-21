@@ -15,6 +15,7 @@ public class SongBean {
     private String filePath;
     private int duration;
     private long size;
+    private long id;
 
 
     public String getTitle() {
@@ -81,8 +82,16 @@ public class SongBean {
         this.filePath = filePath;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public void populateBean(Cursor cursor){
+        setId(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)));
         setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)));
         setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)));
         setTitle(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)));
