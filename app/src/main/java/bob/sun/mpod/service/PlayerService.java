@@ -9,6 +9,7 @@ import android.os.SystemClock;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.MediaLibrary;
@@ -24,8 +25,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private ArrayList<SongBean> playlist;
     private int index;
     private PlayingListener playingListener;
-    private Thread progressThread;
-
+//    private Thread progressThread;
+    private ProgressRunnable runnable;
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
     public static final int CMD_RESUME = 3;
@@ -45,7 +46,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(this);
-        progressThread = new Thread(new ProgressRunnable());
+//        progressThread = new Thread(new ProgressRunnable());
+        runnable = new ProgressRunnable();
+//        new Thread(runnable).start();
     }
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
@@ -53,6 +56,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PLAY:
                 String fileName = intent.getStringExtra("DATA");
                 index = intent.getIntExtra("INDEX",0);
+                runnable.stop();
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
                 }
@@ -63,8 +67,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     mediaPlayer.start();
                     if (playingListener!=null)
                         playingListener.onSongChanged(playlist.get(index));
-                    if (!progressThread.isAlive())
-                        progressThread.start();
+                    runnable.start();
+                    new Thread(runnable).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -111,12 +115,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         index++;
         mediaPlayer.stop();
         mediaPlayer.reset();
+        runnable.stop();
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
 //            progressThread.stop();
 //            progressThread.start();
+            runnable.start();
+            new Thread(runnable).start();
             if (playingListener != null)
                 playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
@@ -130,12 +137,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         index--;
         mediaPlayer.stop();
         mediaPlayer.reset();
+        runnable.stop();
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
 //            progressThread.stop();
 //            progressThread.start();
+            runnable.start();
+            new Thread(runnable).start();
             if (playingListener != null )
                 playingListener.onSongChanged(playlist.get(index));
         } catch (IOException e) {
@@ -182,18 +192,41 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private class ProgressRunnable implements Runnable{
         int total;
         int current;
+//        @Override
+//        public void run() {
+//            while (true) {
+//                total = mediaPlayer.getDuration();
+//                if(total == 0)
+//                    continue;
+//                current = mediaPlayer.getCurrentPosition();
+//                if (playingListener == null)
+//                    continue;
+//                playingListener.onProcessChanged(current , total);
+//                SystemClock.sleep(1000);
+//            }
+//        }
+        private AtomicBoolean stop = new AtomicBoolean(false);
+
+        public void stop() {
+            stop.set(true);
+        }
+        public void start(){
+            stop.set(false);
+        }
         @Override
         public void run() {
-            while (true) {
+            while (!stop.get()) {
                 total = mediaPlayer.getDuration();
                 if(total == 0)
                     continue;
                 current = mediaPlayer.getCurrentPosition();
                 if (playingListener == null)
                     continue;
-                playingListener.onProcessChanged(current , total);
+                playingListener.onProcessChanged(current, total);
+//                Thread.sleep(200);
                 SystemClock.sleep(1000);
             }
         }
+
     }
 }
