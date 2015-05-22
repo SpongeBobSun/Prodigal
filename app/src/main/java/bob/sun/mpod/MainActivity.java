@@ -399,8 +399,10 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         switchFragmentTo(aboutFragment);
                         break;
                     case "Shuffle":
+
                         break;
                     case "Repeat":
+
                         break;
                 }
                 break;

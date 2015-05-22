@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 
+import java.nio.channels.SelectableChannel;
+
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.model.SelectionDetail;
@@ -37,6 +39,9 @@ public class AboutFragment extends Fragment implements OnTickListener {
 
     @Override
     public SelectionDetail getCurrentSelection() {
-        return null;
+        SelectionDetail selectionDetail = new SelectionDetail();
+        selectionDetail.setMenuType(SelectionDetail.MENU_TYPE_UNUSED);
+        return selectionDetail;
     }
+
 }
