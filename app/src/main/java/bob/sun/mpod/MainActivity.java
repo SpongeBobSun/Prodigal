@@ -21,11 +21,14 @@ import java.util.Stack;
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.controller.SimpleListMenuAdapter;
+import bob.sun.mpod.fragments.AboutFragment;
 import bob.sun.mpod.fragments.MainMenu;
 import bob.sun.mpod.fragments.NowPlayingFragment;
+import bob.sun.mpod.fragments.SettingMenu;
 import bob.sun.mpod.fragments.SimpleListMenu;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
+import bob.sun.mpod.model.SettingAdapter;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.utils.VibrateUtil;
@@ -40,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private SimpleListMenu albumsList;
     private SimpleListMenu genresList;
     private NowPlayingFragment nowPlayingFragment;
+    private SettingMenu settingMenu;
 
     private SimpleListMenu artistsAlbumList;
     private SimpleListMenu artistsAlbumSongList;
@@ -86,7 +90,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         if(mainMenu == null){
             mainMenu = new MainMenu();
             fragmentManager.beginTransaction()
-                    .add(R.id.id_screen_fragment_container,mainMenu,"mainMenu").commit();
+                    .add(R.id.id_screen_fragment_container, mainMenu, "mainMenu").commit();
         }
         songsList = (SimpleListMenu) fragmentManager.findFragmentByTag("songsList");
         if(songsList == null){
@@ -94,14 +98,14 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
             songsList.setAdatper(adapter);
-            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,songsList,"songsList").hide(songsList).commit();
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container, songsList, "songsList").hide(songsList).commit();
         }
 
         nowPlayingFragment = (NowPlayingFragment) fragmentManager.findFragmentByTag("nowPlayingFragment");
         if(nowPlayingFragment == null){
             nowPlayingFragment = new NowPlayingFragment();
             fragmentManager.beginTransaction().
-                    add(R.id.id_screen_fragment_container,nowPlayingFragment,"nowPlayingFragment")
+                    add(R.id.id_screen_fragment_container, nowPlayingFragment, "nowPlayingFragment")
                     .hide(nowPlayingFragment)
                     .commit();
         }
@@ -131,6 +135,14 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             genresList = new SimpleListMenu();
             genresList.setAdatper(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,genresList,"genresList").hide(genresList).commit();
+        }
+
+        settingMenu = (SettingMenu) fragmentManager.findFragmentByTag("settingMenu");
+        if (settingMenu == null){
+            settingMenu = new SettingMenu();
+            SettingAdapter adapter = SettingAdapter.getStaticInstance(this);
+            settingMenu.setAdatper(adapter);
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,settingMenu,"settingMenu").hide(settingMenu).commit();
         }
 
         fragmentStack = new Stack<>();
@@ -232,7 +244,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
         if(currentFragment != mainMenu && currentFragment != artistsList
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
-        && currentFragment != songsList && currentFragment != genresList){
+        && currentFragment != songsList && currentFragment != genresList
+        && currentFragment != settingMenu){
             fragmentManager.beginTransaction()
                     .remove(currentFragment).show(fragment).commit();
         }else {
@@ -321,6 +334,9 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         playerService.setPlayList(playList);
 
                         break;
+                    case "Setting":
+                        switchFragmentTo(settingMenu);
+                        break;
                 }
                 break;
             case SelectionDetail.MENU_TYPE_ARTIST:
@@ -374,6 +390,19 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 startService(intent);
                 playerService.setPlayList(detail.getPlaylist());
 
+                break;
+            case SelectionDetail.MENU_TYPE_SETTING:
+                switch ((String) detail.getData()){
+                    case "About":
+                        AboutFragment aboutFragment = new AboutFragment();
+                        fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,aboutFragment).hide(aboutFragment).commit();
+                        switchFragmentTo(aboutFragment);
+                        break;
+                    case "Shuffle":
+                        break;
+                    case "Repeat":
+                        break;
+                }
                 break;
             default:
                 break;

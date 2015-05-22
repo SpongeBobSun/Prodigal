@@ -10,30 +10,38 @@ import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
+import bob.sun.mpod.controller.SimpleListMenuAdapter;
 import bob.sun.mpod.model.MenuAdapter;
-import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.MenuMeta;
+import bob.sun.mpod.model.SelectionDetail;
+import bob.sun.mpod.model.SettingAdapter;
 
 /**
- * Created by sunkuan on 2015/4/23.
+ * Created by bobsun on 15-5-22.
  */
-public class MainMenu extends Fragment implements OnTickListener {
-    ListView listView;
+public class SettingMenu extends Fragment implements OnTickListener {
+
+    private ListView listView;
+    private SettingAdapter adatper;
     int currentItemIndex;
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
-        View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
+        View ret = inflater.inflate(R.layout.layout_simple_list_menu, parent, false);
         listView = (ListView) ret.findViewById(R.id.id_list_view_main_menu);
-        listView.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(adatper.getAdapter());
         currentItemIndex = 0;
-        MenuAdapter.getStaticInstance(null).HighlightItem(0);
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        adatper.HighlightItem(0);
         return ret;
+    }
+
+    public void setAdatper(SettingAdapter adatper){
+        this.adatper = adatper;
     }
 
     @Override
     public void onNextTick() {
-        Log.e("index:",currentItemIndex+"");
+        Log.e("index:", currentItemIndex + "");
         if(currentItemIndex >= listView.getAdapter().getCount()-1){
             currentItemIndex = listView.getAdapter().getCount()-1;
             return;
@@ -50,7 +58,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         });
         if(currentItemIndex > listView.getLastVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
-        MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        adatper.HighlightItem(currentItemIndex);
     }
 
     @Override
@@ -71,13 +79,14 @@ public class MainMenu extends Fragment implements OnTickListener {
         });
         if(currentItemIndex < listView.getFirstVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
-        MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        adatper.HighlightItem(currentItemIndex);
     }
-
+    //TODO
+    //Change selection detail to a new one.
     @Override
     public SelectionDetail getCurrentSelection(){
         SelectionDetail ret = new SelectionDetail();
-        ret.setMenuType(ret.MENU_TPYE_MAIN);
+        ret.setMenuType(ret.MENU_TYPE_SETTING);
         ret.setDataType(ret.DATA_TYPE_STRING);
         ret.setData(((MenuMeta) listView.getAdapter().getItem(currentItemIndex)).itemName);
         return ret;

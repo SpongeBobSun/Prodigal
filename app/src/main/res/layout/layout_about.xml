@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/id_scroll_view_about">
+    <LinearLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="About mPod :"
+        android:layout_marginBottom="3dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Brought you by bob.sun."
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Contact me at "
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="widekuan@outlook.com"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="40dp"
+        android:autoLink="email"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="If you like this app, please star it on GitHub."
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="https://github.com/SpongeBobSun/mPod"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="40dp"
+        android:autoLink="web"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="This App is distributed under Apache License 2.0. You could use this app and its source code for free."
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Also, this app is non-commercial. I'll not gain profits in any form from it."
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="20dp"
+        />
+    </LinearLayout>
+</ScrollView>

@@ -65,6 +65,6 @@ public class ProgressView extends View {
         this.progress = progress;
         this.total = total;
         this.postInvalidate();
-        Log.e("Progress",""+progress);
+//        Log.e("Progress",""+progress);
     }
 }

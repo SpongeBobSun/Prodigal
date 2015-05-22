@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 import bob.sun.mpod.R;
 
+import bob.sun.mpod.model.MenuMeta;
+
 /**
  * Created by sunkuan on 15/4/25.
  */
@@ -56,14 +58,7 @@ public class MenuAdapter {
         mainMenuAdapter.notifyDataSetChanged();
     }
 
-    public class MenuMeta{
-        public String itemName;
-        public boolean highlight;
-        public MenuMeta(String arg1,boolean arg2){
-            itemName = arg1;
-            highlight = arg2;
-        }
-    }
+
 
     class MainMenuAdapter extends ArrayAdapter{
         ArrayList<MenuMeta> arrayList;
