@@ -1,5 +1,7 @@
 package bob.sun.mpod.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,6 +24,18 @@ public class MainMenu extends Fragment implements OnTickListener {
     ListView listView;
     int currentItemIndex;
     ImageView imageView;
+
+    private static int menuIcons[] = {
+            R.drawable.ic_artists,
+            R.drawable.ic_album,
+            R.drawable.ic_album,
+            R.drawable.ic_songs,
+            R.drawable.ic_playlist,
+            R.drawable.ic_playlist,
+            R.drawable.ic_shuffle,
+            R.drawable.ic_shuffle,
+            R.drawable.ic_nowplaying
+    };
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
@@ -55,6 +69,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex > listView.getLastVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[currentItemIndex]));
     }
 
     @Override
@@ -76,6 +91,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex < listView.getFirstVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), menuIcons[currentItemIndex]));
     }
 
     @Override
