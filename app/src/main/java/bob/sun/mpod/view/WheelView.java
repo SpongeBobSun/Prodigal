@@ -120,14 +120,14 @@ public class WheelView extends View {
                         int ticks = (int) (Math.signum(deltaDeg)
                                 * Math.floor(Math.abs(deltaDeg) / degPerTick));
                         if(ticks == 1){
-                            Log.e("Ticks","Next");
+//                            Log.e("Ticks","Next");
                             startDeg = currentDeg;
                             if(onTickListener !=null)
                                 onTickListener.onNextTick();
                             VibrateUtil.getStaticInstance(null).TickVibrate();
                         }
                         if(ticks == -1){
-                            Log.e("Ticks","Previous");
+//                            Log.e("Ticks","Previous");
                             startDeg = currentDeg;
                             if(onTickListener !=null)
                                 onTickListener.onPreviousTick();

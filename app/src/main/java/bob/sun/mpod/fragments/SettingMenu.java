@@ -81,8 +81,7 @@ public class SettingMenu extends Fragment implements OnTickListener {
             listView.smoothScrollToPosition(currentItemIndex);
         adatper.HighlightItem(currentItemIndex);
     }
-    //TODO
-    //Change selection detail to a new one.
+
     @Override
     public SelectionDetail getCurrentSelection(){
         SelectionDetail ret = new SelectionDetail();

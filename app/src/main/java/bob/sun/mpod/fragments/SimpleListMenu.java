@@ -43,7 +43,7 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
 
     @Override
     public void onNextTick() {
-        Log.e("index:", currentItemIndex + "");
+//        Log.e("index:", currentItemIndex + "");
         if(currentItemIndex >= listView.getAdapter().getCount()-1){
             currentItemIndex = listView.getAdapter().getCount()-1;
             return;
@@ -65,7 +65,7 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
 
     @Override
     public void onPreviousTick() {
-        Log.e("index:",currentItemIndex+"");
+//        Log.e("index:",currentItemIndex+"");
         if(currentItemIndex < 1){
             return;
         }

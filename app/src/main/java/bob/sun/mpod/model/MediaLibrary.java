@@ -252,7 +252,6 @@ public class MediaLibrary {
 
     public Bitmap getCoverImageBySong(long songId){
         Uri sArtworkUri = Uri.parse("content://media/external/audio/media/" + songId + "/albumart");
-//        Uri uri = ContentUris.withAppendedId(sArtworkUri, songId);
         ContentResolver res = appContext.getContentResolver();
         InputStream in = null;
         try {
@@ -264,7 +263,34 @@ public class MediaLibrary {
         }
     }
 
+
     public Bitmap getCoverImageByAlbum(long albumId){
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
+        ContentResolver res = appContext.getContentResolver();
+        InputStream in = null;
+        try {
+            in = res.openInputStream(uri);
+            return BitmapFactory.decodeStream(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+        }
+    }
+
+    public Bitmap getCoverImageByAlbum(String albumName){
+        Cursor cursor;
+        long albumId;
+        cursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                new String[]{"_id"},
+                "album=?",
+                new String[]{albumName},
+                null);
+        if(!cursor.moveToNext()){
+            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+        }
+        albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
+
         Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
         Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
         ContentResolver res = appContext.getContentResolver();

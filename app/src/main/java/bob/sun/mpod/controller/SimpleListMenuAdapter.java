@@ -6,12 +6,14 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import bob.sun.mpod.R;
+import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
 
 /**
@@ -61,6 +63,11 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
             ret.setBackgroundColor(Color.GRAY);
         }else{
             ret.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (this.type == SORT_TYPE_ALBUM){
+            ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position))));
         }
         return ret;
     }
