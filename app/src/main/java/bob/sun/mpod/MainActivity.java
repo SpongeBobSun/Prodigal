@@ -352,7 +352,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
-                        nowPlayingFragment.setSong(playerService.getCurrentSong());
+                        if (playerService.getCurrentSong() != null)
+                            nowPlayingFragment.setSong(playerService.getCurrentSong());
                         break;
                     case "Shuffle Songs":
                         switchFragmentTo(nowPlayingFragment);

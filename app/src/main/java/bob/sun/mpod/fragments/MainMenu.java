@@ -45,7 +45,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         currentItemIndex = 0;
         MenuAdapter.getStaticInstance(null).HighlightItem(0);
         imageView = (ImageView) ret.findViewById(R.id.id_main_menu_image);
-
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[0]));
         return ret;
     }
 
@@ -69,6 +69,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex > listView.getLastVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        imageView.destroyDrawingCache();
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[currentItemIndex]));
     }
 
@@ -91,6 +92,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex < listView.getFirstVisiblePosition())
             listView.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
+        imageView.destroyDrawingCache();
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), menuIcons[currentItemIndex]));
     }
 

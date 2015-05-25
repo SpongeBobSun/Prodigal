@@ -220,6 +220,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
 
     public SongBean getCurrentSong(){
+        if (playlist == null || playlist.get(index) == null)
+            return null;
         return playlist.get(index);
     }
 }
