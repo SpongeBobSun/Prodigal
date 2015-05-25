@@ -3,6 +3,7 @@ package bob.sun.mpod;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +32,7 @@ import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.PreferenceUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
 
@@ -55,6 +57,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private OnTickListener currentTickObject;
     private Fragment currentFragment;
     private Stack<Fragment> fragmentStack;
+
+    private SongBean lastSongBean;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             }
         };
         Intent intent = new Intent(this,PlayerService.class);
-        this.bindService(intent,serviceConnection,BIND_AUTO_CREATE);
+        this.bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
 //    @Override
@@ -212,6 +216,32 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         unbindService(serviceConnection);
     }
 
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+//        lastSongBean = new SongBean();
+//        SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
+//        lastSongBean.setId(preferences.getLong("Id", 0));
+//        lastSongBean.setAlbum(preferences.getString("Album", ""));
+//        lastSongBean.setArtist(preferences.getString("Artist", ""));
+//        lastSongBean.setFilePath(preferences.getString("FilePath", ""));
+//        lastSongBean.setGenre(preferences.getString("Genre", ""));
+//        lastSongBean.setDuration(preferences.getInt("Duration", 0));
+//    }
+
+//    @Override
+//    public void onPause(){
+//        super.onPause();
+//        SongBean bean = playerService.getCurrentSong();
+//        PreferenceUtil.getStaticInstance(this).getPreferences().edit()
+//                .putLong("Id",bean.getId())
+//                .putString("Album",bean.getAlbum())
+//                .putString("Artist",bean.getArtist())
+//                .putString("FilePath",bean.getFilePath())
+//                .putString("Genre",bean.getGenre())
+//                .putLong("Duration",bean.getDuration())
+//                .commit();
+//    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -322,6 +352,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
+                        nowPlayingFragment.setSong(playerService.getCurrentSong());
                         break;
                     case "Shuffle Songs":
                         switchFragmentTo(nowPlayingFragment);

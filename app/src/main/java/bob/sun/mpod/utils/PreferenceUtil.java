@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
  * Created by sunkuan on 15/5/12.
  */
 public class PreferenceUtil {
-    private PreferenceUtil staticInstance;
+    private static PreferenceUtil staticInstance;
     private SharedPreferences preferences;
     private static final String PREF_TAG = "app_settings";
 
@@ -20,10 +20,14 @@ public class PreferenceUtil {
         preferences = context.getSharedPreferences(PREF_TAG,0);
     }
 
-    public PreferenceUtil getStaticInstance(Context context){
+    public static PreferenceUtil getStaticInstance(Context context){
         if (staticInstance == null)
             staticInstance = new PreferenceUtil(context);
         return staticInstance;
+    }
+
+    public SharedPreferences getPreferences(){
+        return preferences;
     }
 
     public int getLoopingFlag(){

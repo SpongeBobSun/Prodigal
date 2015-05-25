@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,6 +166,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //    }
     @Override
     public void onDestroy() {
+        Log.e("mPod PlayerService","onDestroy");
         try{
         mediaPlayer.reset();
         mediaPlayer.release();
@@ -192,19 +194,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private class ProgressRunnable implements Runnable{
         int total;
         int current;
-//        @Override
-//        public void run() {
-//            while (true) {
-//                total = mediaPlayer.getDuration();
-//                if(total == 0)
-//                    continue;
-//                current = mediaPlayer.getCurrentPosition();
-//                if (playingListener == null)
-//                    continue;
-//                playingListener.onProcessChanged(current , total);
-//                SystemClock.sleep(1000);
-//            }
-//        }
         private AtomicBoolean stop = new AtomicBoolean(false);
 
         public void stop() {
@@ -228,5 +217,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             }
         }
 
+    }
+
+    public SongBean getCurrentSong(){
+        return playlist.get(index);
     }
 }

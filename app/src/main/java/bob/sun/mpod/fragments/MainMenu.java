@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import bob.sun.mpod.R;
@@ -20,6 +21,7 @@ import bob.sun.mpod.model.MenuMeta;
 public class MainMenu extends Fragment implements OnTickListener {
     ListView listView;
     int currentItemIndex;
+    ImageView imageView;
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
@@ -28,6 +30,8 @@ public class MainMenu extends Fragment implements OnTickListener {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currentItemIndex = 0;
         MenuAdapter.getStaticInstance(null).HighlightItem(0);
+        imageView = (ImageView) ret.findViewById(R.id.id_main_menu_image);
+
         return ret;
     }
 
