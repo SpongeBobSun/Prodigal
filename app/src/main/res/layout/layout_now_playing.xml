@@ -30,7 +30,8 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1.0"
-            android:id="@+id/id_nowplaying_image_view_cover"/>
+            android:id="@+id/id_nowplaying_image_view_cover"
+            android:layout_marginRight="10dp"/>
         <LinearLayout
             android:layout_width="0px"
             android:layout_height="match_parent"
@@ -40,24 +41,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1.0"/>
-            <TextView
+            <bob.sun.mpod.view.FocusedTextView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1.0"
                 android:text="Title"
-                android:id="@+id/id_now_playing_text_view_title"/>
-            <TextView
+                android:id="@+id/id_now_playing_text_view_title"
+                android:focusable="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"/>
+            <bob.sun.mpod.view.FocusedTextView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1.0"
                 android:text="Artist"
-                android:id="@+id/id_now_playing_text_view_artist"/>
-            <TextView
+                android:id="@+id/id_now_playing_text_view_artist"
+                android:focusable="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"/>
+            <bob.sun.mpod.view.FocusedTextView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1.0"
                 android:text="Album"
-                android:id="@+id/id_now_playing_text_view_album"/>
+                android:id="@+id/id_now_playing_text_view_album"
+                android:focusable="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -69,7 +85,9 @@
         android:layout_height="0dp"
         android:layout_weight="1.0"
         android:orientation="horizontal"
-        android:id="@+id/id_bottom_bar_container">
+        android:id="@+id/id_bottom_bar_container"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
         <bob.sun.mpod.view.ProgressView
             android:layout_width="match_parent"
             android:layout_height="20dp"

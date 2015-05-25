@@ -2,6 +2,7 @@ package bob.sun.mpod.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,22 +54,43 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
     @Override
     public View getView(int position,View convertView,ViewGroup parent){
         View ret = convertView;
+        ViewHolder holder;
         if(ret == null) {
             ret = ((Activity) appContext).getLayoutInflater()
                     .inflate(R.layout.item_simple_list_view, parent, false);
+            holder = new ViewHolder();
+            holder.content = getTiltleFromBean(list.get(position));
+
+            if (this.type == SORT_TYPE_ALBUM){
+                holder.bmp = MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position)));
+                ret.setTag(holder);
+            }
+        }else {
+            if (ret.getTag() == null){
+                holder = new ViewHolder();
+                holder.content = getTiltleFromBean(list.get(position));
+                if (this.type == SORT_TYPE_ALBUM){
+                    holder.bmp = MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position)));
+                    ret.setTag(holder);
+                }
+            }else{
+                holder = (ViewHolder) ret.getTag();
+            }
         }
         TextView textView = (TextView) ret.findViewById(R.id.id_itemlistview_textview);
-        textView.setText(getTiltleFromBean(list.get(position)));
+        textView.setText(holder.content);
+        if (this.type == SORT_TYPE_ALBUM){
+            ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(holder.bmp);
+        }
+
         if(metaList.get(position).highlight){
             ret.setBackgroundColor(Color.GRAY);
         }else{
             ret.setBackgroundColor(Color.TRANSPARENT);
         }
-        if (this.type == SORT_TYPE_ALBUM){
-            ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
-            imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap(MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position))));
-        }
+
         return ret;
     }
     class MenuMeta{
@@ -103,6 +125,10 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
         }
     }
 
+    class ViewHolder{
+        String content;
+        Bitmap bmp;
+    }
     public int getType() {
         return type;
     }
