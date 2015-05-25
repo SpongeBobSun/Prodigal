@@ -71,7 +71,25 @@
         android:textSize="20dp"
         android:text="Also, this app is non-commercial. I'll not gain profits in any form from it."
         android:layout_marginBottom="3dp"
-        android:layout_marginLeft="20dp"
+        android:layoutmarginLeft="20dp"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Credits:"
+        android:textStyle="bold|italic"
+        android:layout_marginBottom="3dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Icons by http://dryicons.com"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="3dp"
+        android:autoLink="web"
+        />
+
     </LinearLayout>
 </ScrollView>
