@@ -16,6 +16,7 @@ import java.util.Iterator;
 import bob.sun.mpod.R;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
+import dpl.bobsun.dummypicloader.DummyPicLoader;
 
 /**
  * Created by sunkuan on 15/5/1.
@@ -82,7 +83,8 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
         if (this.type == SORT_TYPE_ALBUM){
             ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap(holder.bmp);
+            DummyPicLoader.getInstance(getContext()).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
+//            imageView.setImageBitmap(holder.bmp);
         }
 
         if(metaList.get(position).highlight){

@@ -291,16 +291,33 @@ public class MediaLibrary {
         }
         albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
 
-        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-        Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
+//        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart/" + albumId);
+//        Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
         ContentResolver res = appContext.getContentResolver();
         InputStream in = null;
         try {
-            in = res.openInputStream(uri);
+//            in = res.openInputStream(uri);
+            in = res.openInputStream(sArtworkUri);
             return BitmapFactory.decodeStream(in);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
         }
+    }
+
+    public String getCoverUriByAlbum(String albumName){
+        Cursor cursor;
+        long albumId;
+        cursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                new String[]{"_id"},
+                "album=?",
+                new String[]{albumName},
+                null);
+        if(!cursor.moveToNext()){
+            return "content://media/external/audio/albumart/0";
+        }
+        albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
+        return "content://media/external/audio/albumart/"+albumId;
     }
 }
