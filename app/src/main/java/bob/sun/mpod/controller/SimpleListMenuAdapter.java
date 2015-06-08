@@ -63,7 +63,10 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
             holder.content = getTiltleFromBean(list.get(position));
 
             if (this.type == SORT_TYPE_ALBUM){
-                holder.bmp = MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position)));
+                holder.imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+                ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+                imageView.setVisibility(View.VISIBLE);
+                DummyPicLoader.getInstance(getContext()).resize(300,300).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
                 ret.setTag(holder);
             }
         }else {
@@ -71,20 +74,33 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                 holder = new ViewHolder();
                 holder.content = getTiltleFromBean(list.get(position));
                 if (this.type == SORT_TYPE_ALBUM){
-                    holder.bmp = MediaLibrary.getStaticInstance(null).getCoverImageByAlbum(getTiltleFromBean(list.get(position)));
+                    holder.imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+                    ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+                    imageView.setVisibility(View.VISIBLE);
+                    DummyPicLoader.getInstance(getContext()).resize(300,300).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
                     ret.setTag(holder);
                 }
             }else{
                 holder = (ViewHolder) ret.getTag();
+                if (holder.content != getTiltleFromBean((list.get(position)))) {
+                    holder.content = getTiltleFromBean(list.get(position));
+                    if (this.type == SORT_TYPE_ALBUM) {
+                        ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+                        imageView.setVisibility(View.VISIBLE);
+                        DummyPicLoader.getInstance(getContext()).resize(300, 300).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))), imageView);
+                        ret.setTag(holder);
+                    }
+//                    holder.needLoadCover = true;
+                }
+//                ret.setTag(holder);
             }
         }
         TextView textView = (TextView) ret.findViewById(R.id.id_itemlistview_textview);
         textView.setText(holder.content);
-        if (this.type == SORT_TYPE_ALBUM){
-            ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
-            imageView.setVisibility(View.VISIBLE);
-            DummyPicLoader.getInstance(getContext()).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
-//            imageView.setImageBitmap(holder.bmp);
+        if (this.type == SORT_TYPE_ALBUM /* && holder.needLoadCover*/){
+//            ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
+//            imageView.setVisibility(View.VISIBLE);
+//            DummyPicLoader.getInstance(getContext()).resize(imageView.getWidth(),imageView.getHeight()).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
         }
 
         if(metaList.get(position).highlight){
@@ -92,7 +108,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
         }else{
             ret.setBackgroundColor(Color.TRANSPARENT);
         }
-
+        ret.setTag(holder);
         return ret;
     }
     class MenuMeta{
@@ -129,7 +145,8 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
 
     class ViewHolder{
         String content;
-        Bitmap bmp;
+        ImageView imageView;
+//        boolean needLoadCover;
     }
     public int getType() {
         return type;

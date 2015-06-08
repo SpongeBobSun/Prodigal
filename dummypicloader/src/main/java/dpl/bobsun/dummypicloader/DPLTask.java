@@ -71,17 +71,15 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
 
         if (this.type == TASK_TYPE_FILE) {
 
-            if (options.outWidth !=0 && options.outHeight !=0){
+            if (resized){
                 BitmapFactory.Options fakeOption = new BitmapFactory.Options();
                 fakeOption.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(strings[0],fakeOption);
+                options.inScaled = true;
                 if ( fakeOption.outWidth / options.outWidth > fakeOption.outHeight / options.outHeight){
                     options.inSampleSize =fakeOption.outWidth / options.outWidth;
-                    options.inScaled = true;
-                }
-                if ( fakeOption.outWidth / fakeOption.outWidth < fakeOption.outHeight / options.outHeight) {
+                } else {
                     options.inSampleSize = fakeOption.outHeight / options.outHeight;
-                    options.inScaled = true;
                 }
             }
             options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -105,17 +103,15 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
                 urlConnection.getHeaderFields();
                 inputStream = urlConnection.getInputStream();
 
-                if (options.outWidth !=0 && options.outHeight !=0) {
+                if (resized) {
                     BitmapFactory.Options fakeOption = new BitmapFactory.Options();
                     fakeOption.inJustDecodeBounds = true;
                     BitmapFactory.decodeStream(urlConnection.getInputStream(),new Rect(),fakeOption);
+                    options.inScaled = true;
                     if (fakeOption.outWidth / options.outWidth > fakeOption.outHeight / options.outHeight) {
                         options.inSampleSize = fakeOption.outWidth / options.outWidth;
-                        options.inScaled = true;
-                    }
-                    if (fakeOption.outWidth / fakeOption.outWidth < fakeOption.outHeight / options.outHeight) {
+                    } else {
                         options.inSampleSize = fakeOption.outHeight / options.outHeight;
-                        options.inScaled = true;
                     }
                     inputStream = urlConnection.getInputStream();
                 }
@@ -131,6 +127,18 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
             ContentResolver contentResolver = context.getContentResolver();
             try{
                 inputStream = contentResolver.openInputStream(bmpUri);
+                if (resized) {
+                    BitmapFactory.Options fakeOption = new BitmapFactory.Options();
+                    fakeOption.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream,new Rect(),fakeOption);
+                    options.inScaled = true;
+                    if (fakeOption.outWidth / options.outWidth > fakeOption.outHeight / options.outHeight) {
+                        options.inSampleSize = fakeOption.outWidth / options.outWidth;
+                    } else {
+                        options.inSampleSize = fakeOption.outHeight / options.outHeight;
+                    }
+                    inputStream = contentResolver.openInputStream(bmpUri);
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
