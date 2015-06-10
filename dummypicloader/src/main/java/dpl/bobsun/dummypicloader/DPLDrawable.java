@@ -12,14 +12,20 @@ import java.lang.ref.WeakReference;
  */
 public class DPLDrawable extends BitmapDrawable {
     private WeakReference DPLTaskRef;
+    private boolean hasDefault;
     public DPLDrawable(Resources res, String fileName,DPLTask task){
         DPLTaskRef = new WeakReference(task);
     }
     public DPLDrawable(Resources res, Bitmap bitmap,DPLTask task){
+        super(res,bitmap);
+        hasDefault = true;
         DPLTaskRef = new WeakReference(task);
     }
     public DPLTask getTask(){
         return (DPLTask) DPLTaskRef.get();
     }
 
+    public boolean isHasDefault(){
+        return hasDefault;
+    }
 }

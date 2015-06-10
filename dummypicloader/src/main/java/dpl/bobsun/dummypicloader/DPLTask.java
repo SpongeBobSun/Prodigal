@@ -11,17 +11,22 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
+import dpl.bobsun.dummypicloader.cache.DPLDefaultImageCache;
 import dpl.bobsun.dummypicloader.cache.DPLDiskCache;
 import dpl.bobsun.dummypicloader.cache.DPLRamCache;
 
@@ -42,6 +47,8 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
     String cacheKey;
     private Context context;
     private boolean resized;
+    private int defaultImgResId = 0;
+    private boolean somethingWrong;
 
     public DPLTask(ImageView imageView,int type){
         imageViewWeakReference = new WeakReference(imageView);
@@ -88,11 +95,21 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
                 inputStream = new FileInputStream(strings[0]);
                 ((FileInputStream)inputStream).getFD();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return Bitmap.createBitmap(300, 300, null);
+//                e.printStackTrace();
+                somethingWrong = true;
+                if (defaultImgResId == 0) {
+                    return Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+                }else{
+                    return null;
+                }
             } catch (IOException e) {
-                e.printStackTrace();
-                return Bitmap.createBitmap(300, 300, null);
+//                e.printStackTrace();
+                somethingWrong = true;
+                if (defaultImgResId == 0) {
+                    return Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+                }else{
+                    return null;
+                }
             }
         }
         if (this.type == TASK_TYPE_URL){
@@ -103,23 +120,37 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
                 urlConnection.getHeaderFields();
                 inputStream = urlConnection.getInputStream();
 
+                options.inPreferredConfig = Bitmap.Config.RGB_565;
+
                 if (resized) {
                     BitmapFactory.Options fakeOption = new BitmapFactory.Options();
-                    fakeOption.inJustDecodeBounds = true;
-                    BitmapFactory.decodeStream(urlConnection.getInputStream(),new Rect(),fakeOption);
+//                    fakeOption.inJustDecodeBounds = true;
+                    DPLDiskCache.getStaticInstance().put(cacheKey,
+                            BitmapFactory.decodeStream(urlConnection.getInputStream(), new Rect(), fakeOption)
+                    );
                     options.inScaled = true;
                     if (fakeOption.outWidth / options.outWidth > fakeOption.outHeight / options.outHeight) {
                         options.inSampleSize = fakeOption.outWidth / options.outWidth;
                     } else {
                         options.inSampleSize = fakeOption.outHeight / options.outHeight;
                     }
-                    inputStream = urlConnection.getInputStream();
+                    inputStream = new FileInputStream(DPLDiskCache.getStaticInstance().get(cacheKey));
                 }
 
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                somethingWrong = true;
+                if (defaultImgResId == 0) {
+                    return Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+                }else{
+                    return null;
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                somethingWrong = true;
+                if (defaultImgResId == 0) {
+                    return Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+                }else{
+                    return null;
+                }
             }
         }
         if (this.type == TASK_TYPE_URI){
@@ -140,7 +171,12 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
                     inputStream = contentResolver.openInputStream(bmpUri);
                 }
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                somethingWrong = true;
+                if (defaultImgResId == 0) {
+                    return Bitmap.createBitmap(options.outWidth, options.outHeight, Bitmap.Config.RGB_565);
+                }else{
+                    return null;
+                }
             }
         }
 
@@ -161,8 +197,11 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
         final ImageView imageView = imageViewWeakReference.get();
         final DPLTask dplTask =
                 getBitmapWorkerTask(imageView);
-        if (this == dplTask && imageView != null) {
+        if (this == dplTask && imageView != null &&
+                ((defaultImgResId !=0 && !somethingWrong) || (defaultImgResId == 0 && somethingWrong))) {
             imageView.setImageBitmap(result);
+            if (defaultImgResId ==0 && somethingWrong)
+                return;
         }
         DPLRamCache.getStaticInstance().put(cacheKey,result);
         if (type == TASK_TYPE_URL && !DPLDiskCache.getStaticInstance().isCached(cacheKey)){
@@ -184,5 +223,9 @@ public class DPLTask extends AsyncTask<String, Integer, Bitmap> {
     public void setOptions(BitmapFactory.Options options, boolean resized){
         this.options = options;
         this.resized = resized;
+    }
+
+    public void setDefaultImgResId(int id){
+        defaultImgResId = id;
     }
 }

@@ -1,6 +1,7 @@
 package dpl.bobsun.dummypicloader.cache;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 
 import java.io.File;
@@ -8,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by bobsun on 15-6-1.
@@ -43,10 +45,7 @@ public class DPLDiskCache {
      * false if this image can not be found.
      */
     public boolean isCached(String key){
-        String[] result = new File(cacheFolderPath).list(new ImageCacheFinder(key));
-        if (result != null && result.length != 0)
-            return true;
-        return false;
+        return new File(cacheFolderPath + key.hashCode()).exists();
     }
 
     /**
@@ -57,11 +56,13 @@ public class DPLDiskCache {
      * @param value
      * Bitmap to be cached.
      */
-    public void put(String key, Bitmap value){
+    public synchronized void put(String key, Bitmap value){
         //Todo
         //Question, will this cause a performance issue?
         //        UUID.fromString(key);
         //Maybe it will when calling "toString()"
+        if (value == null)
+            return;
         File cacheFile = new File(cacheFolderPath + key.hashCode());
         if (!cacheFile.delete()){
             try {
@@ -79,6 +80,7 @@ public class DPLDiskCache {
 
     }
 
+
     /**
      * Get file path for specific key.
      * @param key
@@ -86,12 +88,8 @@ public class DPLDiskCache {
      * @return
      *  <b>Cached Image File Path</b>
      */
-    public String get(String key){
-        String fileName = null;
-        String[] result = cacheFolder.list(new ImageCacheFinder(key));
-        if (result.length != 0)
-            fileName = result[0];
-        return fileName;
+    public synchronized String get(String key){
+        return cacheFolderPath + key.hashCode();
     }
 
     /**
@@ -104,6 +102,10 @@ public class DPLDiskCache {
     public void changeCacheFolder(String newLocation){
         cacheFolderPath = newLocation;
         cacheFolder = new File(cacheFolderPath);
+    }
+
+    public String getCacheFolderPath(){
+        return cacheFolderPath;
     }
 
     class ImageCacheFinder implements FilenameFilter{
