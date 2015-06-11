@@ -41,6 +41,13 @@ public class SimpleListMenu extends Fragment implements OnTickListener {
         this.adatper = adatper;
     }
 
+    /**
+     * Compromise for the playinglist fragment.
+     */
+    public SimpleListMenuAdapter getAdapter(){
+        return adatper;
+    }
+
     @Override
     public void onNextTick() {
 //        Log.e("index:", currentItemIndex + "");

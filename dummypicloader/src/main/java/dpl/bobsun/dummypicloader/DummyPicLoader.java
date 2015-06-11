@@ -120,6 +120,12 @@ public class DummyPicLoader {
     public void loadImageFromUri(String uri, ImageView imageView){
         bmpSet = true;
 
+        if (resized){
+            cacheKey = uri + options.outWidth + options.outHeight;
+        }else{
+            cacheKey = uri;
+        }
+
         if (imageView.getDrawable() != null && imageView.getDrawable() instanceof DPLDrawable && ((DPLDrawable)imageView.getDrawable()).getTask() !=null) {
             ((DPLDrawable) imageView.getDrawable()).getTask().cancel(true);
         }
@@ -127,8 +133,9 @@ public class DummyPicLoader {
         DPLTask task = new DPLTask(imageView,DPLTask.TASK_TYPE_URI);
         task.setContext(context);
 
-        Bitmap ramCacheBmp = ramCache.get(uri);
-        if (ramCache.get(uri) != null){
+        Bitmap ramCacheBmp = ramCache.get(cacheKey);
+        if (ramCacheBmp != null){
+            Log.e("LoadFormUri","Found from ram cache");
             imageView.setImageDrawable(new DPLDrawable(getContext().getResources(), ramCache.get(uri), task));
             imageView.setImageBitmap(ramCacheBmp);
             return;

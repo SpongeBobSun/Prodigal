@@ -139,7 +139,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
             case SORT_TYPE_GENRE :
                 return (String) bean;
             default:
-                return "";
+                return (String)bean;
         }
     }
 

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import bob.sun.mpod.controller.PlayingListener;
@@ -185,6 +186,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     public void setPlayList(ArrayList<SongBean> list){
         playlist = list;
+    }
+
+    public ArrayList getPlayList(){
+        return playlist;
     }
 
     public void setPlayingListener(PlayingListener playingListener) {

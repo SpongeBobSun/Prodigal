@@ -1,9 +1,11 @@
 package bob.sun.mpod;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -141,6 +143,17 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,genresList,"genresList").hide(genresList).commit();
         }
 
+//        playingList = (SimpleListMenu) fragmentManager.findFragmentByTag("playingList");
+//        if (playingList == null) {
+//            playingList = new SimpleListMenu();
+//            ArrayList initArray = new ArrayList();
+//            initArray.add("No playing list.");
+//            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this, R.layout.item_simple_list_view, initArray);
+//            adapter.setArrayListType(-1);
+//            playingList.setAdatper(adapter);
+//            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,playingList,"playingList").hide(playingList).commit();
+//        }
+
         settingMenu = (SettingMenu) fragmentManager.findFragmentByTag("settingMenu");
         if (settingMenu == null){
             settingMenu = new SettingMenu();
@@ -275,7 +288,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         if(currentFragment != mainMenu && currentFragment != artistsList
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
         && currentFragment != songsList && currentFragment != genresList
-        && currentFragment != settingMenu){
+        && currentFragment != settingMenu /* && currentFragment != playingList*/){
             fragmentManager.beginTransaction()
                     .remove(currentFragment).show(fragment).commit();
         }else {
@@ -327,6 +340,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onSelect(){
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -350,6 +364,28 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                     case "Genres":
                         switchFragmentTo(genresList);
                         break;
+                    case "Playlist":
+                        SimpleListMenu menu = new SimpleListMenu();
+                        SimpleListMenuAdapter adapter;
+                        if (playerService != null && playerService.getPlayList() != null) {
+//                            playingList.getAdapter().clear();
+//                            playingList.getAdapter().addAll(playerService.getPlayList());
+//                            playingList.getAdapter().setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                            adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,playerService.getPlayList());
+                            menu.setAdatper(adapter);
+                            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                        }else {
+                            ArrayList crap = new ArrayList();
+                            crap.add("No playing list.");
+                            adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,crap);
+                            menu.setAdatper(adapter);
+                            adapter.setArrayListType(-1);
+                        }
+
+                        fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
+                        switchFragmentTo(menu);
+//                        switchFragmentTo(playingList);
+                        break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
                         if (playerService.getCurrentSong() != null)
@@ -361,10 +397,10 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         ArrayList playList = MediaLibrary.getStaticInstance(this).shuffleList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                         intent.putExtra("CMD",PlayerService.CMD_PLAY);
                         intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
-                        intent.putExtra("INDEX",0);
+                        intent.putExtra("INDEX", 0);
                         startService(intent);
+                        nowPlayingFragment.setSong((SongBean) playList.get(0));
                         playerService.setPlayList(playList);
-
                         break;
                     case "Setting":
                         switchFragmentTo(settingMenu);

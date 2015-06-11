@@ -46,8 +46,8 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
         progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
-//        ((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover)).setImageBitmap(MediaLibrary.getStaticInstance(getActivity()).getCoverImageBySong(songBean.getId()));
-        DummyPicLoader.getInstance(getActivity()).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriBySong(songBean.getId()), (ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover));
+        ((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover)).setImageBitmap(MediaLibrary.getStaticInstance(getActivity()).getCoverImageBySong(songBean.getId()));
+//        DummyPicLoader.getInstance(getActivity()).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriBySong(songBean.getId()), (ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover));
     }
 
     @Override
