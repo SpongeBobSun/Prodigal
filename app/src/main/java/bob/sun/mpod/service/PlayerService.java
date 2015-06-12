@@ -88,6 +88,17 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 break;
             case CMD_RESUME:
                 if (!mediaPlayer.isPlaying()){
+                    if (playlist == null){
+                        String resumeName = intent.getStringExtra("DATA");
+                        try {
+                            mediaPlayer.setDataSource(resumeName);
+                            mediaPlayer.prepare();
+//                            if (playingListener != null)
+//                                playingListener.onSongChanged();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mediaPlayer.start();
                 }
                 break;

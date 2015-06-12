@@ -19,9 +19,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
@@ -32,6 +43,7 @@ import bob.sun.mpod.fragments.NowPlayingFragment;
 import bob.sun.mpod.fragments.SettingMenu;
 import bob.sun.mpod.fragments.SimpleListMenu;
 import bob.sun.mpod.model.MediaLibrary;
+import bob.sun.mpod.model.PlayList;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;
 import bob.sun.mpod.model.SongBean;
@@ -65,6 +77,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private Intent serviceIntent;
 
     private SongBean lastSongBean;
+    private ArrayList lastPlayList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,20 +236,43 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         unbindService(serviceConnection);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onResume(){
         super.onResume();
         lastSongBean = new SongBean();
         SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
         lastSongBean.setId(preferences.getLong("Id", 0));
-        lastSongBean.setTitle(preferences.getString("Title",""));
+        lastSongBean.setTitle(preferences.getString("Title", ""));
         lastSongBean.setAlbum(preferences.getString("Album", ""));
         lastSongBean.setArtist(preferences.getString("Artist", ""));
         lastSongBean.setFilePath(preferences.getString("FilePath", ""));
         lastSongBean.setGenre(preferences.getString("Genre", ""));
         lastSongBean.setDuration((int) preferences.getLong("Duration", 0));
+
+//        HashSet prefList = (HashSet) PreferenceUtil.getStaticInstance(this).getPreferences().getStringSet("LastList",null);
+//        if (prefList == null)
+//            return;
+//        lastPlayList = new ArrayList();
+//        Iterator iterator = prefList.iterator();
+//        while(iterator.hasNext())
+//            lastPlayList.add(MediaLibrary.getStaticInstance(this).getSongById((String) iterator.next()));
+        File objectFile = new File("/data/data/bob.sun.mpod/playlistobject");
+        if (! objectFile.exists())
+            return;
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream( new FileInputStream(objectFile));
+            lastPlayList = new ArrayList();
+            lastPlayList.addAll((ArrayList) objectInputStream.readObject());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onPause(){
         super.onPause();
@@ -253,6 +289,22 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 .putString("Genre",bean.getGenre())
                 .putLong("Duration",bean.getDuration())
                 .commit();
+        lastPlayList = playerService.getPlayList();
+        if (lastPlayList == null)
+            return;
+        PlayList saveList = new PlayList();
+        saveList.addAll(lastPlayList);
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/data/data/bob.sun.mpod/playlistobject"));
+            oos.writeObject(saveList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        HashSet saveList = new HashSet();
+//        Iterator iterator = lastPlayList.iterator();
+//        while(iterator.hasNext())
+//            saveList.add(""+((SongBean) iterator.next()).getId());
+//        PreferenceUtil.getStaticInstance(this).getPreferences().edit().putStringSet("LastList", saveList).commit();
     }
 
     @Override
@@ -290,7 +342,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
     @Override
     public void onMenu() {
-        Log.e("mPod","onMenu");
+        Log.e("mPod", "onMenu");
         if(fragmentStack.isEmpty())
             return;
 
@@ -327,6 +379,9 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             //TODO
             //Add resume & pick play logic here.
             Intent intent = new Intent(this,PlayerService.class);
+            if (playerService.getCurrentSong() == null && playerService.getPlayList() == null) {
+                intent.putExtra("DATA",lastSongBean.getFilePath());
+            }
             intent.putExtra("CMD",PlayerService.CMD_RESUME);
             startService(intent);
         }
@@ -344,7 +399,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
     @Override
     public void onPrevious() {
-        Log.e("mPod","onPrevious");
+        Log.e("mPod", "onPrevious");
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
         startService(intent);
@@ -383,11 +438,17 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                             menu.setAdatper(adapter);
                             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                         }else {
-                            ArrayList crap = new ArrayList();
-                            crap.add("No playing list.");
-                            adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,crap);
-                            menu.setAdatper(adapter);
-                            adapter.setArrayListType(-1);
+                            if (lastPlayList != null){
+                                adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,lastPlayList);
+                                menu.setAdatper(adapter);
+                                adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                            } else {
+                                ArrayList crap = new ArrayList();
+                                crap.add("No playing list.");
+                                adapter = new SimpleListMenuAdapter(this, R.layout.item_simple_list_view, crap);
+                                menu.setAdatper(adapter);
+                                adapter.setArrayListType(-1);
+                            }
                         }
 
                         fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,menu).hide(menu).commit();

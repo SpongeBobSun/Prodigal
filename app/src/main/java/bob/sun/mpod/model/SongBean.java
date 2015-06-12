@@ -3,10 +3,12 @@ package bob.sun.mpod.model;
 import android.database.Cursor;
 import android.provider.MediaStore;
 
+import java.io.Serializable;
+
 /**
  * Created by sunkuan on 15/4/30.
  */
-public class SongBean {
+public class SongBean implements Serializable {
     private String title;
     private String artist;
     private String album;

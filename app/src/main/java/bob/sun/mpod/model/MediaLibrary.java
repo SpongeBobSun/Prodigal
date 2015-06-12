@@ -320,4 +320,20 @@ public class MediaLibrary {
         albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
         return "content://media/external/audio/albumart/"+albumId;
     }
+
+    public SongBean getSongById(String id){
+        SongBean ret = null;
+        Cursor cursor;
+        cursor = contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                "_id=?",
+                new String[]{id},
+                null
+                );
+        while (cursor.moveToNext()){
+            ret = new SongBean();
+            ret.populateBean(cursor);
+        }
+        return ret;
+    }
 }
