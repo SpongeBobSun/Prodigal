@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     private OnTickListener currentTickObject;
     private Fragment currentFragment;
     private Stack<Fragment> fragmentStack;
+
+    private Intent serviceIntent;
 
     private SongBean lastSongBean;
     @Override
@@ -144,17 +147,6 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,genresList,"genresList").hide(genresList).commit();
         }
 
-//        playingList = (SimpleListMenu) fragmentManager.findFragmentByTag("playingList");
-//        if (playingList == null) {
-//            playingList = new SimpleListMenu();
-//            ArrayList initArray = new ArrayList();
-//            initArray.add("No playing list.");
-//            SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this, R.layout.item_simple_list_view, initArray);
-//            adapter.setArrayListType(-1);
-//            playingList.setAdatper(adapter);
-//            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,playingList,"playingList").hide(playingList).commit();
-//        }
-
         settingMenu = (SettingMenu) fragmentManager.findFragmentByTag("settingMenu");
         if (settingMenu == null){
             settingMenu = new SettingMenu();
@@ -215,8 +207,8 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                 playerService = null;
             }
         };
-        Intent intent = new Intent(this,PlayerService.class);
-        this.bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+        serviceIntent = new Intent(this,PlayerService.class);
+        this.bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
 //    @Override
@@ -227,35 +219,39 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     @Override
     protected void onDestroy(){
         super.onDestroy();
+//        this.stopService(serviceIntent);
         unbindService(serviceConnection);
     }
 
-//    @Override
-//    public void onResume(){
-//        super.onResume();
-//        lastSongBean = new SongBean();
-//        SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
-//        lastSongBean.setId(preferences.getLong("Id", 0));
-//        lastSongBean.setAlbum(preferences.getString("Album", ""));
-//        lastSongBean.setArtist(preferences.getString("Artist", ""));
-//        lastSongBean.setFilePath(preferences.getString("FilePath", ""));
-//        lastSongBean.setGenre(preferences.getString("Genre", ""));
-//        lastSongBean.setDuration(preferences.getInt("Duration", 0));
-//    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        lastSongBean = new SongBean();
+        SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
+        lastSongBean.setId(preferences.getLong("Id", 0));
+        lastSongBean.setTitle(preferences.getString("Title",""));
+        lastSongBean.setAlbum(preferences.getString("Album", ""));
+        lastSongBean.setArtist(preferences.getString("Artist", ""));
+        lastSongBean.setFilePath(preferences.getString("FilePath", ""));
+        lastSongBean.setGenre(preferences.getString("Genre", ""));
+        lastSongBean.setDuration((int) preferences.getLong("Duration", 0));
+    }
 
-//    @Override
-//    public void onPause(){
-//        super.onPause();
-//        SongBean bean = playerService.getCurrentSong();
-//        PreferenceUtil.getStaticInstance(this).getPreferences().edit()
-//                .putLong("Id",bean.getId())
-//                .putString("Album",bean.getAlbum())
-//                .putString("Artist",bean.getArtist())
-//                .putString("FilePath",bean.getFilePath())
-//                .putString("Genre",bean.getGenre())
-//                .putLong("Duration",bean.getDuration())
-//                .commit();
-//    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        SongBean bean = playerService.getCurrentSong();
+        PreferenceUtil.getStaticInstance(this).getPreferences().edit()
+                .putLong("Id",bean.getId())
+                .putString("Title",bean.getTitle())
+                .putString("Album",bean.getAlbum())
+                .putString("Artist",bean.getArtist())
+                .putString("FilePath",bean.getFilePath())
+                .putString("Genre",bean.getGenre())
+                .putLong("Duration",bean.getDuration())
+                .commit();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -276,6 +272,17 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode,KeyEvent event){
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                super.onKeyDown(keyCode,event);
+                onPause();
+                return true;
+        }
+        return super.onKeyDown(keyCode,event);
     }
 
     @Override
@@ -369,9 +376,6 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         SimpleListMenu menu = new SimpleListMenu();
                         SimpleListMenuAdapter adapter;
                         if (playerService != null && playerService.getPlayList() != null) {
-//                            playingList.getAdapter().clear();
-//                            playingList.getAdapter().addAll(playerService.getPlayList());
-//                            playingList.getAdapter().setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                             adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,playerService.getPlayList());
                             menu.setAdatper(adapter);
                             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
@@ -389,8 +393,12 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
                         break;
                     case "Now Playing":
                         switchFragmentTo(nowPlayingFragment);
-                        if (playerService.getCurrentSong() != null)
+                        if (playerService.getCurrentSong() != null){
                             nowPlayingFragment.setSong(playerService.getCurrentSong());
+                        }else {
+                            if (lastSongBean != null)
+                                nowPlayingFragment.setSong(lastSongBean);
+                        }
                         break;
                     case "Shuffle Songs":
                         switchFragmentTo(nowPlayingFragment);

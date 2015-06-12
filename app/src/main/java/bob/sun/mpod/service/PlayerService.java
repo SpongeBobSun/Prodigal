@@ -55,6 +55,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
+        if (intent == null){
+            Log.e("PlayerService",""+flags);
+            return START_FLAG_RETRY;
+        }
         switch (intent.getIntExtra("CMD",-1)){
             case CMD_PLAY:
                 String fileName = intent.getStringExtra("DATA");
@@ -80,13 +84,11 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
                    mediaPlayer.pause();
-//                   progressThread.stop();
                 }
                 break;
             case CMD_RESUME:
                 if (!mediaPlayer.isPlaying()){
                     mediaPlayer.start();
-//                    progressThread.start();
                 }
                 break;
             case CMD_NEXT:
@@ -99,7 +101,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 break;
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -124,8 +126,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-//            progressThread.stop();
-//            progressThread.start();
             runnable.start();
             new Thread(runnable).start();
             if (playingListener != null)
@@ -133,6 +133,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         } catch (IOException e) {
             e.printStackTrace();
         }
+        NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
     }
     private void onPrevious(){
         if (playlist == null || index <= 0){
@@ -146,8 +147,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
-//            progressThread.stop();
-//            progressThread.start();
             runnable.start();
             new Thread(runnable).start();
             if (playingListener != null )
@@ -155,6 +154,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         } catch (IOException e) {
             e.printStackTrace();
         }
+        NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
     }
     @Override
     public IBinder onBind(Intent intent) {
@@ -219,7 +219,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 if (playingListener == null)
                     continue;
                 playingListener.onProcessChanged(current, total);
-//                Thread.sleep(200);
                 SystemClock.sleep(1000);
             }
         }

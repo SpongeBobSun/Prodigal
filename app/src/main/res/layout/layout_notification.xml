@@ -6,7 +6,7 @@
     android:layout_height="80dp">
     <ImageView
         android:layout_width="80dp"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:id="@+id/id_image_view_notification"
         android:layout_marginRight="10dp"
         />
