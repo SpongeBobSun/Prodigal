@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,8 @@ public class ProgressView extends View {
     }
     private Paint outRectPaint;
     private Paint inRectPaint;
+    private RectF outRect;
+    private RectF inRect;
     @Override
     protected void onMeasure(int measureWidthSpec,int measureHeightSpec){
         super.onMeasure(measureWidthSpec,measureHeightSpec);
@@ -27,8 +31,14 @@ public class ProgressView extends View {
         this.setMeasuredDimension(measuredWidth,measuredHeight);
         outRectPaint = new Paint();
         inRectPaint = new Paint();
-        outRectPaint.setColor(Color.rgb(0x00,0x96,0x88));
+        outRectPaint.setAntiAlias(true);
+        inRectPaint.setAntiAlias(true);
+        outRectPaint.setColor(Color.rgb(0xcc, 0xcc, 0xcc));
         inRectPaint.setColor(Color.rgb(0xcc, 0xcc, 0xcc));
+        outRectPaint.setStyle(Paint.Style.STROKE);
+        outRectPaint.setStrokeWidth(2);
+        outRect = new RectF(0,0,measuredWidth,measuredHeight);
+        inRect = new RectF(0,0,0,measuredHeight);
     }
 
 
@@ -57,14 +67,14 @@ public class ProgressView extends View {
 
     @Override
     public void onDraw(Canvas canvas){
-        canvas.drawRect(0, 0, getWidth(), getHeight(), outRectPaint);
-        canvas.drawRect(0,0,getWidth() * ((float)progress / (float)total),getHeight(),inRectPaint);
+        canvas.drawRoundRect(outRect, getWidth() / 2, getWidth() / 2, outRectPaint);
+        inRect.right = getWidth() * ((float) progress / (float) total);
+        canvas.drawRoundRect(inRect, getWidth() / 2, getWidth() / 2,inRectPaint);
     }
 
     public void onProcessChanged(int progress, int total){
         this.progress = progress;
         this.total = total;
         this.postInvalidate();
-//        Log.e("Progress",""+progress);
     }
 }

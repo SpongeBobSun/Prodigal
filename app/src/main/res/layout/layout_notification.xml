@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="remote view"
+    android:layout_height="80dp">
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:id="@+id/id_image_view_notification"
+        android:layout_marginRight="10dp"
         />
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/id_button_notification_prev"
+        android:text="prev"/>
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/id_button_notification_pause"
+        android:text=">|"/>
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/id_button_notification_next"
+        android:text=">>"/>
 </LinearLayout>
