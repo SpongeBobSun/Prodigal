@@ -241,6 +241,9 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
     public void onPause(){
         super.onPause();
         SongBean bean = playerService.getCurrentSong();
+        if (bean == null){
+            return;
+        }
         PreferenceUtil.getStaticInstance(this).getPreferences().edit()
                 .putLong("Id",bean.getId())
                 .putString("Title",bean.getTitle())
