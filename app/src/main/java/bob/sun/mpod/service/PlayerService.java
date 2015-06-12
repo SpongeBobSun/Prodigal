@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.utils.NotificationUtil;
 import bob.sun.mpod.utils.PreferenceUtil;
 
 /**
@@ -74,6 +75,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                NotificationUtil.getStaticInstance(this.getApplicationContext()).sendPlayNotification(playlist.get(index));
                 break;
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
