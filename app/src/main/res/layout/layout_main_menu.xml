@@ -22,16 +22,65 @@
             android:layout_weight="1.0"
             android:id="@+id/id_list_view_main_menu"
             android:divider="@null"
-            android:listSelector="@drawable/selector_menu_item"/>
+            android:listSelector="@drawable/selector_menu_item"
+            android:scrollbars="none"
+            android:touchscreenBlocksFocus="true"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_weight="1.0">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/id_main_menu_image"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:visibility="visible"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/id_mainmenu_nowplaying"
+                android:orientation="vertical"
+                android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Now playing:"
+                        android:textSize="12dp"
+                        android:gravity="start"
+                        android:textStyle="bold"/>
+                    <bob.sun.mpod.view.FocusedTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:textSize="15dp"
+                        android:gravity="center"
+                        android:text="Song Name"
+                        android:id="@+id/id_mainmenu_nowplaying_title"
+                        android:focusable="true"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:text="Brought you by:"
+                        android:textSize="12dp"
+                        android:gravity="start"
+                        android:textStyle="bold"/>
+                    <bob.sun.mpod.view.FocusedTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:textSize="15dp"
+                        android:gravity="center"
+                        android:text="Artist"
+                        android:id="@+id/id_mainmenu_nowplaying_artist"
+                        android:focusable="true"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

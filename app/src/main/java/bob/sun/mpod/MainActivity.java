@@ -69,7 +69,7 @@ public class MainActivity extends ActionBarActivity implements OnButtonListener 
 
     private WheelView wheelView;
     private ServiceConnection serviceConnection;
-    private PlayerService playerService;
+    public PlayerService playerService;
     private OnTickListener currentTickObject;
     private Fragment currentFragment;
     private Stack<Fragment> fragmentStack;
