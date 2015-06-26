@@ -66,7 +66,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                 holder.imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
                 ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
                 imageView.setVisibility(View.VISIBLE);
-                DummyPicLoader.getInstance(getContext()).resize(300,300).setDefaultImage(R.drawable.ic_album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))), imageView);
+                DummyPicLoader.getInstance(getContext()).resize(300,300).setDefaultImage(R.drawable.album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))), imageView);
                 ret.setTag(holder);
             }
         }else {
@@ -77,7 +77,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                     holder.imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
                     ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
                     imageView.setVisibility(View.VISIBLE);
-                    DummyPicLoader.getInstance(getContext()).resize(300, 300).setDefaultImage(R.drawable.ic_album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
+                    DummyPicLoader.getInstance(getContext()).resize(300, 300).setDefaultImage(R.drawable.album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))),imageView);
                     ret.setTag(holder);
                 }
             }else{
@@ -87,7 +87,7 @@ public class SimpleListMenuAdapter extends ArrayAdapter {
                     if (this.type == SORT_TYPE_ALBUM) {
                         ImageView imageView = (ImageView) ret.findViewById(R.id.id_itemlistview_imageview);
                         imageView.setVisibility(View.VISIBLE);
-                        DummyPicLoader.getInstance(getContext()).resize(300, 300).setDefaultImage(R.drawable.ic_album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))), imageView);
+                        DummyPicLoader.getInstance(getContext()).resize(300, 300).setDefaultImage(R.drawable.album).loadImageFromUri(MediaLibrary.getStaticInstance(null).getCoverUriByAlbum(getTiltleFromBean(list.get(position))), imageView);
                         ret.setTag(holder);
                     }
 //                    holder.needLoadCover = true;

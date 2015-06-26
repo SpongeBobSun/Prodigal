@@ -26,15 +26,15 @@ public class MainMenu extends Fragment implements OnTickListener {
     ImageView imageView;
 
     private static int menuIcons[] = {
-            R.drawable.ic_artists,
-            R.drawable.ic_album,
-            R.drawable.ic_album,
-            R.drawable.ic_songs,
-            R.drawable.ic_playlist,
-            R.drawable.ic_playlist,
-            R.drawable.ic_shuffle,
-            R.drawable.ic_shuffle,
-            R.drawable.ic_nowplaying
+            R.drawable.artist,
+            R.drawable.album,
+            R.drawable.cover_flow,
+            R.drawable.songs,
+            R.drawable.playlist,
+            R.drawable.genre,
+            R.drawable.shuffle,
+            R.drawable.settings,
+            R.drawable.songs
     };
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){

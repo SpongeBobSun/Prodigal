@@ -88,7 +88,7 @@ public class NotificationUtil {
         notification.contentView.setImageViewBitmap(R.id.id_image_view_notification,
                 MediaLibrary.getStaticInstance(appContext).getCoverImageBySong(bean.getId()));
 
-        notification.icon = R.drawable.ic_nowplaying;
+        notification.icon = R.drawable.songs;
         if (clickIntent != null){
             notification.contentIntent = clickIntent;
         }
