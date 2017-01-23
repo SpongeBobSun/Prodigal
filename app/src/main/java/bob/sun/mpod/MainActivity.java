@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -53,7 +54,7 @@ import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
 
 
-public class MainActivity extends ActionBarActivity implements OnButtonListener {
+public class MainActivity extends AppCompatActivity implements OnButtonListener {
     private FragmentManager fragmentManager;
     private MainMenu mainMenu;
     private SimpleListMenu songsList;
