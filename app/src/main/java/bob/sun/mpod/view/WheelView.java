@@ -14,6 +14,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.utils.VibrateUtil;
@@ -33,8 +34,8 @@ public class WheelView extends View {
         center = new Point();
         paintIn = new Paint();
         paintOut = new Paint();
-        paintOut.setColor(Color.GRAY);
-        paintIn.setColor(Color.WHITE);
+        paintOut.setColor(getResources().getColor(R.color.colorAccent));
+        paintIn.setColor(getResources().getColor(R.color.colorPrimary));
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
 
@@ -52,6 +53,7 @@ public class WheelView extends View {
         radiusIn = radiusOut/3;
         center.x = measuredWidth/2;
         center.y = measuredHeight/2;
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
     @Override
