@@ -1,8 +1,10 @@
-package bob.sun.mpod.model;
+package bob.sun.mpod.adapters;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -45,9 +47,9 @@ public class MenuAdapter {
         }
         return staticInstance;
     }
-    public ArrayAdapter getMainMenuAdapter(){
+    public RecyclerView.Adapter getMainMenuAdapter(){
         if(mainMenuAdapter == null)
-            mainMenuAdapter = new MainMenuAdapter(appContext,R.layout.item_simple_list_view,mainMenuItems);
+            mainMenuAdapter = new MainMenuAdapter(mainMenuItems);
         return mainMenuAdapter;
     }
 
@@ -60,27 +62,41 @@ public class MenuAdapter {
 
 
 
-    class MainMenuAdapter extends ArrayAdapter{
+    public class MainMenuAdapter extends RecyclerView.Adapter<VHListItem>{
+
         ArrayList<MenuMeta> arrayList;
-        int resource;
-        public MainMenuAdapter(Context context, int resource, ArrayList<MenuMeta> list) {
-            super(context, resource,list);
-            this.resource = resource;
+        Context context;
+
+
+        public MainMenuAdapter(ArrayList<MenuMeta> list) {
+            super();
             arrayList = list;
         }
+
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
-            View ret = convertView;
-            if(ret == null) {
-                ret = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.item_simple_list_view, parent,false);
-            }
-            ((TextView) ret.findViewById(R.id.id_itemlistview_textview)).setText(arrayList.get(position).itemName);
-            if(arrayList.get(position).highlight){
-                ret.setBackgroundColor(Color.GRAY);
-            }else{
-                ret.setBackgroundColor(Color.TRANSPARENT);
-            }
+        public VHListItem onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (context == null)
+                context = parent.getContext();
+            View view = LayoutInflater.from(context).inflate(R.layout.item_simple_list_view, parent, false);
+            VHListItem ret = new VHListItem(view);
+
             return ret;
+        }
+
+        @Override
+        public void onBindViewHolder(VHListItem holder, int position) {
+            MenuMeta item = arrayList.get(position);
+            holder.configureWithString(item.itemName,
+                    item.highlight ? VHListItem.Status.ListItemHighlighted : VHListItem.Status.ListItemNormal);
+        }
+
+        @Override
+        public int getItemCount() {
+            return arrayList.size();
+        }
+
+        public MenuMeta getItem(int pos) {
+            return arrayList.get(pos);
         }
     }
 }

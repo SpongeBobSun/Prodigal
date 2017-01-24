@@ -1,10 +1,10 @@
 package bob.sun.mpod.fragments;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +15,9 @@ import android.widget.TextView;
 
 import bob.sun.mpod.MainActivity;
 import bob.sun.mpod.R;
+import bob.sun.mpod.adapters.VHListItem;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.model.MenuAdapter;
+import bob.sun.mpod.adapters.MenuAdapter;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.MenuMeta;
 import bob.sun.mpod.service.PlayerService;
@@ -25,7 +26,8 @@ import bob.sun.mpod.service.PlayerService;
  * Created by sunkuan on 2015/4/23.
  */
 public class MainMenu extends Fragment implements OnTickListener {
-    ListView listView;
+//    ListView listView;
+    RecyclerView theList;
     int currentItemIndex;
     ImageView imageView;
     LinearLayout nowPlayingPage;
@@ -44,9 +46,10 @@ public class MainMenu extends Fragment implements OnTickListener {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
-        listView = (ListView) ret.findViewById(R.id.id_list_view_main_menu);
-        listView.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        theList = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
+        theList.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
+        theList.setLayoutManager(new LinearLayoutManager(getContext()));
+//        theList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currentItemIndex = 0;
         MenuAdapter.getStaticInstance(null).HighlightItem(0);
         imageView = (ImageView) ret.findViewById(R.id.id_main_menu_image);
@@ -57,23 +60,23 @@ public class MainMenu extends Fragment implements OnTickListener {
 
     @Override
     public void onNextTick() {
-        if(currentItemIndex >= listView.getAdapter().getCount()-1){
-            currentItemIndex = listView.getAdapter().getCount()-1;
+        if(currentItemIndex >= theList.getAdapter().getItemCount()-1){
+            currentItemIndex = theList.getAdapter().getItemCount()-1;
             return;
         }
-        listView.setItemChecked(currentItemIndex, false);
+//        theList.setItemChecked(currentItemIndex, false);
         currentItemIndex+=1;
-        listView.requestFocus();
-        listView.post(new Runnable() {
-            @Override
-            public void run() {
-                listView.setItemChecked(currentItemIndex, true);
-            }
-        });
-        if(currentItemIndex > listView.getLastVisiblePosition())
-            listView.smoothScrollToPosition(currentItemIndex);
+        theList.requestFocus();
+//        theList.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                listView.setItemChecked(currentItemIndex, true);
+//            }
+//        });
+        if(currentItemIndex > ((LinearLayoutManager)theList.getLayoutManager()).findLastVisibleItemPosition())
+            theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
-        if (currentItemIndex == listView.getAdapter().getCount() -1){
+        if (currentItemIndex == theList.getAdapter().getItemCount() -1){
             imageView.setVisibility(View.GONE);
             nowPlayingPage.setVisibility(View.VISIBLE);
             PlayerService playerService = ((MainActivity) getActivity()).playerService;
@@ -95,21 +98,21 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex < 1){
             return;
         }
-        listView.setItemChecked(currentItemIndex, false);
-        if (currentItemIndex == listView.getAdapter().getCount()-1){
+//        listView.setItemChecked(currentItemIndex, false);
+        if (currentItemIndex == theList.getAdapter().getItemCount()-1){
             imageView.setVisibility(View.VISIBLE);
             nowPlayingPage.setVisibility(View.GONE);
         }
         currentItemIndex -= 1;
-        listView.requestFocus();
-        listView.post(new Runnable() {
-            @Override
-            public void run() {
-                listView.setItemChecked(currentItemIndex, true);
-            }
-        });
-        if(currentItemIndex < listView.getFirstVisiblePosition())
-            listView.smoothScrollToPosition(currentItemIndex);
+        theList.requestFocus();
+//        theList.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                listView.setItemChecked(currentItemIndex, true);
+//            }
+//        });
+        if(currentItemIndex < ((LinearLayoutManager)theList.getLayoutManager()).findFirstVisibleItemPosition())
+            theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
         imageView.destroyDrawingCache();
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), menuIcons[currentItemIndex]));
@@ -120,7 +123,7 @@ public class MainMenu extends Fragment implements OnTickListener {
         SelectionDetail ret = new SelectionDetail();
         ret.setMenuType(ret.MENU_TPYE_MAIN);
         ret.setDataType(ret.DATA_TYPE_STRING);
-        ret.setData(((MenuMeta) listView.getAdapter().getItem(currentItemIndex)).itemName);
+        ret.setData(((MenuMeta) ((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).itemName);
         return ret;
     }
 }

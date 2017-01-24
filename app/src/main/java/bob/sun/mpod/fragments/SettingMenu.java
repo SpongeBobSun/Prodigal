@@ -10,8 +10,6 @@ import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleListMenuAdapter;
-import bob.sun.mpod.model.MenuAdapter;
 import bob.sun.mpod.model.MenuMeta;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;

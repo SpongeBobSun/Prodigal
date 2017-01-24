@@ -2,19 +2,15 @@ package bob.sun.mpod.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.controller.SimpleListMenuAdapter;
-import bob.sun.mpod.model.MenuAdapter;
 import bob.sun.mpod.model.SelectionDetail;
-import bob.sun.mpod.model.SongBean;
 
 /**
  * Created by sunkuan on 15/4/30.
