@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     >
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:cardElevation="5dp"
-        app:cardCornerRadius="0dp"
-        >
-    </android.support.v7.widget.CardView>
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--app:cardElevation="5dp"-->
+        <!--app:cardCornerRadius="0dp"-->
+        <!--&gt;-->
+    <!--</android.support.v7.widget.CardView>-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

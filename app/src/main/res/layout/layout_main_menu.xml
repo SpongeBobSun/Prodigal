@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:id="@+id/id_text_view_main_menu_bar"
-        android:text="mPod"
-        android:textStyle="bold"
-        android:textSize="12dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -29,13 +22,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:id="@+id/main_menu_right"
             android:layout_weight="1.0">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/id_main_menu_image"
                 android:layout_gravity="center"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:padding="16dp"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -58,9 +54,9 @@
                         android:id="@+id/id_mainmenu_nowplaying_title"
                         android:focusable="true"
                         android:scrollHorizontally="true"
-                        android:singleLine="true"
                         android:ellipsize="marquee"
-                        android:marqueeRepeatLimit="marquee_forever"/>
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:maxLines="1" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
@@ -77,9 +73,9 @@
                         android:id="@+id/id_mainmenu_nowplaying_artist"
                         android:focusable="true"
                         android:scrollHorizontally="true"
-                        android:singleLine="true"
                         android:ellipsize="marquee"
-                        android:marqueeRepeatLimit="marquee_forever"/>
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:maxLines="1" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

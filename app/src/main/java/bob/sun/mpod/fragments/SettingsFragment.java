@@ -17,7 +17,7 @@ import bob.sun.mpod.model.SettingAdapter;
 /**
  * Created by bobsun on 15-5-22.
  */
-public class SettingMenu extends Fragment implements OnTickListener {
+public class SettingsFragment extends Fragment implements OnTickListener {
 
     private ListView listView;
     private SettingAdapter adatper;

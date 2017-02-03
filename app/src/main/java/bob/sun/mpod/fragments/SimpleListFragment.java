@@ -15,7 +15,7 @@ import bob.sun.mpod.model.SelectionDetail;
 /**
  * Created by sunkuan on 15/4/30.
  */
-public class SimpleListMenu extends Fragment implements OnTickListener {
+public class SimpleListFragment extends Fragment implements OnTickListener {
 
     private ListView listView;
     private SimpleListMenuAdapter adatper;

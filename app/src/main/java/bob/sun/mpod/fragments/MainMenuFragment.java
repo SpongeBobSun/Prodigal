@@ -8,29 +8,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import bob.sun.mpod.MainActivity;
 import bob.sun.mpod.R;
-import bob.sun.mpod.adapters.VHListItem;
-import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.adapters.MenuAdapter;
+import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.model.SelectionDetail;
-import bob.sun.mpod.model.MenuMeta;
 import bob.sun.mpod.service.PlayerService;
 
 /**
  * Created by sunkuan on 2015/4/23.
  */
-public class MainMenu extends Fragment implements OnTickListener {
+public class MainMenuFragment extends Fragment implements OnTickListener {
 //    ListView listView;
     RecyclerView theList;
     int currentItemIndex;
     ImageView imageView;
     LinearLayout nowPlayingPage;
+    LinearLayout rightPart;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -55,6 +54,8 @@ public class MainMenu extends Fragment implements OnTickListener {
         imageView = (ImageView) ret.findViewById(R.id.id_main_menu_image);
         nowPlayingPage = (LinearLayout) ret.findViewById(R.id.id_mainmenu_nowplaying);
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[0]));
+
+        rightPart = (LinearLayout) ret.findViewById(R.id.main_menu_right);
         return ret;
     }
 
@@ -64,16 +65,9 @@ public class MainMenu extends Fragment implements OnTickListener {
             currentItemIndex = theList.getAdapter().getItemCount()-1;
             return;
         }
-//        theList.setItemChecked(currentItemIndex, false);
         currentItemIndex+=1;
         theList.requestFocus();
-//        theList.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                listView.setItemChecked(currentItemIndex, true);
-//            }
-//        });
-        if(currentItemIndex > ((LinearLayoutManager)theList.getLayoutManager()).findLastVisibleItemPosition())
+        if(currentItemIndex >= ((LinearLayoutManager)theList.getLayoutManager()).findLastCompletelyVisibleItemPosition())
             theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
         if (currentItemIndex == theList.getAdapter().getItemCount() -1){
@@ -98,20 +92,13 @@ public class MainMenu extends Fragment implements OnTickListener {
         if(currentItemIndex < 1){
             return;
         }
-//        listView.setItemChecked(currentItemIndex, false);
         if (currentItemIndex == theList.getAdapter().getItemCount()-1){
             imageView.setVisibility(View.VISIBLE);
             nowPlayingPage.setVisibility(View.GONE);
         }
         currentItemIndex -= 1;
         theList.requestFocus();
-//        theList.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                listView.setItemChecked(currentItemIndex, true);
-//            }
-//        });
-        if(currentItemIndex < ((LinearLayoutManager)theList.getLayoutManager()).findFirstVisibleItemPosition())
+        if(currentItemIndex <= ((LinearLayoutManager)theList.getLayoutManager()).findFirstCompletelyVisibleItemPosition())
             theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
         imageView.destroyDrawingCache();
@@ -123,7 +110,13 @@ public class MainMenu extends Fragment implements OnTickListener {
         SelectionDetail ret = new SelectionDetail();
         ret.setMenuType(ret.MENU_TPYE_MAIN);
         ret.setDataType(ret.DATA_TYPE_STRING);
-        ret.setData(((MenuMeta) ((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).itemName);
+        ret.setData((((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).itemName);
         return ret;
+    }
+
+    public void dismiss() {
+        TranslateAnimation left = new TranslateAnimation(imageView.getLeft(), imageView.getRight(), imageView.getTop(), imageView.getTop());
+        left.setDuration(300);
+        imageView.startAnimation(left);
     }
 }
