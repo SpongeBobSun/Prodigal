@@ -1,1 +1,1 @@
-include ':app', ':dummypicloader', ':coverflow'
+include ':app', ':coverflow'

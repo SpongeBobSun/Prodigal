@@ -8,11 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.model.MediaLibrary;
-import dpl.bobsun.dummypicloader.DummyPicLoader;
 
 /**
  * Created by bob.sun on 04/02/2017.
@@ -44,10 +45,17 @@ public class AlbumStackAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_album_card, parent, false);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.stack_image);
-        DummyPicLoader.getInstance(convertView.getContext())
-//                .resize(imageView.getWidth(), imageView.getHeight())
-                .setDefaultImage(R.drawable.album)
-                .loadImageFromUri(mData.get(position), imageView);
+
+        Picasso.with(convertView.getContext())
+                .load(mData.get(position))
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.album)
+                .into(imageView);
+//        DummyPicLoader.getInstance(convertView.getContext())
+////                .resize(imageView.getWidth(), imageView.getHeight())
+//                .setDefaultImage(R.drawable.album)
+//                .loadImageFromUri(mData.get(position), imageView);
         return convertView;
     }
 }

@@ -18,7 +18,6 @@ import java.util.Iterator;
 import bob.sun.mpod.R;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
-import dpl.bobsun.dummypicloader.DummyPicLoader;
 
 import static bob.sun.mpod.adapters.VHImageListItem.Status.ListItemHighlighted;
 import static bob.sun.mpod.adapters.VHImageListItem.Status.ListItemNormal;

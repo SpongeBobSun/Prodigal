@@ -339,7 +339,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onMenu() {
-        Log.e("mPod", "onMenu");
         if(fragmentStack.isEmpty())
             return;
 
