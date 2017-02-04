@@ -320,6 +320,7 @@ public class MediaLibrary {
             return "content://media/external/audio/albumart/0";
         }
         albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
+        cursor.close();
         return "content://media/external/audio/albumart/"+albumId;
     }
 
@@ -339,6 +340,7 @@ public class MediaLibrary {
                 ret.add("content://media/external/audio/albumart/"+albumId);
             }
         }
+        cursor.close();
         return ret;
     }
 
@@ -355,6 +357,7 @@ public class MediaLibrary {
             ret = new SongBean();
             ret.populateBean(cursor);
         }
+        cursor.close();
         return ret;
     }
 }

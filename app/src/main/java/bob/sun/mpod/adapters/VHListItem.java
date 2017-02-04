@@ -28,7 +28,7 @@ public class VHListItem extends RecyclerView.ViewHolder {
     public void configureWithString(String str, Status status) {
         ((TextView) contentView.findViewById(R.id.id_itemlistview_textview)).setText(str);
             if(status == Status.ListItemHighlighted){
-                contentView.setBackgroundColor(Color.GRAY);
+                contentView.setBackgroundColor(Color.LTGRAY);
             }else{
                 contentView.setBackgroundColor(Color.TRANSPARENT);
             }

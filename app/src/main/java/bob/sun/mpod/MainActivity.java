@@ -29,7 +29,7 @@ import java.util.Stack;
 
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleListMenuAdapter;
+import bob.sun.mpod.adapters.SimpleListMenuAdapter;
 import bob.sun.mpod.fragments.AboutFragment;
 import bob.sun.mpod.fragments.MainMenuFragment;
 import bob.sun.mpod.fragments.NowPlayingFragment;

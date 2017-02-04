@@ -4,20 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:id="@+id/id_text_view_main_menu_bar"
-        android:text="mPod"
-        android:textStyle="bold"
-        android:textSize="12dp"/>
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
-            android:id="@+id/id_list_view_main_menu"
-            android:divider="@null"
-            android:listSelector="@drawable/selector_menu_item"
-            android:scrollbars="none"
-            android:touchscreenBlocksFocus="true"/>
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:id="@+id/id_list_view_main_menu"
+        android:divider="@null"
+        android:listSelector="@drawable/selector_menu_item"
+        android:scrollbars="none"
+        android:touchscreenBlocksFocus="true"/>
 </LinearLayout>

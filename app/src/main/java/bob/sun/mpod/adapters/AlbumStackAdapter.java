@@ -1,5 +1,6 @@
 package bob.sun.mpod.adapters;
 
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +43,11 @@ public class AlbumStackAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_album_card, parent, false);
-        DummyPicLoader.getInstance(convertView.getContext()).setDefaultImage(R.drawable.album).loadImageFromUri(mData.get(position),
-                (ImageView) convertView.findViewById(R.id.stack_image));
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.stack_image);
+        DummyPicLoader.getInstance(convertView.getContext())
+//                .resize(imageView.getWidth(), imageView.getHeight())
+                .setDefaultImage(R.drawable.album)
+                .loadImageFromUri(mData.get(position), imageView);
         return convertView;
     }
 }

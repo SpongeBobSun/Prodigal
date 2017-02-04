@@ -2,6 +2,8 @@ package bob.sun.mpod.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,7 @@ import android.widget.ListView;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.SimpleListMenuAdapter;
+import bob.sun.mpod.adapters.SimpleListMenuAdapter;
 import bob.sun.mpod.model.SelectionDetail;
 
 /**
@@ -17,7 +19,7 @@ import bob.sun.mpod.model.SelectionDetail;
  */
 public class SimpleListFragment extends Fragment implements OnTickListener {
 
-    private ListView listView;
+    private RecyclerView listView;
     private SimpleListMenuAdapter adatper;
     int currentItemIndex;
     @Override
@@ -25,10 +27,10 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
                              ViewGroup parent,
                              Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_simple_list_menu, parent, false);
-        listView = (ListView) ret.findViewById(R.id.id_list_view_main_menu);
+        listView = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
         listView.setAdapter(adatper);
+        listView.setLayoutManager(new LinearLayoutManager(parent.getContext()));
         currentItemIndex = 0;
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         adatper.HighlightItem(0);
         return ret;
     }
@@ -47,42 +49,25 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
     @Override
     public void onNextTick() {
 //        Log.e("index:", currentItemIndex + "");
-        if(currentItemIndex >= listView.getAdapter().getCount()-1){
-            currentItemIndex = listView.getAdapter().getCount()-1;
+        if(currentItemIndex >= listView.getAdapter().getItemCount()-1){
+            currentItemIndex = listView.getAdapter().getItemCount()-1;
             return;
         }
-        listView.setItemChecked(currentItemIndex, false);
         currentItemIndex+=1;
         listView.requestFocus();
-        listView.post(new Runnable() {
-            @Override
-            public void run() {
-                listView.setItemChecked(currentItemIndex, true);
-//                listView.setSelection(currentItemIndex);
-            }
-        });
-        if(currentItemIndex > listView.getLastVisiblePosition())
+        if(currentItemIndex > ((LinearLayoutManager) listView.getLayoutManager()).findLastCompletelyVisibleItemPosition())
             listView.smoothScrollToPosition(currentItemIndex);
         adatper.HighlightItem(currentItemIndex);
     }
 
     @Override
     public void onPreviousTick() {
-//        Log.e("index:",currentItemIndex+"");
         if(currentItemIndex < 1){
             return;
         }
-        listView.setItemChecked(currentItemIndex, false);
         currentItemIndex -= 1;
         listView.requestFocus();
-        listView.post(new Runnable() {
-            @Override
-            public void run() {
-                listView.setItemChecked(currentItemIndex, true);
-//                listView.setSelection(currentItemIndex);
-            }
-        });
-        if(currentItemIndex < listView.getFirstVisiblePosition())
+        if(currentItemIndex < ((LinearLayoutManager) listView.getLayoutManager()).findFirstCompletelyVisibleItemPosition())
             listView.smoothScrollToPosition(currentItemIndex);
         adatper.HighlightItem(currentItemIndex);
     }
@@ -90,7 +75,7 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
     @Override
     public SelectionDetail getCurrentSelection() {
         SelectionDetail ret = new SelectionDetail();
-        if (adatper.getCount() == 0){
+        if (adatper.getItemCount() == 0){
             return ret;
         }
         switch (adatper.getType()){
