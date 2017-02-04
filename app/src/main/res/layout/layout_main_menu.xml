@@ -51,6 +51,8 @@
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:stack_size="5"
+                    app:stack_rotation="15"
+                    app:stack_spacing="20dp"
                     />
             </FrameLayout>
             <LinearLayout
