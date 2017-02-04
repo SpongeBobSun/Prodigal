@@ -13,7 +13,9 @@ import android.provider.MediaStore;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import bob.sun.mpod.R;
 
@@ -319,6 +321,25 @@ public class MediaLibrary {
         }
         albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
         return "content://media/external/audio/albumart/"+albumId;
+    }
+
+    public ArrayList<String> getAllCoverUries() {
+        ArrayList<String> ret = new ArrayList<String>();
+        HashSet<Long> ids = new HashSet<Long>();
+        Cursor cursor;
+        long albumId;
+        cursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                new String[]{"_id"},
+                null,
+                null,
+                null);
+        while (cursor.moveToNext()) {
+            albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
+            if (ids.add(albumId)) {
+                ret.add("content://media/external/audio/albumart/"+albumId);
+            }
+        }
+        return ret;
     }
 
     public SongBean getSongById(String id){

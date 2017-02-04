@@ -16,7 +16,6 @@ public class DPLRamCache {
     private int maxSize = (int) (Runtime.getRuntime().maxMemory() / 1024) / 8;
 
     private DPLRamCache(){
-        Log.e("maxSize",""+maxSize);
         cache = new LruCache<String,Bitmap>(maxSize){
             @Override
             protected int sizeOf(String key, Bitmap value){
@@ -38,7 +37,6 @@ public class DPLRamCache {
         }
         cache.remove(tag);
         cache.put(tag,bitmap);
-        Log.e("RamCache","put");
         return true;
     }
 

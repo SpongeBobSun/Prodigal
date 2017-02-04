@@ -21,6 +21,7 @@ import bob.sun.mpod.adapters.MenuAdapter;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.view.AlbumStack;
 
 /**
  * Created by sunkuan on 2015/4/23.
@@ -34,6 +35,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     LinearLayout nowPlayingPage;
     LinearLayout rightPanel;
     FrameLayout leftPanel;
+    AlbumStack albumStack;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -63,6 +65,8 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         nowPlayingPage = (LinearLayout) ret.findViewById(R.id.id_mainmenu_nowplaying);
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[0]));
         rightPanelContent = (FrameLayout) ret.findViewById(R.id.right_panel_content);
+        albumStack = (AlbumStack) ret.findViewById(R.id.id_album_stack);
+        albumStack.init();
 
         leftPanel = (FrameLayout) ret.findViewById(R.id.main_menu_left);
         rightPanel = (LinearLayout) ret.findViewById(R.id.main_menu_right);
@@ -92,7 +96,13 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(playerService.getCurrentSong().getArtist());
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(playerService.getCurrentSong().getTitle());
             return;
+        } else if (currentItemIndex == 1) {
+            albumStack.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.GONE);
+            return;
         }
+        albumStack.setVisibility(View.GONE);
+        imageView.setVisibility(View.VISIBLE);
         imageView.destroyDrawingCache();
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[currentItemIndex]));
     }
@@ -102,11 +112,18 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         if(currentItemIndex < 1){
             return;
         }
-        if (currentItemIndex == theList.getAdapter().getItemCount()-1){
+        if (currentItemIndex == theList.getAdapter().getItemCount()-1) {
             rightPanelContent.setVisibility(View.VISIBLE);
             nowPlayingPage.setVisibility(View.GONE);
         }
         currentItemIndex -= 1;
+        if (currentItemIndex == 1) {
+            albumStack.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.GONE);
+        } else {
+            albumStack.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+        }
         theList.requestFocus();
         if(currentItemIndex <= ((LinearLayoutManager)theList.getLayoutManager()).findFirstCompletelyVisibleItemPosition())
             theList.smoothScrollToPosition(currentItemIndex);
@@ -136,5 +153,3 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         return rightPanel;
     }
 }
-
-//TODO: Create a base fragment for dismiss animation callback and etc.
