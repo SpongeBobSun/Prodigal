@@ -35,6 +35,7 @@ import bob.sun.mpod.fragments.MainMenuFragment;
 import bob.sun.mpod.fragments.NowPlayingFragment;
 import bob.sun.mpod.fragments.SettingsFragment;
 import bob.sun.mpod.fragments.SimpleListFragment;
+import bob.sun.mpod.fragments.TwoPanelFragment;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.PlayList;
 import bob.sun.mpod.model.SelectionDetail;
@@ -269,6 +270,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onPause(){
         super.onPause();
+        if (playerService == null) {
+            return;
+        }
         SongBean bean = playerService.getCurrentSong();
         if (bean == null){
             return;
@@ -412,65 +416,104 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             case SelectionDetail.MENU_TPYE_MAIN:
                 switch ((String) detail.getData()){
                     case "Songs":
-                        ((MainMenuFragment) currentFragment).dismiss();
-                        switchFragmentTo(songsList);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(songsList);
+                            }
+                        });
                         break;
                     case "Artists":
-                        switchFragmentTo(artistsList);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(artistsList);
+                            }
+                        });
                         break;
                     case "Albums":
-                        switchFragmentTo(albumsList);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(albumsList);
+                            }
+                        });
                         break;
                     case "Genres":
-                        switchFragmentTo(genresList);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(genresList);
+                            }
+                        });
                         break;
                     case "Playlist":
-                        SimpleListFragment menu = new SimpleListFragment();
-                        SimpleListMenuAdapter adapter;
-                        if (playerService != null && playerService.getPlayList() != null) {
-                            adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,playerService.getPlayList());
-                            menu.setAdatper(adapter);
-                            adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
-                        }else {
-                            if (lastPlayList != null){
-                                adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,lastPlayList);
-                                menu.setAdatper(adapter);
-                                adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
-                            } else {
-                                ArrayList crap = new ArrayList();
-                                crap.add("No playing list.");
-                                adapter = new SimpleListMenuAdapter(this, R.layout.item_simple_list_view, crap);
-                                menu.setAdatper(adapter);
-                                adapter.setArrayListType(-1);
-                            }
-                        }
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                SimpleListFragment menu = new SimpleListFragment();
+                                SimpleListMenuAdapter adapter;
+                                if (playerService != null && playerService.getPlayList() != null) {
+                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,playerService.getPlayList());
+                                    menu.setAdatper(adapter);
+                                    adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                                }else {
+                                    if (lastPlayList != null){
+                                        adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,lastPlayList);
+                                        menu.setAdatper(adapter);
+                                        adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
+                                    } else {
+                                        ArrayList crap = new ArrayList();
+                                        crap.add("No playing list.");
+                                        adapter = new SimpleListMenuAdapter(MainActivity.this, R.layout.item_simple_list_view, crap);
+                                        menu.setAdatper(adapter);
+                                        adapter.setArrayListType(-1);
+                                    }
+                                }
 
-                        fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
-                        switchFragmentTo(menu);
-//                        switchFragmentTo(playingList);
+                                fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
+                                switchFragmentTo(menu);
+                            }
+                        });
                         break;
                     case "Now Playing":
-                        switchFragmentTo(nowPlayingFragment);
-                        if (playerService.getCurrentSong() != null){
-                            nowPlayingFragment.setSong(playerService.getCurrentSong());
-                        }else {
-                            if (lastSongBean != null)
-                                nowPlayingFragment.setSong(lastSongBean);
-                        }
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(nowPlayingFragment);
+                                if (playerService.getCurrentSong() != null){
+                                    nowPlayingFragment.setSong(playerService.getCurrentSong());
+                                }else {
+                                    if (lastSongBean != null)
+                                        nowPlayingFragment.setSong(lastSongBean);
+                                }
+                            }
+                        });
                         break;
                     case "Shuffle Songs":
-                        switchFragmentTo(nowPlayingFragment);
-                        Intent intent = new Intent(this,PlayerService.class);
-                        ArrayList playList = MediaLibrary.getStaticInstance(this).shuffleList(MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
-                        intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                        intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
-                        intent.putExtra("INDEX", 0);
-                        startService(intent);
-                        nowPlayingFragment.setSong((SongBean) playList.get(0));
-                        playerService.setPlayList(playList);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(nowPlayingFragment);
+                                Intent intent = new Intent(MainActivity.this,PlayerService.class);
+                                ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
+                                intent.putExtra("CMD",PlayerService.CMD_PLAY);
+                                intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
+                                intent.putExtra("INDEX", 0);
+                                startService(intent);
+                                nowPlayingFragment.setSong((SongBean) playList.get(0));
+                                playerService.setPlayList(playList);
+                            }
+                        });
+
                         break;
                     case "Setting":
-                        switchFragmentTo(settingMenu);
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(settingMenu);
+                            }
+                        });
                         break;
                 }
                 break;

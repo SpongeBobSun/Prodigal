@@ -1,14 +1,16 @@
 package bob.sun.mpod.fragments;
 
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,13 +25,15 @@ import bob.sun.mpod.service.PlayerService;
 /**
  * Created by sunkuan on 2015/4/23.
  */
-public class MainMenuFragment extends Fragment implements OnTickListener {
+public class MainMenuFragment extends TwoPanelFragment implements OnTickListener {
 //    ListView listView;
     RecyclerView theList;
     int currentItemIndex;
     ImageView imageView;
+    FrameLayout rightPanelContent;
     LinearLayout nowPlayingPage;
-    LinearLayout rightPart;
+    LinearLayout rightPanel;
+    FrameLayout leftPanel;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -47,15 +51,21 @@ public class MainMenuFragment extends Fragment implements OnTickListener {
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
         theList = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
         theList.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
-        theList.setLayoutManager(new LinearLayoutManager(getContext()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            theList.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else {
+            theList.setLayoutManager(new LinearLayoutManager(parent.getContext()));
+        }
 //        theList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         currentItemIndex = 0;
         MenuAdapter.getStaticInstance(null).HighlightItem(0);
         imageView = (ImageView) ret.findViewById(R.id.id_main_menu_image);
         nowPlayingPage = (LinearLayout) ret.findViewById(R.id.id_mainmenu_nowplaying);
         imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),menuIcons[0]));
+        rightPanelContent = (FrameLayout) ret.findViewById(R.id.right_panel_content);
 
-        rightPart = (LinearLayout) ret.findViewById(R.id.main_menu_right);
+        leftPanel = (FrameLayout) ret.findViewById(R.id.main_menu_left);
+        rightPanel = (LinearLayout) ret.findViewById(R.id.main_menu_right);
         return ret;
     }
 
@@ -71,7 +81,7 @@ public class MainMenuFragment extends Fragment implements OnTickListener {
             theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
         if (currentItemIndex == theList.getAdapter().getItemCount() -1){
-            imageView.setVisibility(View.GONE);
+            rightPanelContent.setVisibility(View.GONE);
             nowPlayingPage.setVisibility(View.VISIBLE);
             PlayerService playerService = ((MainActivity) getActivity()).playerService;
             if (playerService == null || playerService.getCurrentSong() == null){
@@ -93,7 +103,7 @@ public class MainMenuFragment extends Fragment implements OnTickListener {
             return;
         }
         if (currentItemIndex == theList.getAdapter().getItemCount()-1){
-            imageView.setVisibility(View.VISIBLE);
+            rightPanelContent.setVisibility(View.VISIBLE);
             nowPlayingPage.setVisibility(View.GONE);
         }
         currentItemIndex -= 1;
@@ -114,9 +124,17 @@ public class MainMenuFragment extends Fragment implements OnTickListener {
         return ret;
     }
 
-    public void dismiss() {
-        TranslateAnimation left = new TranslateAnimation(imageView.getLeft(), imageView.getRight(), imageView.getTop(), imageView.getTop());
-        left.setDuration(300);
-        imageView.startAnimation(left);
+    @NonNull
+    @Override
+    public View getLeftPanel() {
+        return leftPanel;
+    }
+
+    @NonNull
+    @Override
+    public View getRightPanel() {
+        return rightPanel;
     }
 }
+
+//TODO: Create a base fragment for dismiss animation callback and etc.
