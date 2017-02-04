@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -348,16 +349,15 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
         && currentFragment != songsList && currentFragment != genresList
         && currentFragment != settingMenu /* && currentFragment != playingList*/){
-            fragmentManager.beginTransaction()
-                    .remove(currentFragment).show(fragment).commit();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+            ft.remove(currentFragment).show(fragment).commit();
         }else {
-            fragmentManager.beginTransaction()
-                    .hide(currentFragment).show(fragment).commit();
+            fragmentManager.beginTransaction().hide(currentFragment).show(fragment).commit();
         }
         currentFragment = fragment;
         currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
-
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
@@ -386,7 +386,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onNext() {
-        Log.e("mPod","onNext");
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_NEXT);
         startService(intent);
@@ -395,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onPrevious() {
-        Log.e("mPod", "onPrevious");
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
         startService(intent);
@@ -418,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(songsList);
+                                switchFragmentTo(songsList, false);
                             }
                         });
                         break;
@@ -426,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(artistsList);
+                                switchFragmentTo(artistsList, false);
                             }
                         });
                         break;
@@ -434,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(albumsList);
+                                switchFragmentTo(albumsList, false);
                             }
                         });
                         break;
@@ -442,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(genresList);
+                                switchFragmentTo(genresList, false);
                             }
                         });
                         break;
@@ -471,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 }
 
                                 fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,menu).hide(menu).commit();
-                                switchFragmentTo(menu);
+                                switchFragmentTo(menu, false);
                             }
                         });
                         break;
@@ -479,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(nowPlayingFragment);
+                                switchFragmentTo(nowPlayingFragment, false);
                                 if (playerService.getCurrentSong() != null){
                                     nowPlayingFragment.setSong(playerService.getCurrentSong());
                                 }else {
@@ -493,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(nowPlayingFragment);
+                                switchFragmentTo(nowPlayingFragment, false);
                                 Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
@@ -510,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(settingMenu);
+                                switchFragmentTo(settingMenu, false);
                             }
                         });
                         break;
@@ -526,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 artistAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,artistMenu).hide(artistMenu).commit();
-                switchFragmentTo(artistMenu);
+                switchFragmentTo(artistMenu, true);
                 break;
             case SelectionDetail.MENU_TYPE_ALBUM:
                 SimpleListMenuAdapter albumAdapter = new SimpleListMenuAdapter(this,
@@ -538,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 albumAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,albumMenu).hide(albumMenu).commit();
-                switchFragmentTo(albumMenu);
+                switchFragmentTo(albumMenu, true);
                 break;
             case SelectionDetail.MENU_TYPE_GENRES:
                 SimpleListMenuAdapter genresAdapter = new SimpleListMenuAdapter(this,
@@ -550,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 genresAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ARTIST);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,genresMenu).hide(genresMenu).commit();
-                switchFragmentTo(genresMenu);
+                switchFragmentTo(genresMenu, true);
                 break;
             case SelectionDetail.MENU_TYPE_SONGS:
                 fragmentStack.push(currentFragment);
@@ -573,7 +571,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     case "About":
                         AboutFragment aboutFragment = new AboutFragment();
                         fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,aboutFragment).hide(aboutFragment).commit();
-                        switchFragmentTo(aboutFragment);
+                        switchFragmentTo(aboutFragment, true);
                         break;
                     case "Shuffle":
 
@@ -587,9 +585,13 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 break;
         }
     }
-    private void switchFragmentTo(Fragment fragment){
+    private void switchFragmentTo(Fragment fragment, boolean slide){
         fragmentStack.push(currentFragment);
-        fragmentManager.beginTransaction().hide(currentFragment).show(fragment).commit();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        if (slide) {
+            ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+        ft.hide(currentFragment).show(fragment).commit();
         currentFragment = fragment;
         this.currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
