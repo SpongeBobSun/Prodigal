@@ -3,37 +3,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:orientation="horizontal"
-        android:background="#ccc"
-        android:id="@+id/id_now_playing_title_bar_container">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:text="Now Playing"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:text="HH:MM"
-            android:id="@+id/id_text_view_title_bar_time"/>
-    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="3.0"
         android:orientation="horizontal">
+
         <ImageView
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:id="@+id/id_nowplaying_image_view_cover"
             android:layout_marginRight="10dp"
-            android:rotationY="15"
             />
+
         <LinearLayout
             android:layout_width="0px"
             android:layout_height="match_parent"
@@ -54,6 +38,7 @@
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"/>
+
             <bob.sun.mpod.view.FocusedTextView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -65,6 +50,7 @@
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"/>
+
             <bob.sun.mpod.view.FocusedTextView
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -76,12 +62,14 @@
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"/>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1.0"/>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -90,11 +78,12 @@
         android:id="@+id/id_bottom_bar_container"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
+
         <bob.sun.mpod.view.ProgressView
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_weight="1.0"
             android:layout_gravity="center"
-            android:id="@+id/id_progress_view"/>
+            android:id="@+id/id_progress_view" />
     </LinearLayout>
 </LinearLayout>

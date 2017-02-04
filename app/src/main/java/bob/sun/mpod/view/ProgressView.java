@@ -67,9 +67,9 @@ public class ProgressView extends View {
 
     @Override
     public void onDraw(Canvas canvas){
-        canvas.drawRoundRect(outRect, getWidth() / 2, getWidth() / 2, outRectPaint);
+        canvas.drawRoundRect(outRect, getWidth() / 2f, getWidth() / 2f, outRectPaint);
         inRect.right = getWidth() * ((float) progress / (float) total);
-        canvas.drawRoundRect(inRect, getWidth() / 2, getWidth() / 2,inRectPaint);
+        canvas.drawRoundRect(inRect, getWidth() / 2f, getWidth() / 2f,inRectPaint);
     }
 
     public void onProcessChanged(int progress, int total){
