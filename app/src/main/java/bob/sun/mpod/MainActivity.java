@@ -345,14 +345,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         Fragment fragment = fragmentStack.pop();
 
+        //Fuck me =.=
         if(currentFragment != mainMenu && currentFragment != artistsList
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
         && currentFragment != songsList && currentFragment != genresList
         && currentFragment != settingMenu /* && currentFragment != playingList*/){
+            //Back from album songs or artist albums or etc.
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             ft.remove(currentFragment).show(fragment).commit();
         }else {
+            //Back to main menu.
             fragmentManager.beginTransaction().hide(currentFragment).show(fragment).commit();
         }
         currentFragment = fragment;
