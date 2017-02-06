@@ -20,13 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.tbruyelle.rxpermissions2.Permission;
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import bob.sun.mpod.fragments.CoverflowFragment;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +34,7 @@ import bob.sun.mpod.adapters.SimpleListMenuAdapter;
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
 import bob.sun.mpod.fragments.AboutFragment;
+import bob.sun.mpod.fragments.CoverflowFragment;
 import bob.sun.mpod.fragments.MainMenuFragment;
 import bob.sun.mpod.fragments.NowPlayingFragment;
 import bob.sun.mpod.fragments.SettingsFragment;
@@ -55,7 +49,6 @@ import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.utils.PreferenceUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
-import io.reactivex.functions.Function;
 
 
 public class MainActivity extends AppCompatActivity implements OnButtonListener {
@@ -85,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
 
-    private RxPermissions rxPermissions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -219,9 +211,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     }
 
     private void requestPermission() {
-        rxPermissions = new RxPermissions(this);
-        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                                        Manifest.permission.READ_EXTERNAL_STORAGE);
         //TODO: Request permission.
 
     }

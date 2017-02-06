@@ -277,10 +277,11 @@ public class MediaLibrary {
         InputStream in = null;
         try {
             in = res.openInputStream(sArtworkUri);
+            // TODO: 06/02/2017 Close input stream!
             return BitmapFactory.decodeStream(in);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.album);
         }
     }
 

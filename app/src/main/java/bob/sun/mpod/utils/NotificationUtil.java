@@ -85,8 +85,8 @@ public class NotificationUtil {
 
     public void sendPlayNotification(SongBean bean){
         notification.tickerText = bean.getTitle();
-        notification.contentView.setImageViewBitmap(R.id.id_image_view_notification,
-                MediaLibrary.getStaticInstance(appContext).getCoverImageBySong(bean.getId()));
+//        notification.contentView.setImageViewBitmap(R.id.id_image_view_notification,
+//                MediaLibrary.getStaticInstance(appContext).getCoverImageBySong(bean.getId()));
 
         notification.icon = R.drawable.songs;
         if (clickIntent != null){

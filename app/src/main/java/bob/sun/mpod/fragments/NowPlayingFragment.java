@@ -1,12 +1,17 @@
 package bob.sun.mpod.fragments;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
@@ -44,7 +49,14 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
         progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
-        ((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover)).setImageBitmap(MediaLibrary.getStaticInstance(getActivity()).getCoverImageBySong(songBean.getId()));
+        String img = MediaLibrary.getStaticInstance(view.getContext())
+                .getCoverUriBySong(songBean.getId());
+        Picasso.with(view.getContext())
+                .load(Uri.parse(img))
+                .placeholder(R.drawable.album)
+                .config(Bitmap.Config.RGB_565)
+                .into((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover));
+        Log.e("mPod", img);
     }
 
     @Override
