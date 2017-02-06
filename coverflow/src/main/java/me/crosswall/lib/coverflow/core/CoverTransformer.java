@@ -1,7 +1,6 @@
 package me.crosswall.lib.coverflow.core;
 
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -31,9 +30,6 @@ public class CoverTransformer implements ViewPager.PageTransformer {
 
     @Override
     public void transformPage(View page, float position) {
-
-        Log.d(TAG,"position:"+position);
-
 
         if(rotationY!=0){
             float realRotationY = Math.min(rotationY,Math.abs(position * rotationY));

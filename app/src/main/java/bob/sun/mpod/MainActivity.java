@@ -1,15 +1,16 @@
 package bob.sun.mpod;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import bob.sun.mpod.fragments.CoverflowFragment;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,9 +37,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import bob.sun.mpod.adapters.SimpleListMenuAdapter;
 import bob.sun.mpod.controller.OnButtonListener;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.adapters.SimpleListMenuAdapter;
 import bob.sun.mpod.fragments.AboutFragment;
 import bob.sun.mpod.fragments.MainMenuFragment;
 import bob.sun.mpod.fragments.NowPlayingFragment;
@@ -46,6 +55,7 @@ import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.utils.PreferenceUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
+import io.reactivex.functions.Function;
 
 
 public class MainActivity extends AppCompatActivity implements OnButtonListener {
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private SimpleListFragment songsList;
     private SimpleListFragment artistsList;
     private SimpleListFragment albumsList;
+    private CoverflowFragment coverFlow;
     private SimpleListFragment genresList;
     private NowPlayingFragment nowPlayingFragment;
     private SettingsFragment settingMenu;
@@ -73,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
+
+    private RxPermissions rxPermissions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +159,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,albumsList,"albumList").hide(albumsList).commit();
         }
 
+        coverFlow = (CoverflowFragment) fragmentManager.findFragmentByTag("coverFlow");
+        if (coverFlow == null) {
+            coverFlow = new CoverflowFragment();
+            fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container, coverFlow, "coverFlow").hide(coverFlow).commit();
+        }
+
         genresList = (SimpleListFragment) fragmentManager.findFragmentByTag("genresList");
         if (genresList == null){
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllGenre());
@@ -197,8 +216,20 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 onNext();
             }
         });
+    }
 
+    private void requestPermission() {
+        rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                        Manifest.permission.READ_EXTERNAL_STORAGE);
+        //TODO: Request permission.
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        doNext(requestCode,grantResults);
     }
 
     private void startService(){
@@ -436,6 +467,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             @Override
                             public void dismissed() {
                                 switchFragmentTo(albumsList, false);
+                            }
+                        });
+                        break;
+                    case "Cover Flow":
+                        ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
+                            @Override
+                            public void dismissed() {
+                                switchFragmentTo(coverFlow, false);
                             }
                         });
                         break;
