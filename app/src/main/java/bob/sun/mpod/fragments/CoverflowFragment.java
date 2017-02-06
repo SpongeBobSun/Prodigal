@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,10 +23,14 @@ import java.util.ArrayList;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
+import bob.sun.mpod.model.AlbumBean;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
+import bob.sun.mpod.model.SongBean;
 import me.crosswall.lib.coverflow.CoverFlow;
 import me.crosswall.lib.coverflow.core.PagerContainer;
+
+import static bob.sun.mpod.model.SelectionDetail.MENU_TYPE_ALBUM;
 
 /**
  * Created by bob.sun on 06/02/2017.
@@ -120,16 +125,19 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
 
     @Override
     public SelectionDetail getCurrentSelection() {
-        return null;
+        SelectionDetail ret = new SelectionDetail();
+        ret.setMenuType(MENU_TYPE_ALBUM);
+        ret.setData(pagerAdapter.getItem(pager.getCurrentItem()).getName());
+        return ret;
     }
 
     class CoverflowPagerAdapter extends PagerAdapter {
 
-        private ArrayList<String> imgs;
+        private ArrayList<AlbumBean> imgs;
         public boolean resized;
 
         public CoverflowPagerAdapter() {
-            imgs = MediaLibrary.getStaticInstance(getContext()).getAllCoverUries();
+            imgs = MediaLibrary.getStaticInstance(getContext()).getAllAlbumsWrapped();
             resized = false;
         }
 
@@ -139,10 +147,12 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
 
             ImageView img = (ImageView) ret.findViewById(R.id.cover_image);
             Picasso.with(container.getContext())
-                    .load(Uri.parse(imgs.get(position)))
+                    .load(Uri.parse(imgs.get(position).getCover()))
+                    .placeholder(R.drawable.album)
                     .fit()
                     .centerCrop()
                     .into(img);
+            ((TextView) ret.findViewById(R.id.cover_text)).setText(imgs.get(position).getName());
             container.addView(ret);
             return ret;
         }
@@ -155,6 +165,10 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
         @Override
         public int getCount() {
             return resized ? imgs.size() : 0;
+        }
+
+        public AlbumBean getItem(int position) {
+            return imgs.get(position);
         }
 
         @Override

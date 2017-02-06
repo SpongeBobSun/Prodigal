@@ -186,6 +186,25 @@ public class MediaLibrary {
         return ret;
     }
 
+    public ArrayList<AlbumBean> getAllAlbumsWrapped() {
+        ArrayList ret = new ArrayList<AlbumBean>();
+        Cursor cursor;
+        cursor = contentResolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        AlbumBean bean;
+        while(cursor.moveToNext()){
+            bean = new AlbumBean();
+            bean.populateBean(cursor);
+            ret.add(bean);
+        }
+        cursor.close();
+        return ret;
+    }
+
     public ArrayList<String> getAllArtists(){
         ArrayList ret = new ArrayList<String>();
         Cursor cursor;
