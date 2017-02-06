@@ -42,7 +42,7 @@ public class AlbumStack extends SwipeStack {
                 } else {
                     swipeTopViewToRight();
                 }
-                if (getCurrentPosition() == getAdapter().getCount() - 1) {
+                if (getCurrentPosition() >= getAdapter().getCount() - 1) {
                     resetStack();
                 } else {
                     direction = !direction;

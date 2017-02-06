@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
@@ -36,23 +37,23 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
     private CoverflowPagerAdapter pagerAdapter;
     private PagerContainer pagerContainer;
     private CoverFlow flow;
+    private boolean resized;
 
     public CoverflowFragment() {
-
+        resized = false;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
-        View ret = inflater.inflate(R.layout.layout_coverflow, parent, false);
+        final View ret = inflater.inflate(R.layout.layout_coverflow, parent, false);
         pagerContainer = (PagerContainer) ret.findViewById(R.id.pager_container);
         pager = (ViewPager) ret.findViewById(R.id.view_pager);
         pagerAdapter = new CoverflowPagerAdapter();
         pager.setAdapter(pagerAdapter);
-        pager.setOffscreenPageLimit(10);
-        pagerAdapter.notifyDataSetChanged();
+        pager.setOffscreenPageLimit(3);
         flow = new CoverFlow.Builder()
                 .with(pager)
-                .pagerMargin(0) //.pagerMargin(getResources().getDimensionPixelSize(R.dimen.pager_margin))
+                .pagerMargin(0)
                 .scale(0.3f)
                 .spaceSize(0f)
                 .rotationY(30f)
@@ -64,7 +65,37 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
                 ViewCompat.setElevation(view, 8.0f);
             }
         });
+        ret.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int height = pagerContainer.getHeight();
+                if (height <= 0 || resized) {
+                    return;
+                }
+                ViewGroup.LayoutParams lp = pager.getLayoutParams();
+                int margin = getResources().getDimensionPixelSize(R.dimen.cover_flow_margin);
+                lp.height = height - margin * 2;
+                lp.width = lp.height;
+                pager.setLayoutParams(lp);
+                pagerAdapter.resized = true;
+                pagerContainer.invalidate();
+                pagerAdapter.notifyDataSetChanged();
+                pager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        pager.setCurrentItem(pagerAdapter.getCount() / 2);
+                    }
+                });
+                resized = true;
+            }
+        });
         return ret;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -95,9 +126,11 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
     class CoverflowPagerAdapter extends PagerAdapter {
 
         private ArrayList<String> imgs;
+        public boolean resized;
 
         public CoverflowPagerAdapter() {
             imgs = MediaLibrary.getStaticInstance(getContext()).getAllCoverUries();
+            resized = false;
         }
 
         @Override
@@ -119,9 +152,9 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
             container.removeView((View) object);
         }
 
-            @Override
+        @Override
         public int getCount() {
-            return imgs.size();
+            return resized ? imgs.size() : 0;
         }
 
         @Override

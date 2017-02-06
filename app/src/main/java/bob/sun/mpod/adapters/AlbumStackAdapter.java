@@ -52,10 +52,6 @@ public class AlbumStackAdapter extends BaseAdapter {
                 .centerCrop()
                 .placeholder(R.drawable.album)
                 .into(imageView);
-//        DummyPicLoader.getInstance(convertView.getContext())
-////                .resize(imageView.getWidth(), imageView.getHeight())
-//                .setDefaultImage(R.drawable.album)
-//                .loadImageFromUri(mData.get(position), imageView);
         return convertView;
     }
 }
