@@ -21,6 +21,9 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -84,30 +87,21 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         setContentView(R.layout.activity_main);
 
         VibrateUtil.getStaticInstance(this);
-
-        initFragments();
+        MediaLibrary.getStaticInstance(this);
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
-        wheelView.setOnButtonListener(this);
-        wheelView.setOnTickListener(mainMenu);
-        this.currentTickObject = mainMenu;
 
         initOnButtonListener();
 
         startService();
 
-        MediaLibrary.getStaticInstance(this);
-
-        //Unit Test for MeidaLibrary
-        ArrayList<String> list = MediaLibrary.getStaticInstance(this).getArtistsByGenre("Rock");
-        for(String bean : list){
-//            Log.e(bean.getArtist(),bean.getFileName());
-            Log.e("Artists - ",bean);
-        }
-
     }
 
     private void initFragments(){
+        wheelView.setOnButtonListener(this);
+        wheelView.setOnTickListener(mainMenu);
+        this.currentTickObject = mainMenu;
+
         fragmentManager = getSupportFragmentManager();
         mainMenu = (MainMenuFragment) fragmentManager.findFragmentByTag("mainMenu");
         if(mainMenu == null){
@@ -211,14 +205,36 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     }
 
     private void requestPermission() {
-        //TODO: Request permission.
+        if (PermissionsManager.hasAllPermissions(MainActivity.this,
+                new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                })) {
+            initFragments();
+            return;
+        }
+        PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
+            @Override
+            public void onGranted() {
+                initFragments();
+            }
 
+            @Override
+            public void onDenied(String permission) {
+                if (PermissionsManager.hasAllPermissions(MainActivity.this,
+                        new String[]{
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        })) {
+                    initFragments();
+                }
+            }
+        });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        doNext(requestCode,grantResults);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
     }
 
     private void startService(){
@@ -255,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onResume(){
         super.onResume();
+        requestPermission();
         lastSongBean = new SongBean();
         SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
         lastSongBean.setId(preferences.getLong("Id", 0));
