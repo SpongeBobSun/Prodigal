@@ -380,7 +380,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         if(currentFragment != mainMenu && currentFragment != artistsList
         && currentFragment != albumsList && currentFragment != nowPlayingFragment
         && currentFragment != songsList && currentFragment != genresList
-        && currentFragment != settingMenu /* && currentFragment != playingList*/){
+        && currentFragment != settingMenu && currentFragment != coverFlow
+            /* && currentFragment != playingList*/){
             //Back from album songs or artist albums or etc.
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
