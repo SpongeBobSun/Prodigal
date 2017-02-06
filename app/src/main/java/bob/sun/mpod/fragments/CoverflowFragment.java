@@ -144,7 +144,8 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View ret = LayoutInflater.from(container.getContext()).inflate(R.layout.layout_coverflow_img, null);
-
+            if (imgs.size() == 0)
+                return ret;
             ImageView img = (ImageView) ret.findViewById(R.id.cover_image);
             Picasso.with(container.getContext())
                     .load(Uri.parse(imgs.get(position).getCover()))

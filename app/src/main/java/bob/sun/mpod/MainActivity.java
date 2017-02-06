@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
+    private boolean permissionGranted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,16 +92,19 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
 
+        permissionGranted = false;
+        requestPermission();
+
         initOnButtonListener();
 
         startService();
 
     }
 
-    private void initFragments(){
-        wheelView.setOnButtonListener(this);
-        wheelView.setOnTickListener(mainMenu);
-        this.currentTickObject = mainMenu;
+    private void initFragments() {
+
+        if (fragmentManager != null)
+            return;
 
         fragmentManager = getSupportFragmentManager();
         mainMenu = (MainMenuFragment) fragmentManager.findFragmentByTag("mainMenu");
@@ -170,6 +174,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         fragmentStack = new Stack<>();
         currentFragment = mainMenu;
+
+        wheelView.setOnButtonListener(this);
+        wheelView.setOnTickListener(mainMenu);
+        this.currentTickObject = mainMenu;
         return;
     }
 
@@ -210,24 +218,22 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 })) {
-            initFragments();
+            permissionGranted = true;
             return;
         }
         PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
             @Override
             public void onGranted() {
-                initFragments();
+                permissionGranted = true;
             }
 
             @Override
             public void onDenied(String permission) {
-                if (PermissionsManager.hasAllPermissions(MainActivity.this,
+                permissionGranted = PermissionsManager.hasAllPermissions(MainActivity.this,
                         new String[]{
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        })) {
-                    initFragments();
-                }
+                        });
             }
         });
     }
@@ -271,7 +277,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onResume(){
         super.onResume();
-        requestPermission();
+        if (!permissionGranted) {
+            return;
+        }
+        initFragments();
         lastSongBean = new SongBean();
         SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();
         lastSongBean.setId(preferences.getLong("Id", 0));
