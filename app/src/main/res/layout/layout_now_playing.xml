@@ -16,6 +16,7 @@
             android:layout_weight="1.0"
             android:id="@+id/id_nowplaying_image_view_cover"
             android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             />
 
         <LinearLayout
@@ -74,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:id="@+id/id_bottom_bar_container"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
@@ -82,8 +83,24 @@
         <bob.sun.mpod.view.ProgressView
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_weight="1.0"
             android:layout_gravity="center"
             android:id="@+id/id_progress_view" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/current_time"
+                android:text="--:--"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:id="@+id/total_time"
+                android:text="--:--"/>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

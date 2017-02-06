@@ -56,8 +56,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
         if (intent == null){
-            Log.e("PlayerService",""+flags);
-            return START_FLAG_RETRY;
+            return START_REDELIVER_INTENT;
         }
         switch (intent.getIntExtra("CMD",-1)){
             case CMD_PLAY:

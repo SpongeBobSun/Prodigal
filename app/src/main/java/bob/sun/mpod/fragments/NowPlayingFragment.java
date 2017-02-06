@@ -25,6 +25,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
     SongBean song;
     View view;
     ProgressView progressView;
+    TextView currentTime, totalTime;
     @Override
     public View onCreateView(LayoutInflater layoutInflater,
                              ViewGroup parent,
@@ -32,6 +33,8 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
                              ){
         View ret = layoutInflater.inflate(R.layout.layout_now_playing,parent,false);
         view = ret;
+        currentTime = (TextView) view.findViewById(R.id.current_time);
+        totalTime = (TextView) view.findViewById(R.id.total_time);
         return ret;
     }
 
@@ -65,8 +68,16 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
     }
 
     @Override
-    public void onProcessChanged(int current, int total) {
+    public void onProcessChanged(final int current, final int total) {
         if (progressView != null )
             this.progressView.onProcessChanged(current, total);
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                currentTime.setText(String.format("%02d:%02d", (current / 1000 / 60), (current / 1000 % 60)));
+                totalTime.setText(String.format("%02d:%02d", (total / 1000 / 60), (total / 1000 % 60)));
+            }
+        });
+
     }
 }
