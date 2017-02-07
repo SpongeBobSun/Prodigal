@@ -39,7 +39,7 @@ public class WheelView extends View {
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
 
-        paintOut.setShadowLayer(10.0f, 0.0f, 2.0f, 0xFF000000);
+        paintOut.setShadowLayer(10.0f, 0.0f, 5.0f, 0xFF000000);
 //        paintIn.setShadowLayer(10.0f, 0.0f, -2.0f, 0xFF000000);
     }
 
