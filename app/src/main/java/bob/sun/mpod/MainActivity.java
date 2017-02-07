@@ -44,6 +44,7 @@ import bob.sun.mpod.fragments.SettingsFragment;
 import bob.sun.mpod.fragments.SimpleListFragment;
 import bob.sun.mpod.fragments.TwoPanelFragment;
 import bob.sun.mpod.model.MediaLibrary;
+import bob.sun.mpod.model.MenuMeta;
 import bob.sun.mpod.model.PlayList;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;
@@ -461,8 +462,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         }
         switch (detail.getMenuType()){
             case SelectionDetail.MENU_TPYE_MAIN:
-                switch ((String) detail.getData()){
-                    case "Songs":
+                switch ((MenuMeta.MenuType) detail.getData()){
+                    case Songs:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -470,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Artists":
+                    case Artists:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -478,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Albums":
+                    case Albums:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -486,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Cover Flow":
+                    case Coverflow:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -494,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Genres":
+                    case Genres:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -502,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Playlist":
+                    case Playlist:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -531,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Now Playing":
+                    case NowPlaying:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -545,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             }
                         });
                         break;
-                    case "Shuffle Songs":
+                    case ShuffleSongs:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
@@ -562,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         });
 
                         break;
-                    case "Setting":
+                    case Settings:
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {

@@ -35,9 +35,9 @@ public class SettingAdapter {
     }
     private void initMenuItems(){
         menutItems = new ArrayList();
-        menutItems.add(new MenuMeta("About",false));
-        menutItems.add(new MenuMeta("Shuffle",false));
-        menutItems.add(new MenuMeta("Repeat", false));
+        menutItems.add(new MenuMeta("About",false, MenuMeta.MenuType.About));
+        menutItems.add(new MenuMeta("Shuffle",false, MenuMeta.MenuType.ShuffleSettings));
+        menutItems.add(new MenuMeta("Repeat", false, MenuMeta.MenuType.RepeatSettings));
     }
 
     public SettingsAdapter getAdapter(){

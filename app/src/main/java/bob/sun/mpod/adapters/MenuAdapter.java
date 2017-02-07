@@ -31,15 +31,15 @@ public class MenuAdapter {
     }
     private void initLists(){
         mainMenuItems = new ArrayList<>();
-        mainMenuItems.add(new MenuMeta("Artists",false));
-        mainMenuItems.add(new MenuMeta("Albums",false));
-        mainMenuItems.add(new MenuMeta("Cover Flow",false));
-        mainMenuItems.add(new MenuMeta("Songs",false));
-        mainMenuItems.add(new MenuMeta("Playlist",false));
-        mainMenuItems.add(new MenuMeta("Genres",false));
-        mainMenuItems.add(new MenuMeta("Shuffle Songs",false));
-        mainMenuItems.add(new MenuMeta("Setting",false));
-        mainMenuItems.add(new MenuMeta("Now Playing",false));
+        mainMenuItems.add(new MenuMeta("Artists",false, MenuMeta.MenuType.Artists));
+        mainMenuItems.add(new MenuMeta("Albums",false, MenuMeta.MenuType.Albums));
+        mainMenuItems.add(new MenuMeta("Cover Flow",false, MenuMeta.MenuType.Coverflow));
+        mainMenuItems.add(new MenuMeta("Songs",false, MenuMeta.MenuType.Songs));
+        mainMenuItems.add(new MenuMeta("Playlist",false, MenuMeta.MenuType.Playlist));
+        mainMenuItems.add(new MenuMeta("Genres",false, MenuMeta.MenuType.Genres));
+        mainMenuItems.add(new MenuMeta("Shuffle Songs",false, MenuMeta.MenuType.ShuffleSongs));
+        mainMenuItems.add(new MenuMeta("Settings",false, MenuMeta.MenuType.Settings));
+        mainMenuItems.add(new MenuMeta("Now Playing",false, MenuMeta.MenuType.NowPlaying));
     }
     public static MenuAdapter getStaticInstance(Context context){
         if (staticInstance == null){

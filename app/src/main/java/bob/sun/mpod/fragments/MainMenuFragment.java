@@ -152,7 +152,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         SelectionDetail ret = new SelectionDetail();
         ret.setMenuType(ret.MENU_TPYE_MAIN);
         ret.setDataType(ret.DATA_TYPE_STRING);
-        ret.setData((((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).itemName);
+        ret.setData((((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).menuType);
         return ret;
     }
 
