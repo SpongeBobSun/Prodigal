@@ -1,5 +1,6 @@
 package bob.sun.mpod.service;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -83,11 +84,14 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                NotificationUtil.getStaticInstance(this.getApplicationContext()).sendPlayNotification(playlist.get(index));
+                NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
                 break;
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
-                   mediaPlayer.pause();
+                    NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
+                    mediaPlayer.pause();
+                } else {
+                    mediaPlayer.start();
                 }
                 break;
             case CMD_RESUME:
@@ -104,6 +108,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         }
                     }
                     mediaPlayer.start();
+                    NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
                 }
                 break;
             case CMD_NEXT:
@@ -185,10 +190,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     @Override
     public void onDestroy() {
         audioManager.abandonAudioFocus(this);
-        // TODO: 07/02/2017 Dismiss notification as well
+        NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
         try{
-        mediaPlayer.reset();
-        mediaPlayer.release();
+            mediaPlayer.reset();
+            mediaPlayer.release();
         }catch (IllegalStateException e){
 
         }

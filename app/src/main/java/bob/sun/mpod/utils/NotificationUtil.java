@@ -8,9 +8,13 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
+import com.squareup.picasso.Picasso;
+
+import bob.sun.mpod.MainActivity;
 import bob.sun.mpod.R;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.service.PlayerService;
 
 /**
  * Created by bobsun on 15-6-12.
@@ -25,22 +29,45 @@ public class NotificationUtil {
     private NotificationManager notificationManager;
     private Notification notification;
     private NotificationCompat.Builder builder;
-    private PendingIntent clickIntent;
-    private RemoteViews remoteViews;
+    private PendingIntent clickIntent, nextIntent, prevIntent, playIntent;
+    private RemoteViews bigView, normalView;
 
     private NotificationUtil(Context context){
         appContext = context;
         notificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        init();
 
         builder = new NotificationCompat.Builder(appContext);
-        notification = new Notification();
+        builder.setCustomBigContentView(bigView)
+                .setCustomContentView(normalView)
+                .setSmallIcon(R.drawable.pod_notification)
+                .setContentIntent(clickIntent);
+        notification = builder.build();
         notification.flags = Notification.FLAG_ONGOING_EVENT;
-        this.setRemoteView(R.layout.layout_notification);
+    }
 
-        notification.contentView = remoteViews;
-        //Todo
-        //Switch next & previous.
-//        remoteViews.setOnClickPendingIntent();
+    private void init() {
+        normalView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification);
+        bigView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification);
+        Intent intent = new Intent(appContext, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        clickIntent = PendingIntent.getActivity(appContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        intent = new Intent(appContext, PlayerService.class);
+        intent.putExtra("CMD", PlayerService.CMD_PAUSE);
+        playIntent = PendingIntent.getService(appContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        intent = new Intent(appContext, PlayerService.class);
+        intent.putExtra("CMD", PlayerService.CMD_NEXT);
+        nextIntent = PendingIntent.getService(appContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        intent = new Intent(appContext, PlayerService.class);
+        intent.putExtra("CMD", PlayerService.CMD_PREVIOUS);
+        prevIntent = PendingIntent.getService(appContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_pause, playIntent);
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_prev, prevIntent);
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_next, nextIntent);
     }
 
     public static NotificationUtil getStaticInstance(Context context){
@@ -49,60 +76,20 @@ public class NotificationUtil {
         return staticInstance;
     }
 
-    public NotificationUtil setClass(Class c){
-        clickIntent = PendingIntent.getActivity(appContext,0,new Intent(appContext,c),0);
-        return this;
-    }
-
-    public NotificationCompat.Builder getBuilder(){
-        return builder;
-    }
-
-    public void setRemoteView(int res){
-        remoteViews = new RemoteViews(appContext.getPackageName(),res);
-    }
-
-    /**
-    //General interface for NotificationUtil. Add it to SBLib someday...
-    public void sendTextNotification(String text){
-
-    }
-
-    public void sendNotificationWithView(String text,RemoteViews remoteViews){
-
-    }
-
-    public void sendTextOngoingNotification(String text){
-
-    }
-
-    public void sendOngoingNotificationWithView(String text,RemoteViews remoteViews){
-
-    }
-*/
-    //Interfaces for mPod only.
-    //In mPod, we only use ongoing notifications.
 
     public void sendPlayNotification(SongBean bean){
         notification.tickerText = bean.getTitle();
-//        notification.contentView.setImageViewBitmap(R.id.id_image_view_notification,
-//                MediaLibrary.getStaticInstance(appContext).getCoverImageBySong(bean.getId()));
-
-        notification.icon = R.drawable.songs;
-        if (clickIntent != null){
-            notification.contentIntent = clickIntent;
-        }
         notificationManager.notify(NOTIFICATION_ID,notification);
+        Picasso.with(appContext).load(MediaLibrary.getStaticInstance(appContext).getCoverUriByAlbumId(bean.getAlbumId()))
+                .into(normalView, R.id.id_image_view_notification, NOTIFICATION_ID, notification);
+    }
+
+    public void dismiss() {
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 
     public void changeSong(SongBean bean){
         sendPlayNotification(bean);
     }
 
-    public void sendPauseNotification(){
-
-    }
-    public void sendStopNotification(){
-
-    }
 }

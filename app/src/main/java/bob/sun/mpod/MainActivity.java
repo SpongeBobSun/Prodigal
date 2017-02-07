@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         }else {
             //Back to main menu.
             fragmentManager.beginTransaction().hide(currentFragment).show(fragment).commit();
-            if (fragment.getTag().equalsIgnoreCase("mainMenu")) {
+            if (fragment.getTag() != null && fragment.getTag().equalsIgnoreCase("mainMenu")) {
                 ((TwoPanelFragment) fragment).show(null);
             }
         }
