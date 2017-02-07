@@ -12,6 +12,7 @@ public class SongBean implements Serializable {
     private String title;
     private String artist;
     private String album;
+    private long albumId;
     private String genre;
     private String fileName;
     private String filePath;
@@ -92,6 +93,15 @@ public class SongBean implements Serializable {
         this.id = id;
     }
 
+    public long getAlbumId() {
+        return albumId;
+    }
+
+    public SongBean setAlbumId(long albumId) {
+        this.albumId = albumId;
+        return this;
+    }
+
     public void populateBean(Cursor cursor){
         setId(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)));
         setAlbum(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)));
@@ -102,5 +112,6 @@ public class SongBean implements Serializable {
         setFilePath(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
         setDuration(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
         setSize(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)));
+        setAlbumId(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)));
     }
 }

@@ -50,7 +50,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
         progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
         String img = MediaLibrary.getStaticInstance(view.getContext())
-                .getCoverUriBySong(songBean.getId());
+                .getCoverUriByAlbumId(songBean.getAlbumId());
         Picasso.with(view.getContext())
                 .load(Uri.parse(img))
                 .placeholder(R.drawable.album)

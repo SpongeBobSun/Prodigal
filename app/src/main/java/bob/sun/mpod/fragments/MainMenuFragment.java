@@ -1,5 +1,6 @@
 package bob.sun.mpod.fragments;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
@@ -7,19 +8,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 import bob.sun.mpod.MainActivity;
 import bob.sun.mpod.R;
@@ -105,11 +102,14 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
             ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
-            String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriBySong(song.getId());
-            Log.e("mPod", img);
-            Picasso.with(getActivity()).load(Uri.parse(img)).fit().centerCrop().placeholder(R.drawable.album).into(currentCover);
-            //TODO: Fix this!
-//            currentCover.setImageBitmap(MediaLibrary.getStaticInstance(getContext()).getCoverImageBySong(playerService.getCurrentSong().getId()));
+            String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriByAlbumId(song.getAlbumId());
+
+            Picasso.with(getActivity())
+                    .load(Uri.parse(img)).fit().centerInside()
+                    .config(Bitmap.Config.RGB_565)
+                    .placeholder(R.drawable.album)
+                    .error(R.drawable.album)
+                    .into(currentCover);
             return;
         } else if (currentItemIndex == 1) {
             albumStack.setVisibility(View.VISIBLE);

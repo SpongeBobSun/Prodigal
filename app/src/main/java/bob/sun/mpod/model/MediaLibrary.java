@@ -285,8 +285,10 @@ public class MediaLibrary {
         }
     }
 
-    public String getCoverUriBySong(long songId){
-        return "content://media/external/audio/media/" + songId + "/albumart";
+    public String getCoverUriByAlbumId(long albumId){
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
+        return uri.toString();
     }
 
     public Bitmap getCoverImageByAlbum(long albumId){
@@ -337,7 +339,7 @@ public class MediaLibrary {
                 new String[]{albumName},
                 null);
         if(!cursor.moveToNext()){
-            return "content://media/external/audio/albumart/0";
+            return "content://media/external/audio/albumart/-1";
         }
         albumId = (cursor.getLong(cursor.getColumnIndexOrThrow("_id")));
         cursor.close();
