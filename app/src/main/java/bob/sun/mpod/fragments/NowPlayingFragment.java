@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.squareup.picasso.Picasso;
 
 import bob.sun.mpod.R;
@@ -29,7 +30,7 @@ import bob.sun.mpod.view.ProgressView;
 public class NowPlayingFragment extends Fragment implements OnTickListener,PlayingListener{
     SongBean song;
     View view;
-    ProgressView progressView;
+    NumberProgressBar progressView;
     TextView currentTime, totalTime;
     @Override
     public View onCreateView(LayoutInflater layoutInflater,
@@ -48,7 +49,9 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_title)).setText(song.getTitle());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
-        progressView = (ProgressView) view.findViewById(R.id.id_progress_view);
+        progressView = (NumberProgressBar) view.findViewById(R.id.id_progress_view);
+        progressView.setMax(100);
+        progressView.setProgress(0);
         String img = MediaLibrary.getStaticInstance(view.getContext())
                 .getCoverUriByAlbumId(songBean.getAlbumId());
         Picasso.with(view.getContext())
@@ -56,7 +59,6 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
                 .placeholder(R.drawable.album)
                 .config(Bitmap.Config.RGB_565)
                 .into((ImageView) view.findViewById(R.id.id_nowplaying_image_view_cover));
-        Log.e("mPod", img);
     }
 
     @Override
@@ -82,10 +84,10 @@ public class NowPlayingFragment extends Fragment implements OnTickListener,Playi
     @Override
     public void onProcessChanged(final int current, final int total) {
         if (progressView != null )
-            this.progressView.onProcessChanged(current, total);
         view.post(new Runnable() {
             @Override
             public void run() {
+                progressView.setProgress((int) (((float)current / (float)total) * 100));
                 currentTime.setText(String.format("%02d:%02d", (current / 1000 / 60), (current / 1000 % 60)));
                 totalTime.setText(String.format("%02d:%02d", (total / 1000 / 60), (total / 1000 % 60)));
             }

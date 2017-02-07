@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -80,11 +81,14 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
-        <bob.sun.mpod.view.ProgressView
+        <com.daimajia.numberprogressbar.NumberProgressBar
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:id="@+id/id_progress_view" />
+            android:id="@+id/id_progress_view"
+            app:progress_text_visibility="invisible"
+            app:progress_unreached_color="@color/colorPrimary"
+            app:progress_reached_color="@color/colorAccent"
+            />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
