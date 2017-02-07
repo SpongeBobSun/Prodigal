@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             @Override
             public void onGranted() {
                 permissionGranted = true;
+                findViewById(R.id.id_holder_no_permission).setVisibility(View.GONE);
             }
 
             @Override
@@ -279,8 +280,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     public void onResume(){
         super.onResume();
         if (!permissionGranted) {
+            findViewById(R.id.id_holder_no_permission).setVisibility(View.VISIBLE);
             return;
         }
+        findViewById(R.id.id_holder_no_permission).setVisibility(View.GONE);
         initFragments();
         lastSongBean = new SongBean();
         SharedPreferences preferences = PreferenceUtil.getStaticInstance(this).getPreferences();

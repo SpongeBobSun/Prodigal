@@ -24,8 +24,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/id_screen_fragment_container">
-
         </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/id_holder_no_permission"
+            android:visibility="gone"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
+                android:src="@drawable/icon_sad"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.0"
+                android:text="Please grant permission I request."
+                android:textSize="20sp"
+                android:gravity="center"/>
+        </LinearLayout>
     </android.support.v7.widget.CardView>
     <LinearLayout
         android:layout_width="match_parent"
@@ -102,11 +124,11 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginRight="59dp"
-                    android:layout_alignBottom="@+id/linearLayout"
+                    android:layout_marginRight="58dp"
+                    android:layout_marginEnd="58dp"
+                    android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="59dp">
+                    android:layout_alignParentEnd="true">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
