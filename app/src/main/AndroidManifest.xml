@@ -13,13 +13,6 @@
     -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <!--
-        Pause music when incoming / outgoing phone
-    -->
-
-    <uses-permission android:name="ANDROID.PERMISSION.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -36,12 +29,6 @@
             </intent-filter>
         </activity>
         <service android:name=".service.PlayerService"/>
-        <receiver android:name=".filter.PhoneReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-                <action android:name="android.intent.action.PHONE_STATE"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package bob.sun.mpod.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
@@ -22,12 +23,13 @@ import bob.sun.mpod.utils.PreferenceUtil;
 /**
  * Created by sunkuan on 15/4/29.
  */
-public class PlayerService extends Service implements MediaPlayer.OnCompletionListener {
+public class PlayerService extends Service implements MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     private MediaPlayer mediaPlayer;
     private final ServiceBinder binder = new ServiceBinder();
     private ArrayList<SongBean> playlist;
     private int index;
     private PlayingListener playingListener;
+    private AudioManager audioManager;
 //    private Thread progressThread;
     private ProgressRunnable runnable;
     public static final int CMD_PLAY = 1;
@@ -52,6 +54,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //        progressThread = new Thread(new ProgressRunnable());
         runnable = new ProgressRunnable();
 //        new Thread(runnable).start();
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
     }
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
@@ -179,7 +184,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 //    }
     @Override
     public void onDestroy() {
-        Log.e("mPod PlayerService","onDestroy");
+        audioManager.abandonAudioFocus(this);
+        // TODO: 07/02/2017 Dismiss notification as well
         try{
         mediaPlayer.reset();
         mediaPlayer.release();
@@ -190,6 +196,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     public boolean isPlaying(){
         return mediaPlayer.isPlaying();
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        if (focusChange <= 0) {
+            if (mediaPlayer.isPlaying())
+                mediaPlayer.pause();
+        } else {
+        }
     }
 
     public class ServiceBinder extends Binder{
