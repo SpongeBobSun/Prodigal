@@ -65,9 +65,56 @@ public abstract class TwoPanelFragment extends Fragment {
         right.startAnimation(rAnim);
     }
 
+    public void show(final DismissCallback callback) {
+        finishCount = 0;
+        View left, right;
+        left = getLeftPanel();
+        right = getRightPanel();
+        TranslateAnimation lAnim, rAnim;
+        lAnim = new TranslateAnimation(0 - left.getRight(), 0, 0, 0);
+        lAnim.setDuration(300);
+        lAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                increaseAnimCount(callback);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        rAnim = new TranslateAnimation(right.getRight(), 0, 0, 0);
+        rAnim.setDuration(300);
+        rAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                increaseAnimCount(callback);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        left.startAnimation(lAnim);
+        right.startAnimation(rAnim);
+    }
+
     synchronized private void increaseAnimCount(DismissCallback callback) {
         if (finishCount == 1) {
-            callback.dismissed();
+            if (callback != null)
+                callback.dismissed();
             return;
         }
         finishCount ++;
