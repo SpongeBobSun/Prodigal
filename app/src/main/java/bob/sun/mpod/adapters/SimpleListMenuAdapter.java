@@ -102,15 +102,15 @@ public class SimpleListMenuAdapter extends RecyclerView.Adapter<VHImageListItem>
             highlight = arg2;
         }
     }
-    public void HighlightItem(int position){
+    public void highlightItem(int position){
         if (metaList.size() == 0){
             return;
         }
         metaList.get(lastPosistion).highlight = false;
         lastPosistion = position;
         metaList.get(position).highlight = true;
-        this.notifyDataSetChanged();
     }
+
     private String getTiltleFromBean(Object bean){
         switch (type){
             case SORT_TYPE_ARTIST :

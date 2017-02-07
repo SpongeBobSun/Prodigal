@@ -1,5 +1,6 @@
 package bob.sun.mpod.adapters;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -23,10 +24,12 @@ public class VHImageListItem extends RecyclerView.ViewHolder {
     }
 
     private View contentView;
+    private ImageView imageView;
 
     public VHImageListItem(View itemView) {
         super(itemView);
         contentView = itemView;
+        imageView = (ImageView) contentView.findViewById(R.id.id_itemlistview_imageview);
     }
 
     public void configure(String str, String imgUri, VHImageListItem.Status status) {
@@ -36,18 +39,17 @@ public class VHImageListItem extends RecyclerView.ViewHolder {
         }else{
             contentView.setBackgroundColor(Color.TRANSPARENT);
         }
-        ImageView imageView = (ImageView) contentView.findViewById(R.id.id_itemlistview_imageview);
         if (imgUri != null) {
             imageView.setVisibility(View.VISIBLE);
             Picasso.with(contentView.getContext())
                     .load(Uri.parse(imgUri))
+                    .config(Bitmap.Config.RGB_565)
+                    .placeholder(R.drawable.album)
+                    .error(R.drawable.album)
                     .fit().centerCrop()
                     .into(imageView);
-//            DummyPicLoader.getInstance(contentView.getContext())
-////                    .resize(imageView.getWidth(), imageView.getHeight())
-//                    .loadImageFromUri(imgUri, imageView);
         } else {
-            imageView.setVisibility(View.GONE);
+            imageView.setImageResource(R.drawable.album);
         }
 
     }
