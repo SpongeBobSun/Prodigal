@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,18 +49,21 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
 
     @Override
     public void onNextTick() {
-//        Log.e("index:", currentItemIndex + "");
+        VHImageListItem holder;
         if(currentItemIndex >= listView.getAdapter().getItemCount()-1){
             currentItemIndex = listView.getAdapter().getItemCount()-1;
+            holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
+            adatper.onBindViewHolder(holder, currentItemIndex);
             return;
         }
         currentItemIndex+=1;
         adatper.highlightItem(currentItemIndex);
-        VHImageListItem holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex - 1);
+        holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex - 1);
         if (holder != null)
             adatper.onBindViewHolder(holder, currentItemIndex - 1);
         if(currentItemIndex > ((LinearLayoutManager) listView.getLayoutManager()).findLastCompletelyVisibleItemPosition()) {
-            listView.smoothScrollToPosition(currentItemIndex);
+            listView.getLayoutManager().scrollToPosition(currentItemIndex);
+            return;
         }
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
         if (holder != null) {
@@ -69,16 +73,20 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
 
     @Override
     public void onPreviousTick() {
+        VHImageListItem holder;
         if(currentItemIndex < 1){
+            holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
+            adatper.onBindViewHolder(holder, currentItemIndex);
             return;
         }
         currentItemIndex -= 1;
         adatper.highlightItem(currentItemIndex);
-        VHImageListItem holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex + 1);
+        holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex + 1);
         if (holder != null)
             adatper.onBindViewHolder(holder, currentItemIndex + 1);
         if(currentItemIndex < ((LinearLayoutManager) listView.getLayoutManager()).findFirstCompletelyVisibleItemPosition()) {
-            listView.smoothScrollToPosition(currentItemIndex);
+            listView.getLayoutManager().scrollToPosition(currentItemIndex);
+            return;
         }
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
         if (holder != null) {
