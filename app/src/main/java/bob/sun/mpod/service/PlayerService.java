@@ -93,8 +93,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 break;
             case CMD_RESUME:
                 if (!mediaPlayer.isPlaying()){
-                    if (playlist == null){
+                    if (playlist == null || playlist.size() == 0){
                         String resumeName = intent.getStringExtra("DATA");
+                        if (resumeName == null)
+                            break;
                         try {
                             mediaPlayer.setDataSource(resumeName);
                             mediaPlayer.prepare();
@@ -102,8 +104,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                             e.printStackTrace();
                         }
                     }
+
                     mediaPlayer.start();
-                    NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
+                    if (playlist != null && playlist.size() > 0)
+                        NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
                 }
                 break;
             case CMD_NEXT:
@@ -203,7 +207,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         if (focusChange <= 0) {
             if (mediaPlayer.isPlaying())
                 mediaPlayer.pause();
-        } else {
         }
     }
 
@@ -251,7 +254,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
 
     public SongBean getCurrentSong(){
-        if (playlist == null || playlist.get(index) == null)
+        if (playlist == null || playlist.size() == 0)
             return null;
         return playlist.get(index);
     }

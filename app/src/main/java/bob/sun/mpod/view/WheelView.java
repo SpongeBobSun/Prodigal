@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnButtonListener;
@@ -47,7 +48,7 @@ public class WheelView extends View {
 
     private boolean animating;
     private float timer;
-    private static final int duration = 100, frameRate = 5;
+    private static final int duration = 200, frameRate = 5;
     private float maxRadius = 1000;
     private Runnable runnable;
 
@@ -61,7 +62,8 @@ public class WheelView extends View {
         paintIn.setColor(getResources().getColor(R.color.colorPrimary));
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-        ripplePaint.setColor(Color.argb(80, 0xFF, 0xFF, 0xFF));
+        ripplePaint.setColor(Color.WHITE);
+        ripplePaint.setAlpha(80);
 
         paintOut.setShadowLayer(10.0f, 0.0f, 5.0f, 0xFF000000);
 //        paintIn.setShadowLayer(10.0f, 0.0f, -2.0f, 0xFF000000);
@@ -103,15 +105,10 @@ public class WheelView extends View {
 
         if (animating) {
             if (timer >= duration) {
-                if (timer - duration >= 20)
-                    animating = false;
-//                ripplePaint.setAlpha();
-                canvas.drawCircle(ripplePoint.x, ripplePoint.y, maxRadius, ripplePaint);
-                postDelayed(runnable, (long) timer);
-                timer += duration / frameRate;
+                animating = false;
             } else {
                 postDelayed(runnable, (long) timer);
-                timer = (float) Math.pow(timer + frameRate, 1.1);
+                timer = (float)2 * (timer + frameRate);
                 canvas.drawCircle(ripplePoint.x, ripplePoint.y, (timer / duration) * maxRadius, ripplePaint);
             }
         }
@@ -225,6 +222,8 @@ public class WheelView extends View {
     }
 
     public void rippleFrom(RipplePoint point) {
+        if (animating)
+            return;
         animating = false;
         switch (point) {
             case Top:

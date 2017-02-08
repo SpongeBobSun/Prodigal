@@ -50,6 +50,7 @@ import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.NotificationUtil;
 import bob.sun.mpod.utils.PreferenceUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
@@ -272,6 +273,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     protected void onDestroy(){
         super.onDestroy();
 //        this.stopService(serviceIntent);
+        NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
+        stopService(new Intent(this, PlayerService.class));
         unbindService(serviceConnection);
     }
 
@@ -304,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 //            lastPlayList.add(MediaLibrary.getStaticInstance(this).getSongById((String) iterator.next()));
         File objectFile = new File("/data/data/bob.sun.mpod/playlistobject");
         if (! objectFile.exists())
-            return;
+            lastPlayList = new ArrayList();
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream( new FileInputStream(objectFile));
             lastPlayList = new ArrayList();
@@ -317,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onPause(){
         super.onPause();
@@ -436,6 +438,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             Intent intent = new Intent(this,PlayerService.class);
             if (playerService.getCurrentSong() == null && playerService.getPlayList() == null) {
                 intent.putExtra("DATA",lastSongBean.getFilePath());
+                playerService.setPlayList(lastPlayList);
             }
             intent.putExtra("CMD",PlayerService.CMD_RESUME);
             startService(intent);
