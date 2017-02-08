@@ -27,4 +27,12 @@ public class VolumeUtil {
                 AudioManager.ADJUST_LOWER,
                 0);
     }
+
+    public int getMax() {
+        return audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+    }
+
+    public int getCurrent() {
+        return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+    }
 }

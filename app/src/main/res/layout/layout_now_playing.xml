@@ -1,110 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="3.0"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
-            android:id="@+id/id_nowplaying_image_view_cover"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            />
-
-        <LinearLayout
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
-            android:orientation="vertical">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1.0"/>
-            <bob.sun.mpod.view.FocusedTextView
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1.0"
-                android:text="Title"
-                android:id="@+id/id_now_playing_text_view_title"
-                android:focusable="true"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"/>
-
-            <bob.sun.mpod.view.FocusedTextView
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1.0"
-                android:text="Artist"
-                android:id="@+id/id_now_playing_text_view_artist"
-                android:focusable="true"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"/>
-
-            <bob.sun.mpod.view.FocusedTextView
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1.0"
-                android:text="Album"
-                android:id="@+id/id_now_playing_text_view_album"
-                android:focusable="true"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1.0"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
+        android:id="@+id/id_now_playing_wrapper"
         android:orientation="vertical"
-        android:id="@+id/id_bottom_bar_container"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
-
-        <com.daimajia.numberprogressbar.NumberProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:id="@+id/id_progress_view"
-            app:progress_text_visibility="invisible"
-            app:progress_unreached_color="@color/colorPrimary"
-            app:progress_reached_color="@color/colorAccent"
-            />
-        <RelativeLayout
+            android:layout_height="0px"
+            android:layout_weight="3.0"
+            android:orientation="horizontal">
+    
+            <ImageView
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:id="@+id/id_nowplaying_image_view_cover"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                />
+    
+            <LinearLayout
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:orientation="vertical">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1.0"/>
+                <bob.sun.mpod.view.FocusedTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1.0"
+                    android:text="Title"
+                    android:id="@+id/id_now_playing_text_view_title"
+                    android:focusable="true"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"/>
+    
+                <bob.sun.mpod.view.FocusedTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1.0"
+                    android:text="Artist"
+                    android:id="@+id/id_now_playing_text_view_artist"
+                    android:focusable="true"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"/>
+    
+                <bob.sun.mpod.view.FocusedTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1.0"
+                    android:text="Album"
+                    android:id="@+id/id_now_playing_text_view_album"
+                    android:focusable="true"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"/>
+    
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="1.0"/>
+            </LinearLayout>
+        </LinearLayout>
+    
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.0">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:id="@+id/current_time"
-                android:text="--:--"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:id="@+id/total_time"
-                android:text="--:--"/>
-        </RelativeLayout>
+            android:layout_weight="1.0"
+            android:orientation="vertical"
+            android:id="@+id/id_bottom_bar_container"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+    
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:id="@+id/id_progress_view"
+                app:progress_text_visibility="invisible"
+                app:progress_unreached_color="@color/colorPrimary"
+                app:progress_reached_color="@color/colorAccent"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.0">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:id="@+id/current_time"
+                    android:text="--:--"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/total_time"
+                    android:text="--:--"/>
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/id_seeker_wrapper"
+        android:visibility="gone"
+        android:background="#CCFFFFFF">
+        <com.daimajia.numberprogressbar.NumberProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/id_seeker"
+            android:layout_centerInParent="true"
+            app:progress_reached_bar_height="10dp"
+            app:progress_unreached_bar_height="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/id_seeker_title"
+            android:layout_above="@id/id_seeker"
+            android:gravity="center"
+            android:textSize="20dp"
+            />
+
+    </RelativeLayout>
+</FrameLayout>
