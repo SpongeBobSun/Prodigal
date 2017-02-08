@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.Region;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,24 +27,54 @@ import bob.sun.mpod.utils.VibrateUtil;
  * Created by bob.sun on 2015/4/23.
  */
 public class WheelView extends View {
+
+    public enum RipplePoint {
+        Top,
+        Bottom,
+        Left,
+        Right,
+    }
+
     private Point center;
+    private Path viewBound;
     private int radiusOut,radiusIn;
-    private Paint paintOut, paintIn;
+    private Paint paintOut, paintIn, ripplePaint;
     private OnTickListener onTickListener;
     private float startDeg = Float.NaN;
     private OnButtonListener onButtonListener;
+    private Point ripplePoint;
+    private float buttonWidth, buttonHeight;
+
+    private boolean animating;
+    private float timer;
+    private static final int duration = 100, frameRate = 5;
+    private float maxRadius = 1000;
+    private Runnable runnable;
+
     public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         center = new Point();
         paintIn = new Paint();
         paintOut = new Paint();
+        ripplePaint = new Paint();
         paintOut.setColor(getResources().getColor(R.color.colorAccent));
         paintIn.setColor(getResources().getColor(R.color.colorPrimary));
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
+        ripplePaint.setColor(Color.argb(80, 0xFF, 0xFF, 0xFF));
 
         paintOut.setShadowLayer(10.0f, 0.0f, 5.0f, 0xFF000000);
 //        paintIn.setShadowLayer(10.0f, 0.0f, -2.0f, 0xFF000000);
+
+        buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
+        buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);
+        animating = false;
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                invalidate();
+            }
+        };
     }
 
     @Override
@@ -54,12 +88,38 @@ public class WheelView extends View {
         center.x = measuredWidth/2;
         center.y = measuredHeight/2;
         setLayerType(LAYER_TYPE_SOFTWARE, null);
+
+        maxRadius = radiusOut * 2f;
+        viewBound = new Path();
+        viewBound.addCircle(center.x, center.y, radiusOut, Path.Direction.CW);
     }
 
     @Override
     public void onDraw(Canvas canvas){
         canvas.drawCircle(center.x,center.y,radiusOut,paintOut);
+        canvas.save();
+        if (viewBound != null)
+            canvas.clipPath(viewBound, Region.Op.REPLACE);
+
+        if (animating) {
+            if (timer >= duration) {
+                if (timer - duration >= 20)
+                    animating = false;
+//                ripplePaint.setAlpha();
+                canvas.drawCircle(ripplePoint.x, ripplePoint.y, maxRadius, ripplePaint);
+                postDelayed(runnable, (long) timer);
+                timer += duration / frameRate;
+            } else {
+                postDelayed(runnable, (long) timer);
+                timer = (float) Math.pow(timer + frameRate, 1.1);
+                canvas.drawCircle(ripplePoint.x, ripplePoint.y, (timer / duration) * maxRadius, ripplePaint);
+            }
+        }
+
         canvas.drawCircle(center.x,center.y,radiusIn,paintIn);
+
+        if (Build.VERSION.SDK_INT != 23)
+            canvas.restore();
     }
 
     private float xyToDegrees(float x, float y) {
@@ -162,5 +222,26 @@ public class WheelView extends View {
 
     public void setOnButtonListener(OnButtonListener listener){
         this.onButtonListener = listener;
+    }
+
+    public void rippleFrom(RipplePoint point) {
+        animating = false;
+        switch (point) {
+            case Top:
+                ripplePoint = new Point(getWidth() / 2, (int) (buttonHeight / 2));
+                break;
+            case Bottom:
+                ripplePoint = new Point(getWidth() / 2, (int) (getHeight() - (buttonHeight / 2)));
+                break;
+            case Left:
+                ripplePoint = new Point((int) ((getWidth() - radiusOut - buttonWidth) / 2), getHeight() / 2);
+                break;
+            case Right:
+                ripplePoint = new Point((int) ((getWidth() + radiusOut + buttonWidth) / 2), getHeight() / 2);
+                break;
+        }
+        timer = 0;
+        animating = true;
+        invalidate();
     }
 }

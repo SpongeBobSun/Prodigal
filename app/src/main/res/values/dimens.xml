@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="cover_flow_margin">32dp</dimen>
+    <dimen name="button_width">30dp</dimen>
+    <dimen name="button_height">42dp</dimen>
 </resources>
