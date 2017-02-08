@@ -151,7 +151,7 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
                     .load(Uri.parse(imgs.get(position).getCover()))
                     .placeholder(R.drawable.album)
                     .fit()
-                    .centerCrop()
+                    .centerInside()
                     .into(img);
             ((TextView) ret.findViewById(R.id.cover_text)).setText(imgs.get(position).getName());
             container.addView(ret);

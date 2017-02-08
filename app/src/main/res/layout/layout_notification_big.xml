@@ -3,13 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="120dp">
     <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:id="@+id/id_image_view_notification"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/album"
+        android:layout_margin="10dp"
         />
     <LinearLayout
         android:layout_width="0dp"
@@ -20,9 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.0"
-            android:lines="1"
-            android:maxLines="1"
-            android:gravity="center_vertical|left"
             android:textColor="@android:color/tertiary_text_dark"
             android:id="@+id/id_notification_title"
             />

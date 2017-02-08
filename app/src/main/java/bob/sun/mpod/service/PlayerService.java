@@ -101,8 +101,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         try {
                             mediaPlayer.setDataSource(resumeName);
                             mediaPlayer.prepare();
-//                            if (playingListener != null)
-//                                playingListener.onSongChanged();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
