@@ -1,5 +1,6 @@
 package bob.sun.mpod.fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.service.PlayerService;
 import bob.sun.mpod.utils.VolumeUtil;
 
 
@@ -41,6 +43,8 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
     VolumeUtil volume;
     ViewMode viewMode;
 
+    private final float seekStep = 0.1f;
+    int seekedPosistiton;
     private long lastTick;
 
     public NowPlayingFragment() {
@@ -109,6 +113,10 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
                 break;
             case Seek:
                 //Seek here
+                seekedPosistiton = seeker.getProgress();
+                seekedPosistiton += seeker.getMax() * seekStep;
+                seekedPosistiton = seekedPosistiton > song.getDuration() ? seeker.getMax() : seekedPosistiton;
+                seeker.setProgress(seekedPosistiton);
                 break;
         }
         seekView.postDelayed(dismissRunnable, 2000);
@@ -126,6 +134,10 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
                 seeker.setProgress(volume.getCurrent());
                 break;
             case Seek:
+                seekedPosistiton = seeker.getProgress();
+                seekedPosistiton -= seeker.getMax() * seekStep;
+                seekedPosistiton = seekedPosistiton < 0 ? 0 : seekedPosistiton;
+                seeker.setProgress(seekedPosistiton);
                 //Seek here
                 break;
         }
@@ -141,11 +153,12 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
                 break;
             case Volume:
                 this.setViewMode(ViewMode.Playing);
-                seekView.postDelayed(dismissRunnable, 2000);
+                seekView.getHandler().removeCallbacks(dismissRunnable);
                 break;
             case Seek:
                 this.setViewMode(ViewMode.Playing);
-                seekView.postDelayed(dismissRunnable, 2000);
+                seekView.getHandler().removeCallbacks(dismissRunnable);
+                doSeek();
                 break;
         }
         return null;
@@ -184,12 +197,20 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
                 seekerTitle.setText("Volume");
                 break;
             case Seek:
-                seeker.setMax(progressView.getMax());
+                seekedPosistiton = progressView.getProgress();
+                seeker.setMax(100);
                 seeker.setProgress(progressView.getProgress());
                 seekView.setVisibility(View.VISIBLE);
                 seekerTitle.setText("Seek");
                 break;
         }
         return;
+    }
+
+    private void doSeek() {
+        Intent intent = new Intent(getActivity(), PlayerService.class);
+        intent.putExtra("CMD", PlayerService.CMD_SEEK);
+        intent.putExtra("DATA", seekedPosistiton);
+        getActivity().startService(intent);
     }
 }

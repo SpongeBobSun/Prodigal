@@ -40,6 +40,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     public static final int CMD_PREVIOUS = 6;
     public static final int CMD_VOLUMN_UP = 7;
     public static final int CMD_VOLUMN_DOWN = 8;
+    public static final int CMD_SEEK = 10;
 
     @Override
     public void onCreate(){
@@ -116,6 +117,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PREVIOUS:
                 onPrevious();
                 break;
+            case CMD_SEEK:
+                int position = intent.getIntExtra("DATA", -1);
+                onSeek(position);
+                break;
             default:
                 break;
         }
@@ -174,6 +179,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             e.printStackTrace();
         }
         NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
+    }
+
+    private void onSeek(int position) {
+        if (position == -1) {
+            return;
+        }
+        int duration = mediaPlayer.getDuration();
+        int seek = (int) (duration * (position / 100f));
+        mediaPlayer.seekTo(seek);
     }
     @Override
     public IBinder onBind(Intent intent) {

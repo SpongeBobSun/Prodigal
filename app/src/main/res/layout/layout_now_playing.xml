@@ -128,6 +128,9 @@
             app:progress_unreached_bar_height="10dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            app:progress_reached_color="@color/colorAccent"
+            app:progress_unreached_color="@color/colorPrimary"
+            app:progress_text_visibility="invisible"
             />
         <TextView
             android:layout_width="match_parent"
