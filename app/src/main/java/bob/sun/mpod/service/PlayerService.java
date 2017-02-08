@@ -31,7 +31,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private int index;
     private PlayingListener playingListener;
     private AudioManager audioManager;
-//    private Thread progressThread;
     private ProgressRunnable runnable;
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -52,9 +51,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(this);
-//        progressThread = new Thread(new ProgressRunnable());
         runnable = new ProgressRunnable();
-//        new Thread(runnable).start();
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
