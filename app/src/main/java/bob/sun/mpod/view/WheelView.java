@@ -62,11 +62,17 @@ public class WheelView extends View {
         paintIn.setColor(getResources().getColor(R.color.colorPrimary));
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-        ripplePaint.setColor(Color.WHITE);
-        ripplePaint.setAlpha(80);
 
-        paintOut.setShadowLayer(10.0f, 0.0f, 5.0f, 0xFF000000);
-//        paintIn.setShadowLayer(10.0f, 0.0f, -2.0f, 0xFF000000);
+        int rippleColor = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            rippleColor = getContext().getResources().getColor(R.color.colorPrimary, null);
+        } else {
+            rippleColor = getContext().getResources().getColor(R.color.colorPrimary);
+        }
+        ripplePaint.setColor(rippleColor);
+        ripplePaint.setAlpha(80);
+        paintOut.setShadowLayer(8.0f, 0.0f, 8.0f,
+                Color.rgb(126, 126, 126));
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
         buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);

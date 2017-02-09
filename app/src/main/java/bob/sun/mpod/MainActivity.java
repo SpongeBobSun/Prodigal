@@ -561,6 +561,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             public void dismissed() {
                                 Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
+                                if (playList == null || playList.size() == 0)
+                                    return;
                                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
                                 intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
                                 intent.putExtra("INDEX", 0);

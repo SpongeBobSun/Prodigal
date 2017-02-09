@@ -94,6 +94,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    } else {
+                        mediaPlayer.start();
                     }
 
                     if (playlist != null && playlist.size() > 0)
