@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.Set;
 
 import bob.sun.mpod.R;
+import bob.sun.mpod.utils.UserDefaults;
 
 /**
  * Created by sunkuan on 15/4/30.
