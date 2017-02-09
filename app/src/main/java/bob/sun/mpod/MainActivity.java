@@ -2,13 +2,17 @@ package bob.sun.mpod;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -50,6 +54,8 @@ import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SettingAdapter;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.AIDLDumper;
+import bob.sun.mpod.utils.AppConstants;
 import bob.sun.mpod.utils.NotificationUtil;
 import bob.sun.mpod.utils.PreferenceUtil;
 import bob.sun.mpod.utils.VibrateUtil;
@@ -67,13 +73,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private NowPlayingFragment nowPlayingFragment;
     private SettingsFragment settingMenu;
 
-    private SimpleListFragment artistsAlbumList;
-    private SimpleListFragment artistsAlbumSongList;
-    private SimpleListFragment albumSongList;
+    private ServiceBroadcastReceiver receiver;
 
     private WheelView wheelView;
-    private ServiceConnection serviceConnection;
-    public PlayerService playerService;
+    public PlayerServiceAIDL playerService;
     private OnTickListener currentTickObject;
     private Fragment currentFragment;
     private Stack<Fragment> fragmentStack;
@@ -246,29 +249,41 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
     }
 
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            playerService = PlayerServiceAIDL.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            playerService = null;
+        }
+    };
     private void startService(){
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-
-                playerService = (PlayerService) ((PlayerService.ServiceBinder) service).getService();
-                playerService.setPlayingListener(nowPlayingFragment);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                playerService = null;
-            }
-        };
         serviceIntent = new Intent(this,PlayerService.class);
         this.bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
     }
 
-//    @Override
-//    protected void onStart(){
-//        super.onStart();
-//        startService();
-//    }
+    @Override
+    protected void onStart(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.broadcastSongChange);
+        if (receiver == null)
+            receiver = new ServiceBroadcastReceiver();
+        registerReceiver(receiver, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        super.onStop();
+    }
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -326,7 +341,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         if (playerService == null) {
             return;
         }
-        SongBean bean = playerService.getCurrentSong();
+        SongBean bean = null;
+        try {
+            bean = playerService.getCurrentSong();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         if (bean == null){
             return;
         }
@@ -339,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 .putString("Genre",bean.getGenre())
                 .putLong("Duration",bean.getDuration())
                 .commit();
-        lastPlayList = playerService.getPlayList();
+        lastPlayList = AIDLDumper.getPlayList(playerService);
         if (lastPlayList == null)
             return;
         PlayList saveList = new PlayList();
@@ -403,10 +423,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     public void onPlay() {
         wheelView.rippleFrom(WheelView.RipplePoint.Bottom);
         if(playerService == null){
-            Intent intent = new Intent(this,PlayerService.class);
-            this.bindService(intent,serviceConnection,BIND_AUTO_CREATE);
+            startService();
         }
-        if (playerService.isPlaying() == true){
+        if (AIDLDumper.isPlaying(playerService) == true){
             Intent intent = new Intent(this,PlayerService.class);
             intent.putExtra("CMD", PlayerService.CMD_PAUSE);
             startService(intent);
@@ -414,9 +433,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             //TODO
             //Add resume & pick play logic here.
             Intent intent = new Intent(this,PlayerService.class);
-            if (playerService.getCurrentSong() == null && playerService.getPlayList() == null) {
+            if (AIDLDumper.getCurrentSong(playerService) == null && AIDLDumper.getPlayList(playerService) == null) {
                 intent.putExtra("DATA",lastSongBean.getFilePath());
-                playerService.setPlayList(lastPlayList);
+                AIDLDumper.setPlaylist(playerService, lastPlayList);
             }
             intent.putExtra("CMD",PlayerService.CMD_RESUME);
             startService(intent);
@@ -499,8 +518,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             public void dismissed() {
                                 SimpleListFragment menu = new SimpleListFragment();
                                 SimpleListMenuAdapter adapter;
-                                if (playerService != null && playerService.getPlayList() != null) {
-                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,playerService.getPlayList());
+                                if (playerService != null && AIDLDumper.getPlayList(playerService) != null) {
+                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,AIDLDumper.getPlayList(playerService));
                                     menu.setAdatper(adapter);
                                     adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                                 }else {
@@ -527,9 +546,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             @Override
                             public void dismissed() {
                                 switchFragmentTo(nowPlayingFragment, false);
-                                if (playerService.getCurrentSong() != null){
-                                    nowPlayingFragment.setSong(playerService.getCurrentSong());
-                                }else {
+                                SongBean song = AIDLDumper.getCurrentSong(playerService);
+                                if (song != null) {
+                                    nowPlayingFragment.setSong(song);
+                                } else {
                                     if (lastSongBean != null)
                                         nowPlayingFragment.setSong(lastSongBean);
                                 }
@@ -540,15 +560,20 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                switchFragmentTo(nowPlayingFragment, false);
                                 Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
                                 intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
                                 intent.putExtra("INDEX", 0);
+                                if (playerService != null) {
+                                    AIDLDumper.setPlaylist(playerService, playList);
+                                } else {
+                                    startService();
+                                    AIDLDumper.setPlaylist(playerService, playList);
+                                }
                                 startService(intent);
+                                switchFragmentTo(nowPlayingFragment, false);
                                 nowPlayingFragment.setSong((SongBean) playList.get(0));
-                                playerService.setPlayList(playList);
                             }
                         });
 
@@ -602,18 +627,21 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             case SelectionDetail.MENU_TYPE_SONGS:
                 fragmentStack.push(currentFragment);
                 nowPlayingFragment.setSong((SongBean) detail.getData());
-                fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
-                currentFragment = nowPlayingFragment;
-                this.currentTickObject = nowPlayingFragment;
-                wheelView.setOnTickListener(nowPlayingFragment);
+
+                if (playerService == null)
+                    startService();
 
                 Intent intent = new Intent(this,PlayerService.class);
                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
                 intent.putExtra("DATA",((SongBean) detail.getData()).getFilePath());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
-                playerService.setPlayList(detail.getPlaylist());
+                AIDLDumper.setPlaylist(playerService, detail.getPlaylist());
 
+                fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
+                currentFragment = nowPlayingFragment;
+                this.currentTickObject = nowPlayingFragment;
+                wheelView.setOnTickListener(nowPlayingFragment);
                 break;
             case SelectionDetail.MENU_TYPE_SETTING:
                 switch ((String) detail.getData()){
@@ -644,5 +672,16 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         currentFragment = fragment;
         this.currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
+    }
+
+    class ServiceBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            NowPlayingFragment fragment = ((MainActivity) context).nowPlayingFragment;
+            if (fragment == null)
+                return;
+            fragment.onSongChanged();
+        }
     }
 }

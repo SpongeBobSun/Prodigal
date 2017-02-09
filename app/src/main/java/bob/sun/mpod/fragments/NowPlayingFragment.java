@@ -1,5 +1,6 @@
 package bob.sun.mpod.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,20 +15,22 @@ import android.widget.TextView;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.squareup.picasso.Picasso;
 
+import bob.sun.mpod.MainActivity;
+import bob.sun.mpod.PlayerServiceAIDL;
 import bob.sun.mpod.R;
 import bob.sun.mpod.controller.OnTickListener;
-import bob.sun.mpod.controller.PlayingListener;
 import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.AIDLDumper;
 import bob.sun.mpod.utils.VolumeUtil;
 
 
 /**
  * Created by sunkuan on 15/5/4.
  */
-public class NowPlayingFragment extends Fragment implements OnTickListener, PlayingListener {
+public class NowPlayingFragment extends Fragment implements OnTickListener {
 
     enum ViewMode {
         Playing,
@@ -42,6 +45,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
     Runnable dismissRunnable;
     VolumeUtil volume;
     ViewMode viewMode;
+    Runnable progressFetcher;
 
     private final float seekStep = 0.1f;
     int seekedPosistiton;
@@ -69,7 +73,34 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
         return ret;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            if (progressFetcher != null)
+                view.removeCallbacks(progressFetcher);
+        } else {
+            if (progressFetcher == null) {
+                progressFetcher = new Runnable() {
+                    @Override
+                    public void run() {
+                        PlayerServiceAIDL service = ((MainActivity)getActivity()).playerService;
+                        if (service != null) {
+                            onProcessChanged(AIDLDumper.getCurrent(service), AIDLDumper.getDuration(service));
+                        }
+                        view.postDelayed(this, 1000);
+                    }
+                };
+            }
+            view.post(progressFetcher);
+        }
+    }
+
+
     public void setSong(SongBean songBean){
+        if (progressFetcher != null)
+            view.removeCallbacks(progressFetcher);
+
         song = songBean;
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_title)).setText(song.getTitle());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
@@ -86,18 +117,20 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
 
         viewMode = ViewMode.Playing;
 
-        dismissRunnable = new Runnable() {
-            @Override
-            public void run() {
-                long current = System.currentTimeMillis();
-                if (current - lastTick > 2000) {
-                    setViewMode(ViewMode.Playing);
+        if (dismissRunnable == null) {
+            dismissRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    long current = System.currentTimeMillis();
+                    if (current - lastTick > 2000) {
+                        setViewMode(ViewMode.Playing);
 
-                    seekView.setVisibility(View.INVISIBLE);
-                    viewMode = ViewMode.Playing;
+                        seekView.setVisibility(View.INVISIBLE);
+                        viewMode = ViewMode.Playing;
+                    }
                 }
-            }
-        };
+            };
+        }
     }
 
     @Override
@@ -164,12 +197,20 @@ public class NowPlayingFragment extends Fragment implements OnTickListener, Play
         return null;
     }
 
-    @Override
-    public void onSongChanged(SongBean bean) {
+    public void onSongChanged() {
+        PlayerServiceAIDL serviceAIDL = ((MainActivity) getActivity()).playerService;
+        if (serviceAIDL == null)
+            return;
+        SongBean bean = AIDLDumper.getCurrentSong(serviceAIDL);
+        if (bean == null)
+            return;
         setSong(bean);
+        if (!isHidden()) {
+            view.removeCallbacks(progressFetcher);
+            view.post(progressFetcher);
+        }
     }
 
-    @Override
     public void onProcessChanged(final int current, final int total) {
         if (progressView != null )
         view.post(new Runnable() {

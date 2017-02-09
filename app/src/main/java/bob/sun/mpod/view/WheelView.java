@@ -48,7 +48,7 @@ public class WheelView extends View {
 
     private boolean animating;
     private float timer;
-    private static final int duration = 200, frameRate = 5;
+    private static final int duration = 200, frameRate = 10;
     private float maxRadius = 1000;
     private Runnable runnable;
 
@@ -105,12 +105,15 @@ public class WheelView extends View {
 
         if (animating) {
             if (timer >= duration) {
+                getHandler().removeCallbacks(runnable);
                 animating = false;
             } else {
                 postDelayed(runnable, (long) timer);
                 timer = (float)2 * (timer + frameRate);
-                canvas.drawCircle(ripplePoint.x, ripplePoint.y, (timer / duration) * maxRadius, ripplePaint);
+                canvas.drawCircle(ripplePoint.x, ripplePoint.y, (timer / duration) * maxRadius + buttonWidth, ripplePaint);
             }
+        } else {
+            getHandler().removeCallbacks(runnable);
         }
 
         canvas.drawCircle(center.x,center.y,radiusIn,paintIn);

@@ -1,6 +1,8 @@
 package bob.sun.mpod.model;
 
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import java.io.Serializable;
@@ -8,7 +10,7 @@ import java.io.Serializable;
 /**
  * Created by sunkuan on 15/4/30.
  */
-public class SongBean implements Serializable {
+public class SongBean implements Serializable, Parcelable {
     private String title;
     private String artist;
     private String album;
@@ -20,6 +22,36 @@ public class SongBean implements Serializable {
     private long size;
     private long id;
 
+    public SongBean() {
+
+    }
+
+    public SongBean(Parcel in) {
+        title = in.readString();
+        artist = in.readString();
+        album = in.readString();
+        albumId = in.readLong();
+        genre = in.readString();
+        fileName = in.readString();
+        filePath = in.readString();
+        duration = in.readInt();
+        size = in.readLong();
+        id = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(title);
+        out.writeString(artist);
+        out.writeString(album);
+        out.writeLong(albumId);
+        out.writeString(genre);
+        out.writeString(fileName);
+        out.writeString(filePath);
+        out.writeInt(duration);
+        out.writeLong(size);
+        out.writeLong(id);
+    }
 
     public String getTitle() {
         return title;
@@ -113,5 +145,23 @@ public class SongBean implements Serializable {
         setDuration(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
         setSize(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)));
         setAlbumId(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)));
+    }
+
+    public static final Creator<SongBean> CREATOR = new Creator<SongBean>() {
+
+        @Override
+        public SongBean createFromParcel(Parcel source) {
+            return new SongBean(source);
+        }
+
+        @Override
+        public SongBean[] newArray(int size) {
+            return new SongBean[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

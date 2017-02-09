@@ -1,37 +1,30 @@
 package bob.sun.mpod.service;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Binder;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.util.Log;
+import android.os.RemoteException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.List;
 
-import bob.sun.mpod.controller.PlayingListener;
-import bob.sun.mpod.model.MediaLibrary;
+import bob.sun.mpod.PlayerServiceAIDL;
 import bob.sun.mpod.model.SongBean;
+import bob.sun.mpod.utils.AppConstants;
 import bob.sun.mpod.utils.NotificationUtil;
-import bob.sun.mpod.utils.PreferenceUtil;
 
 /**
  * Created by sunkuan on 15/4/29.
  */
-public class PlayerService extends Service implements MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
+public class PlayerService extends Service implements MediaPlayer.OnCompletionListener,
+        AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
-    private final ServiceBinder binder = new ServiceBinder();
     private ArrayList<SongBean> playlist;
     private int index;
-    private PlayingListener playingListener;
     private AudioManager audioManager;
-    private ProgressRunnable runnable;
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
     public static final int CMD_RESUME = 3;
@@ -52,7 +45,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(this);
-        runnable = new ProgressRunnable();
+        mediaPlayer.setOnPreparedListener(this);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
@@ -66,7 +59,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_PLAY:
                 String fileName = intent.getStringExtra("DATA");
                 index = intent.getIntExtra("INDEX",0);
-                runnable.stop();
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
                 }
@@ -74,11 +66,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 try {
                     mediaPlayer.setDataSource(fileName);
                     mediaPlayer.prepare();
-                    mediaPlayer.start();
-                    if (playingListener!=null)
-                        playingListener.onSongChanged(playlist.get(index));
-                    runnable.start();
-                    new Thread(runnable).start();
+                    Intent msg = new Intent(AppConstants.broadcastSongChange);
+                    msg.setPackage(this.getPackageName());
+                    sendBroadcast(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -106,7 +96,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         }
                     }
 
-                    mediaPlayer.start();
                     if (playlist != null && playlist.size() > 0)
                         NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
                 }
@@ -145,15 +134,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         index++;
         mediaPlayer.stop();
         mediaPlayer.reset();
-        runnable.stop();
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
-            mediaPlayer.start();
-            runnable.start();
-            new Thread(runnable).start();
-            if (playingListener != null)
-                playingListener.onSongChanged(playlist.get(index));
+            Intent msg = new Intent(AppConstants.broadcastSongChange);
+            msg.setPackage(this.getPackageName());
+            sendBroadcast(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,15 +152,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         index--;
         mediaPlayer.stop();
         mediaPlayer.reset();
-        runnable.stop();
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
-            mediaPlayer.start();
-            runnable.start();
-            new Thread(runnable).start();
-            if (playingListener != null )
-                playingListener.onSongChanged(playlist.get(index));
+            Intent msg = new Intent(AppConstants.broadcastSongChange);
+            msg.setPackage(this.getPackageName());
+            sendBroadcast(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -191,15 +174,54 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
     @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return new PlayerServiceAIDL.Stub() {
+
+            @Override
+            public boolean isPlaying() throws RemoteException {
+                return mediaPlayer.isPlaying();
+            }
+
+            @Override
+            public List getPlayList() throws RemoteException {
+                return playlist;
+            }
+
+            @Override
+            public void setPlayList(List list) throws RemoteException {
+                playlist = (ArrayList<SongBean>) list;
+            }
+
+            @Override
+            public long getDuration() throws RemoteException {
+                if (mediaPlayer.isPlaying())
+                    return mediaPlayer.getDuration();
+                if (playlist != null && playlist.size() > 0)
+                    return playlist.indexOf(index);
+                return -1;
+            }
+
+            @Override
+            public long getCurrent() throws RemoteException {
+                if (mediaPlayer.isPlaying())
+                    return mediaPlayer.getCurrentPosition();
+                return 0;
+            }
+
+            @Override
+            public SongBean getCurrentSong() throws RemoteException {
+                if (playlist == null || playlist.size() == 0)
+                    return null;
+                return playlist.get(index);
+            }
+        };
     }
 
-//    @Override
-//    public boolean onUnbind(Intent intent){
-//        mediaPlayer.reset();
-//        mediaPlayer.release();
-//        return super.onUnbind(intent);
-//    }
+    @Override
+    public boolean onUnbind(Intent intent){
+        mediaPlayer.reset();
+        mediaPlayer.release();
+        return super.onUnbind(intent);
+    }
     @Override
     public void onDestroy() {
         audioManager.abandonAudioFocus(this);
@@ -224,52 +246,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
     }
 
-    public class ServiceBinder extends Binder{
-        public Service getService(){return PlayerService.this;}
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mp.start();
     }
 
-    public void setPlayList(ArrayList<SongBean> list){
-        playlist = list;
-    }
-
-    public ArrayList getPlayList(){
-        return playlist;
-    }
-
-    public void setPlayingListener(PlayingListener playingListener) {
-        this.playingListener = playingListener;
-    }
-
-    private class ProgressRunnable implements Runnable{
-        int total;
-        int current;
-        private AtomicBoolean stop = new AtomicBoolean(false);
-
-        public void stop() {
-            stop.set(true);
-        }
-        public void start(){
-            stop.set(false);
-        }
-        @Override
-        public void run() {
-            while (!stop.get()) {
-                total = mediaPlayer.getDuration();
-                if(total == 0)
-                    continue;
-                current = mediaPlayer.getCurrentPosition();
-                if (playingListener == null)
-                    continue;
-                playingListener.onProcessChanged(current, total);
-                SystemClock.sleep(1000);
-            }
-        }
-
-    }
-
-    public SongBean getCurrentSong(){
-        if (playlist == null || playlist.size() == 0)
-            return null;
-        return playlist.get(index);
-    }
 }

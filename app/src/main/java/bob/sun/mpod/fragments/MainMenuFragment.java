@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import bob.sun.mpod.MainActivity;
+import bob.sun.mpod.PlayerServiceAIDL;
 import bob.sun.mpod.R;
 import bob.sun.mpod.adapters.MenuAdapter;
 import bob.sun.mpod.controller.OnTickListener;
@@ -26,6 +27,7 @@ import bob.sun.mpod.model.MediaLibrary;
 import bob.sun.mpod.model.SelectionDetail;
 import bob.sun.mpod.model.SongBean;
 import bob.sun.mpod.service.PlayerService;
+import bob.sun.mpod.utils.AIDLDumper;
 import bob.sun.mpod.view.AlbumStack;
 
 /**
@@ -92,13 +94,13 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         if (currentItemIndex == theList.getAdapter().getItemCount() -1){
             rightPanelContent.setVisibility(View.GONE);
             nowPlayingPage.setVisibility(View.VISIBLE);
-            PlayerService playerService = ((MainActivity) getActivity()).playerService;
-            if (playerService == null || playerService.getCurrentSong() == null){
+            PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
+            if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
                 ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText("Nobody");
                 ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText("Nothing");
                 return;
             }
-            SongBean song = playerService.getCurrentSong();
+            SongBean song = AIDLDumper.getCurrentSong(playerService);
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
             ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
