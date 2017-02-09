@@ -140,6 +140,13 @@
             android:gravity="center"
             android:textSize="20dp"
             />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:id="@+id/id_seeker_hint"
+            android:gravity="center"
+            android:textSize="15dp"
+            android:layout_below="@id/id_seeker"/>
 
     </RelativeLayout>
 </FrameLayout>

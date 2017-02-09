@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 
 
 import com.anthonycr.grant.PermissionsManager;
@@ -54,6 +55,7 @@ import bob.sun.mpod.utils.AIDLDumper;
 import bob.sun.mpod.utils.AppConstants;
 import bob.sun.mpod.utils.NotificationUtil;
 import bob.sun.mpod.utils.PreferenceUtil;
+import bob.sun.mpod.utils.ResUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
 
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
+        ResUtil.getInstance(getApplicationContext());
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
 

@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">mPod</string>
-    <string name="action_settings"></string>
+    <string name="albums">专辑</string>
+    <string name="artists">艺术家</string>
+    <string name="songs">歌曲</string>
+    <string name="cover_flow">Cover Flow</string>
+    <string name="playlists">播放列表</string>
+    <string name="genres">流派</string>
+    <string name="settings">设置</string>
+    <string name="now_playing">正在播放</string>
+    <string name="shuffle_songs">随机全部</string>
+    <string name="brought_you_by">来自</string>
+    <string name="about">关于</string>
+    <string name="shuffle">随机</string>
+    <string name="repeat">重复</string>
 </resources>

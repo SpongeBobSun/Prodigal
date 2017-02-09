@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import bob.sun.mpod.R;
+import bob.sun.mpod.utils.ResUtil;
 import bob.sun.mpod.adapters.VHListItem;
 
 /**
@@ -34,10 +35,11 @@ public class SettingAdapter {
         return staticInstance;
     }
     private void initMenuItems(){
+        ResUtil r = ResUtil.getInstance(null);
         menutItems = new ArrayList();
-        menutItems.add(new MenuMeta("About",false, MenuMeta.MenuType.About));
-        menutItems.add(new MenuMeta("Shuffle",false, MenuMeta.MenuType.ShuffleSettings));
-        menutItems.add(new MenuMeta("Repeat", false, MenuMeta.MenuType.RepeatSettings));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.about),false, MenuMeta.MenuType.About));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.shuffle),false, MenuMeta.MenuType.ShuffleSettings));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.repeat), false, MenuMeta.MenuType.RepeatSettings));
     }
 
     public SettingsAdapter getAdapter(){

@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">mPod</string>
+    <string name="albums">Albums</string>
+    <string name="artists">Artists</string>
+    <string name="songs">Songs</string>
+    <string name="cover_flow">Cover Flow</string>
+    <string name="playlists">Playlists</string>
+    <string name="genres">Genres</string>
+    <string name="settings">Settings</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="shuffle_songs">Shuffle Songs</string>
+    <string name="brought_you_by">Brought you by</string>
+    <string name="nothing">Nothing</string>
+    <string name="nobody">Nobody</string>
+    <string name="about">About</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="repeat">Repeat</string>
 </resources>

@@ -41,7 +41,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     SongBean song;
     View view, contentView, seekView;
     NumberProgressBar progressView, seeker;
-    TextView currentTime, totalTime, seekerTitle;
+    TextView currentTime, totalTime, seekerTitle, seekerHint;
     Runnable dismissRunnable;
     VolumeUtil volume;
     ViewMode viewMode;
@@ -67,6 +67,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         progressView = (NumberProgressBar) view.findViewById(R.id.id_progress_view);
         seeker = (NumberProgressBar) view.findViewById(R.id.id_seeker);
         seekerTitle = (TextView) view.findViewById(R.id.id_seeker_title);
+        seekerHint = (TextView) view.findViewById(R.id.id_seeker_hint);
         currentTime = (TextView) view.findViewById(R.id.current_time);
         totalTime = (TextView) view.findViewById(R.id.total_time);
         volume = VolumeUtil.getStaticInstance(getActivity());
@@ -242,6 +243,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
                 seeker.setProgress(volume.getCurrent());
                 seekView.setVisibility(View.VISIBLE);
                 seekerTitle.setText("Volume");
+                seekerHint.setText("Click on middle button to dismiss.");
                 break;
             case Seek:
                 seekedPosistiton = progressView.getProgress();
@@ -249,6 +251,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
                 seeker.setProgress(progressView.getProgress());
                 seekView.setVisibility(View.VISIBLE);
                 seekerTitle.setText("Seek");
+                seekerHint.setText("Click on middle button to confirm.");
                 break;
         }
         return;

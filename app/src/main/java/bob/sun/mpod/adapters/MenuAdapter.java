@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import bob.sun.mpod.R;
 
 import bob.sun.mpod.model.MenuMeta;
+import bob.sun.mpod.utils.ResUtil;
 
 /**
  * Created by sunkuan on 15/4/25.
@@ -31,15 +32,16 @@ public class MenuAdapter {
     }
     private void initLists(){
         mainMenuItems = new ArrayList<>();
-        mainMenuItems.add(new MenuMeta("Artists",false, MenuMeta.MenuType.Artists));
-        mainMenuItems.add(new MenuMeta("Albums",false, MenuMeta.MenuType.Albums));
-        mainMenuItems.add(new MenuMeta("Cover Flow",false, MenuMeta.MenuType.Coverflow));
-        mainMenuItems.add(new MenuMeta("Songs",false, MenuMeta.MenuType.Songs));
-        mainMenuItems.add(new MenuMeta("Playlist",false, MenuMeta.MenuType.Playlist));
-        mainMenuItems.add(new MenuMeta("Genres",false, MenuMeta.MenuType.Genres));
-        mainMenuItems.add(new MenuMeta("Shuffle Songs",false, MenuMeta.MenuType.ShuffleSongs));
-        mainMenuItems.add(new MenuMeta("Settings",false, MenuMeta.MenuType.Settings));
-        mainMenuItems.add(new MenuMeta("Now Playing",false, MenuMeta.MenuType.NowPlaying));
+        ResUtil r = ResUtil.getInstance(null);
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.artists),false, MenuMeta.MenuType.Artists));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.albums),false, MenuMeta.MenuType.Albums));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.cover_flow),false, MenuMeta.MenuType.Coverflow));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.songs),false, MenuMeta.MenuType.Songs));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.playlists),false, MenuMeta.MenuType.Playlist));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.genres),false, MenuMeta.MenuType.Genres));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.shuffle_songs),false, MenuMeta.MenuType.ShuffleSongs));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.settings),false, MenuMeta.MenuType.Settings));
+        mainMenuItems.add(new MenuMeta(r.getLocalized(R.string.now_playing),false, MenuMeta.MenuType.NowPlaying));
     }
     public static MenuAdapter getStaticInstance(Context context){
         if (staticInstance == null){

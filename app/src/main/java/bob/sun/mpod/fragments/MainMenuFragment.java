@@ -157,8 +157,8 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         nowPlayingPage.setVisibility(View.VISIBLE);
         PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
         if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
-            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText("Nobody");
-            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText("Nothing");
+            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(R.string.nothing);
+            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(R.string.nobody);
             return;
         }
         SongBean song = AIDLDumper.getCurrentSong(playerService);
