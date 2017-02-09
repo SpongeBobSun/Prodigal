@@ -34,6 +34,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     public static final int CMD_VOLUMN_UP = 7;
     public static final int CMD_VOLUMN_DOWN = 8;
     public static final int CMD_SEEK = 10;
+    public static final int CMD_PREPARE = 11;
 
     @Override
     public void onCreate(){
@@ -111,6 +112,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             case CMD_SEEK:
                 int position = intent.getIntExtra("DATA", -1);
                 onSeek(position);
+                break;
+            case CMD_PREPARE:
+                index = intent.getIntExtra("INDEX", 0);
                 break;
             default:
                 break;

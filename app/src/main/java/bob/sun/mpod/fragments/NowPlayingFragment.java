@@ -113,10 +113,10 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
         ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
         progressView.setMax(100);
-        progressView.setProgress(0);
+        onProcessChanged(0, song.getDuration());
         String img = MediaLibrary.getStaticInstance(view.getContext())
                 .getCoverUriByAlbumId(songBean.getAlbumId());
-        Picasso.with(view.getContext())
+        Picasso.with(getActivity())
                 .load(Uri.parse(img))
                 .placeholder(R.drawable.album)
                 .config(Bitmap.Config.RGB_565)
@@ -219,6 +219,8 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     }
 
     public void onProcessChanged(final int current, final int total) {
+        if (total == -1)
+            return;
         if (progressView != null )
         view.post(new Runnable() {
             @Override

@@ -59,6 +59,8 @@ import bob.sun.mpod.utils.ResUtil;
 import bob.sun.mpod.utils.VibrateUtil;
 import bob.sun.mpod.view.WheelView;
 
+import static bob.sun.mpod.service.PlayerService.CMD_PREPARE;
+
 
 public class MainActivity extends AppCompatActivity implements OnButtonListener {
     private FragmentManager fragmentManager;
@@ -307,18 +309,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         lastSongBean.setId(preferences.getLong("Id", 0));
         lastSongBean.setTitle(preferences.getString("Title", ""));
         lastSongBean.setAlbum(preferences.getString("Album", ""));
+        lastSongBean.setAlbumId(preferences.getLong("AlbumId", -1));
         lastSongBean.setArtist(preferences.getString("Artist", ""));
         lastSongBean.setFilePath(preferences.getString("FilePath", ""));
         lastSongBean.setGenre(preferences.getString("Genre", ""));
         lastSongBean.setDuration((int) preferences.getLong("Duration", 0));
 
-//        HashSet prefList = (HashSet) PreferenceUtil.getStaticInstance(this).getPreferences().getStringSet("LastList",null);
-//        if (prefList == null)
-//            return;
-//        lastPlayList = new ArrayList();
-//        Iterator iterator = prefList.iterator();
-//        while(iterator.hasNext())
-//            lastPlayList.add(MediaLibrary.getStaticInstance(this).getSongById((String) iterator.next()));
         File objectFile = new File("/data/data/bob.sun.mpod/playlistobject");
         if (! objectFile.exists())
             lastPlayList = new ArrayList();
@@ -331,7 +327,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
+        if (lastSongBean != null && playerService != null) {
+            AIDLDumper.setPlaylist(playerService, lastPlayList);
+        }
+        int index;
+        if (lastPlayList.contains(lastSongBean)) {
+            index = lastPlayList.indexOf(lastSongBean);
+            Intent intent = new Intent(this, PlayerService.class);
+            intent.putExtra("CMD", CMD_PREPARE);
+            intent.putExtra("INDEX", index);
+            startService(intent);
+        }
     }
 
     @Override
@@ -346,13 +352,16 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        bean = bean == null ? lastSongBean : bean;
         if (bean == null){
             return;
         }
+
         PreferenceUtil.getStaticInstance(this).getPreferences().edit()
                 .putLong("Id",bean.getId())
                 .putString("Title",bean.getTitle())
                 .putString("Album",bean.getAlbum())
+                .putLong("AlbumId", bean.getAlbumId())
                 .putString("Artist",bean.getArtist())
                 .putString("FilePath",bean.getFilePath())
                 .putString("Genre",bean.getGenre())
@@ -369,11 +378,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        HashSet saveList = new HashSet();
-//        Iterator iterator = lastPlayList.iterator();
-//        while(iterator.hasNext())
-//            saveList.add(""+((SongBean) iterator.next()).getId());
-//        PreferenceUtil.getStaticInstance(this).getPreferences().edit().putStringSet("LastList", saveList).commit();
     }
 
     @Override

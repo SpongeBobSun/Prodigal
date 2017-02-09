@@ -71,7 +71,7 @@ public class WheelView extends View {
         }
         ripplePaint.setColor(rippleColor);
         ripplePaint.setAlpha(80);
-        paintOut.setShadowLayer(8.0f, 0.0f, 8.0f,
+        paintOut.setShadowLayer(10f, 0.0f, 10f,
                 Color.rgb(126, 126, 126));
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);

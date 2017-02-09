@@ -147,6 +147,21 @@ public class SongBean implements Serializable, Parcelable {
         setAlbumId(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)));
     }
 
+    @Override
+    public boolean equals(Object another) {
+        boolean ret = false;
+        SongBean bean = null;
+        try {
+            bean = (SongBean) another;
+        } catch (ClassCastException e) {
+            ret = false;
+        }
+        if (bean != null) {
+            ret = bean.getId() == this.id;
+        }
+        return ret;
+    }
+
     public static final Creator<SongBean> CREATOR = new Creator<SongBean>() {
 
         @Override

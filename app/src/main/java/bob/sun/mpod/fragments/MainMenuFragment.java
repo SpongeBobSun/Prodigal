@@ -159,6 +159,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(R.string.nothing);
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(R.string.nobody);
+            ((ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover)).setImageResource(R.drawable.album);
             return;
         }
         SongBean song = AIDLDumper.getCurrentSong(playerService);
