@@ -674,10 +674,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            NowPlayingFragment fragment = ((MainActivity) context).nowPlayingFragment;
-            if (fragment == null)
-                return;
-            fragment.refreshSong();
+            if (nowPlayingFragment != null && !nowPlayingFragment.isHidden())
+                nowPlayingFragment.refreshSong();
+            if (mainMenu != null && !mainMenu.isHidden())
+                mainMenu.refreshCurrentSongIfNeeded();
         }
     }
 }

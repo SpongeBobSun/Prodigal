@@ -81,6 +81,19 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden)
+            refreshCurrentSongIfNeeded();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshCurrentSongIfNeeded();
+    }
+
+    @Override
     public void onNextTick() {
         if(currentItemIndex >= theList.getAdapter().getItemCount()-1){
             currentItemIndex = theList.getAdapter().getItemCount()-1;
@@ -92,26 +105,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
             theList.smoothScrollToPosition(currentItemIndex);
         MenuAdapter.getStaticInstance(null).HighlightItem(currentItemIndex);
         if (currentItemIndex == theList.getAdapter().getItemCount() -1){
-            rightPanelContent.setVisibility(View.GONE);
-            nowPlayingPage.setVisibility(View.VISIBLE);
-            PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
-            if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
-                ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText("Nobody");
-                ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText("Nothing");
-                return;
-            }
-            SongBean song = AIDLDumper.getCurrentSong(playerService);
-            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
-            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
-            ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
-            String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriByAlbumId(song.getAlbumId());
-
-            Picasso.with(getActivity())
-                    .load(Uri.parse(img)).fit().centerInside()
-                    .config(Bitmap.Config.RGB_565)
-                    .placeholder(R.drawable.album)
-                    .error(R.drawable.album)
-                    .into(currentCover);
+            refreshCurrentSong();
             return;
         } else if (currentItemIndex == 1) {
             albumStack.setVisibility(View.VISIBLE);
@@ -156,6 +150,35 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         ret.setDataType(ret.DATA_TYPE_STRING);
         ret.setData((((MenuAdapter.MainMenuAdapter)theList.getAdapter()).getItem(currentItemIndex)).menuType);
         return ret;
+    }
+
+    public void refreshCurrentSong() {
+        rightPanelContent.setVisibility(View.GONE);
+        nowPlayingPage.setVisibility(View.VISIBLE);
+        PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
+        if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
+            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText("Nobody");
+            ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText("Nothing");
+            return;
+        }
+        SongBean song = AIDLDumper.getCurrentSong(playerService);
+        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
+        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
+        ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
+        String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriByAlbumId(song.getAlbumId());
+
+        Picasso.with(getActivity())
+                .load(Uri.parse(img)).fit().centerInside()
+                .config(Bitmap.Config.RGB_565)
+                .placeholder(R.drawable.album)
+                .error(R.drawable.album)
+                .into(currentCover);
+    }
+
+    public void refreshCurrentSongIfNeeded () {
+        if (currentItemIndex == theList.getAdapter().getItemCount() -1) {
+            refreshCurrentSong();
+        }
     }
 
     @NonNull
