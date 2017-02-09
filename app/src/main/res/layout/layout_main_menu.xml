@@ -70,9 +70,9 @@
                         android:textStyle="bold"/>
                     <bob.sun.mpod.view.FocusedTextView
                         android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:textSize="15dp"
-                        android:gravity="center"
+                        android:layout_height="30dp"
+                        android:textSize="20dp"
+                        android:gravity="start"
                         android:text="Song Name"
                         android:id="@+id/id_mainmenu_nowplaying_title"
                         android:focusable="true"
@@ -91,7 +91,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:textSize="15dp"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="Artist"
                         android:id="@+id/id_mainmenu_nowplaying_artist"
                         android:focusable="true"
