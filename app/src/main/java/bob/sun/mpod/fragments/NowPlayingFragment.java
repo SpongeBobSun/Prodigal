@@ -96,6 +96,12 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshSong();
+    }
+
 
     public void setSong(SongBean songBean){
         if (progressFetcher != null)
@@ -197,7 +203,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         return null;
     }
 
-    public void onSongChanged() {
+    public void refreshSong() {
         PlayerServiceAIDL serviceAIDL = ((MainActivity) getActivity()).playerService;
         if (serviceAIDL == null)
             return;
