@@ -17,6 +17,7 @@ import bob.sun.bender.PlayerServiceAIDL;
 import bob.sun.bender.model.SongBean;
 import bob.sun.bender.utils.AppConstants;
 import bob.sun.bender.utils.NotificationUtil;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by sunkuan on 15/4/29.
@@ -41,6 +42,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     @Override
     public void onCreate(){
         super.onCreate();
+
+        Fabric.with(this, new Crashlytics());
+
         if(mediaPlayer != null){
             mediaPlayer.reset();
             mediaPlayer.release();
@@ -90,12 +94,15 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 if (!mediaPlayer.isPlaying()){
                     if (playlist == null || playlist.size() == 0){
                         String resumeName = intent.getStringExtra("DATA");
-                        if (resumeName == null)
+                        if (resumeName == null || resumeName.length() == 0)
                             break;
                         try {
                             mediaPlayer.setDataSource(resumeName);
                             mediaPlayer.prepare();
                         } catch (IOException e) {
+                            e.printStackTrace();
+                            Crashlytics.logException(e);
+                        } catch (IllegalStateException e) {
                             e.printStackTrace();
                             Crashlytics.logException(e);
                         }
