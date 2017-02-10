@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0px"
             android:layout_weight="1.0">
-            <bob.sun.mpod.view.WheelView
+            <bob.sun.bender.view.WheelView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/id_wheel_view"/>

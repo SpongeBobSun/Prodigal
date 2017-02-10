@@ -42,7 +42,7 @@
                     android:visibility="visible"
                     android:padding="16dp"
                     />
-                <bob.sun.mpod.view.AlbumStack
+                <bob.sun.bender.view.AlbumStack
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/id_album_stack"
@@ -68,7 +68,7 @@
                         android:textSize="12dp"
                         android:gravity="start"
                         android:textStyle="bold"/>
-                    <bob.sun.mpod.view.FocusedTextView
+                    <bob.sun.bender.view.FocusedTextView
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:textSize="20dp"
@@ -87,7 +87,7 @@
                         android:textSize="12dp"
                         android:gravity="start"
                         android:textStyle="bold"/>
-                    <bob.sun.mpod.view.FocusedTextView
+                    <bob.sun.bender.view.FocusedTextView
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:textSize="15dp"

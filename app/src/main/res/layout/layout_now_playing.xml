@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1.0"/>
-                <bob.sun.mpod.view.FocusedTextView
+                <bob.sun.bender.view.FocusedTextView
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1.0"
@@ -45,7 +45,7 @@
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"/>
     
-                <bob.sun.mpod.view.FocusedTextView
+                <bob.sun.bender.view.FocusedTextView
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1.0"
@@ -57,7 +57,7 @@
                     android:ellipsize="marquee"
                     android:marqueeRepeatLimit="marquee_forever"/>
     
-                <bob.sun.mpod.view.FocusedTextView
+                <bob.sun.bender.view.FocusedTextView
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1.0"
