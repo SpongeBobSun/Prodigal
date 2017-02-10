@@ -26,6 +26,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnPreparedListener {
     private MediaPlayer mediaPlayer;
     private ArrayList<SongBean> playlist;
+    private SongBean currentSong;
     private int index;
     private AudioManager audioManager;
     public static final int CMD_PLAY = 1;
@@ -81,7 +82,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     e.printStackTrace();
                     Crashlytics.logException(e);
                 }
-                NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
+                NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(song);
+                currentSong = song;
                 break;
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
@@ -93,26 +95,30 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 break;
             case CMD_RESUME:
                 song = (SongBean) intent.getSerializableExtra("DATA");
-                if (!mediaPlayer.isPlaying()){
-                    if (playlist == null || playlist.size() == 0){
-                        if (song == null || song.getId() == -1)
-                            break;
+                if (song != null) {
+                    //Song from caller, means current not playing anything.
+                    if (!mediaPlayer.isPlaying()) {
                         try {
                             mediaPlayer.reset();
-                            mediaPlayer.setDataSource(song.getFilePath());
                             mediaPlayer.prepare();
+                            mediaPlayer.setDataSource(song.getFilePath());
+                            currentSong = song;
                         } catch (IOException e) {
                             e.printStackTrace();
-                            Crashlytics.logException(e);
                         } catch (IllegalStateException e) {
                             e.printStackTrace();
                             Crashlytics.logException(e);
                         }
-                    } else {
-                        mediaPlayer.start();
                     }
-                    NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(song);
+                } else {
+                    //Current is playing something
+                    mediaPlayer.start();
                 }
+                song = song == null ? currentSong : song;
+                if (song != null)
+                    NotificationUtil
+                            .getStaticInstance(getApplicationContext())
+                            .sendPlayNotification(song);
                 break;
             case CMD_NEXT:
                 onNext();
@@ -154,6 +160,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
+            currentSong = playlist.get(index);
             Intent msg = new Intent(AppConstants.broadcastSongChange);
             msg.setPackage(this.getPackageName());
             sendBroadcast(msg);
@@ -173,6 +180,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         try {
             mediaPlayer.setDataSource(playlist.get(index).getFilePath());
             mediaPlayer.prepare();
+            currentSong = playlist.get(index);
             Intent msg = new Intent(AppConstants.broadcastSongChange);
             msg.setPackage(this.getPackageName());
             sendBroadcast(msg);
@@ -215,7 +223,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 if (mediaPlayer.isPlaying())
                     return mediaPlayer.getDuration();
                 if (playlist != null && playlist.size() > 0)
-                    return playlist.indexOf(index);
+                    return playlist.get(index).getDuration();
                 return -1;
             }
 
@@ -228,9 +236,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
             @Override
             public SongBean getCurrentSong() throws RemoteException {
-                if (playlist == null || playlist.size() == 0)
-                    return null;
-                return playlist.get(index);
+                return currentSong;
             }
         };
     }

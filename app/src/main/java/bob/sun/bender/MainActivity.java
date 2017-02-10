@@ -436,24 +436,21 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             startService();
             return;
         }
-        if (AIDLDumper.isPlaying(playerService) == true){
-            Intent intent = new Intent(this,PlayerService.class);
+        Intent intent;
+        if (AIDLDumper.isPlaying(playerService)) {
+            intent = new Intent(this, PlayerService.class);
             intent.putExtra("CMD", PlayerService.CMD_PAUSE);
-            startService(intent);
-        }else if (lastSongBean.getId() != -1){
-            //TODO
-            //Add resume & pick play logic here.
-            Intent intent = new Intent(this,PlayerService.class);
-            if (AIDLDumper.getCurrentSong(playerService) == null &&
-                    AIDLDumper.getPlayList(playerService) == null) {
-                intent.putExtra("DATA", (Parcelable) lastSongBean);
-                AIDLDumper.setPlaylist(playerService, lastPlayList);
-            } else if (AIDLDumper.getCurrentSong(playerService) == null){
+        } else {
+            if (AIDLDumper.getCurrentSong(playerService) != null) {
+                intent = new Intent(this, PlayerService.class);
+                intent.putExtra("CMD", PlayerService.CMD_RESUME);
+            } else {
+                intent = new Intent(this, PlayerService.class);
+                intent.putExtra("CMD", PlayerService.CMD_PLAY);
                 intent.putExtra("DATA", (Parcelable) lastSongBean);
             }
-            intent.putExtra("CMD",PlayerService.CMD_RESUME);
-            startService(intent);
         }
+        startService(intent);
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
