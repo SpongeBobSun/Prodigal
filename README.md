@@ -1,4 +1,4 @@
-# mPod
+# Prodigal
 
 Music Player APP looks and feels like an classic music player.
 
