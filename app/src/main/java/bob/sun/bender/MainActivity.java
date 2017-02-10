@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         lastSongBean.setGenre(preferences.getString("Genre", ""));
         lastSongBean.setDuration((int) preferences.getLong("Duration", 0));
 
-        File objectFile = new File("/data/data/bob.sun.mpod/playlistobject");
+        File objectFile = new File("/data/data/bob.sun.bender/playlistobject");
         if (! objectFile.exists())
             lastPlayList = new ArrayList();
         try {
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         PlayList saveList = new PlayList();
         saveList.addAll(lastPlayList);
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/data/data/bob.sun.mpod/playlistobject"));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/data/data/bob.sun.bender/playlistobject"));
             oos.writeObject(saveList);
         } catch (IOException e) {
             e.printStackTrace();

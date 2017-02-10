@@ -39,7 +39,7 @@ public class VHImageListItem extends RecyclerView.ViewHolder {
         }else{
             contentView.setBackgroundColor(Color.TRANSPARENT);
         }
-        if (imgUri != null) {
+        if (imgUri != null && !imgUri.equalsIgnoreCase((String) imageView.getTag())) {
             imageView.setVisibility(View.VISIBLE);
             Picasso.with(contentView.getContext())
                     .load(Uri.parse(imgUri))
@@ -48,7 +48,8 @@ public class VHImageListItem extends RecyclerView.ViewHolder {
                     .error(R.drawable.album)
                     .fit().centerCrop()
                     .into(imageView);
-        } else {
+            imageView.setTag(imgUri);
+        } else if (imgUri == null){
             imageView.setImageResource(R.drawable.album);
         }
 

@@ -12,7 +12,7 @@
     -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <permission android:name="sun.bob.mpod.allow_broadcast"
+    <permission android:name="sun.bob.bender.allow_broadcast"
         android:protectionLevel="signature"/>
 
     <application
@@ -32,7 +32,7 @@
         </activity>
         <service
             android:name="bob.sun.bender.service.PlayerService"
-            android:process=".mPodPlayer"
+            android:process=".PrdPlayer"
             />
     </application>
 

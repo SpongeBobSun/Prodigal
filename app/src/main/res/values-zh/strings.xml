@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">mPod</string>
+    <string name="app_name">Prodigal</string>
     <string name="albums">专辑</string>
     <string name="artists">艺术家</string>
     <string name="songs">歌曲</string>

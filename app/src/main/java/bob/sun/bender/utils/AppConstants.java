@@ -24,7 +24,7 @@ public class AppConstants {
     public static final String kShuffle = "mpod_app_settings.key.shuffle";
     public static final String kRepeat = "mpod_app_settings.key.repeat";
 
-    public static final String broadcastSongChange = "sun.bob.mpod.songchanged";
-    public static final String broadcastPermission = "sun.bob.mpod.allow_broadcast";
+    public static final String broadcastSongChange = "sun.bob.bender.songchanged";
+    public static final String broadcastPermission = "sun.bob.bender.allow_broadcast";
 
 }
