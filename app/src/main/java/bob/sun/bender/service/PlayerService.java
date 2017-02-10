@@ -62,16 +62,17 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         if (intent == null){
             return START_REDELIVER_INTENT;
         }
+        SongBean song;
         switch (intent.getIntExtra("CMD",-1)){
             case CMD_PLAY:
-                String fileName = intent.getStringExtra("DATA");
+                song = (SongBean) intent.getSerializableExtra("DATA");
                 index = intent.getIntExtra("INDEX",0);
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
                 }
                 mediaPlayer.reset();
                 try {
-                    mediaPlayer.setDataSource(fileName);
+                    mediaPlayer.setDataSource(song.getFilePath());
                     mediaPlayer.prepare();
                     Intent msg = new Intent(AppConstants.broadcastSongChange);
                     msg.setPackage(this.getPackageName());
@@ -91,13 +92,14 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 }
                 break;
             case CMD_RESUME:
+                song = (SongBean) intent.getSerializableExtra("DATA");
                 if (!mediaPlayer.isPlaying()){
                     if (playlist == null || playlist.size() == 0){
-                        String resumeName = intent.getStringExtra("DATA");
-                        if (resumeName == null || resumeName.length() == 0)
+                        if (song == null || song.getId() == -1)
                             break;
                         try {
-                            mediaPlayer.setDataSource(resumeName);
+                            mediaPlayer.reset();
+                            mediaPlayer.setDataSource(song.getFilePath());
                             mediaPlayer.prepare();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -109,9 +111,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     } else {
                         mediaPlayer.start();
                     }
-
-                    if (playlist != null && playlist.size() > 0)
-                        NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
+                    NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(song);
                 }
                 break;
             case CMD_NEXT:

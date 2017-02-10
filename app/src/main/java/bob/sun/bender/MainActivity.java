@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -309,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         initFragments();
         lastSongBean = new SongBean();
         SharedPreferences preferences = UserDefaults.getStaticInstance(this).getPreferences();
-        lastSongBean.setId(preferences.getLong("Id", 0));
+        lastSongBean.setId(preferences.getLong("Id", -1));
         lastSongBean.setTitle(preferences.getString("Title", ""));
         lastSongBean.setAlbum(preferences.getString("Album", ""));
         lastSongBean.setAlbumId(preferences.getLong("AlbumId", -1));
@@ -330,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        if (lastSongBean != null && playerService != null) {
+        if (lastSongBean.getId() != -1 && playerService != null) {
             AIDLDumper.setPlaylist(playerService, lastPlayList);
         }
         int index;
@@ -438,13 +440,16 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             Intent intent = new Intent(this,PlayerService.class);
             intent.putExtra("CMD", PlayerService.CMD_PAUSE);
             startService(intent);
-        }else{
+        }else if (lastSongBean.getId() != -1){
             //TODO
             //Add resume & pick play logic here.
             Intent intent = new Intent(this,PlayerService.class);
-            if (AIDLDumper.getCurrentSong(playerService) == null && AIDLDumper.getPlayList(playerService) == null) {
-                intent.putExtra("DATA",lastSongBean.getFilePath());
+            if (AIDLDumper.getCurrentSong(playerService) == null &&
+                    AIDLDumper.getPlayList(playerService) == null) {
+                intent.putExtra("DATA", (Parcelable) lastSongBean);
                 AIDLDumper.setPlaylist(playerService, lastPlayList);
+            } else if (AIDLDumper.getCurrentSong(playerService) == null){
+                intent.putExtra("DATA", (Parcelable) lastSongBean);
             }
             intent.putExtra("CMD",PlayerService.CMD_RESUME);
             startService(intent);
@@ -559,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 if (song != null) {
                                     nowPlayingFragment.setSong(song);
                                 } else {
-                                    if (lastSongBean != null)
+                                    if (lastSongBean.getId() != -1)
                                         nowPlayingFragment.setSong(lastSongBean);
                                 }
                             }
@@ -574,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 if (playList == null || playList.size() == 0)
                                     return;
                                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                                intent.putExtra("DATA",((SongBean) playList.get(0)).getFilePath());
+                                intent.putExtra("DATA",(Serializable) playList.get(0));
                                 intent.putExtra("INDEX", 0);
                                 if (playerService != null) {
                                     AIDLDumper.setPlaylist(playerService, playList);
@@ -644,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
                 Intent intent = new Intent(this,PlayerService.class);
                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                intent.putExtra("DATA",((SongBean) detail.getData()).getFilePath());
+                intent.putExtra("DATA",(Serializable) detail.getData());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
                 AIDLDumper.setPlaylist(playerService, detail.getPlaylist());

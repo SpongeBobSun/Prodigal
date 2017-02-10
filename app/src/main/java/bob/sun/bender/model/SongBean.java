@@ -23,7 +23,7 @@ public class SongBean implements Serializable, Parcelable {
     private long id;
 
     public SongBean() {
-
+        id = -1;
     }
 
     public SongBean(Parcel in) {
