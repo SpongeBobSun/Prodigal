@@ -68,8 +68,7 @@ public class SettingsFragment extends Fragment implements OnTickListener {
     public SelectionDetail getCurrentSelection(){
         SelectionDetail ret = new SelectionDetail();
         ret.setMenuType(ret.MENU_TYPE_SETTING);
-        ret.setDataType(ret.DATA_TYPE_STRING);
-        ret.setData(((SettingAdapter.SettingsAdapter) listView.getAdapter()).getItem(currentItemIndex).itemName);
+        ret.setData(((SettingAdapter.SettingsAdapter) listView.getAdapter()).getItem(currentItemIndex).menuType);
         return ret;
     }
 }

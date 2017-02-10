@@ -18,6 +18,8 @@ public class MenuMeta {
         About,
         ShuffleSettings,
         RepeatSettings,
+        GetSourceCode,
+        ContactUs,
     }
     public String itemName;
     public boolean highlight;

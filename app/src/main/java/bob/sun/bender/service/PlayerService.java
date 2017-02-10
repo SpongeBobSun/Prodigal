@@ -7,6 +7,8 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     sendBroadcast(msg);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Crashlytics.logException(e);
                 }
                 NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(playlist.get(index));
                 break;
@@ -94,6 +97,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                             mediaPlayer.prepare();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            Crashlytics.logException(e);
                         }
                     } else {
                         mediaPlayer.start();
@@ -148,6 +152,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             sendBroadcast(msg);
         } catch (IOException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
     }
@@ -166,6 +171,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             sendBroadcast(msg);
         } catch (IOException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
     }

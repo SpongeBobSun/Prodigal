@@ -2,10 +2,13 @@ package bob.sun.bender.utils;
 
 import android.os.RemoteException;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 
 import bob.sun.bender.PlayerServiceAIDL;
 import bob.sun.bender.model.SongBean;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by bob.sun on 09/02/2017.
@@ -19,6 +22,7 @@ public class AIDLDumper {
             ret = service.isPlaying();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return ret;
     }
@@ -29,6 +33,7 @@ public class AIDLDumper {
             ret = (ArrayList) service.getPlayList();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return ret;
     }
@@ -39,6 +44,7 @@ public class AIDLDumper {
             ret = service.getCurrentSong();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return ret;
     }
@@ -48,6 +54,7 @@ public class AIDLDumper {
             service.setPlayList(list);
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 
@@ -57,6 +64,7 @@ public class AIDLDumper {
             ret = service.getCurrent();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return (int) ret;
     }
@@ -67,6 +75,7 @@ public class AIDLDumper {
             ret = service.getDuration();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         return (int) ret;
     }

@@ -24,6 +24,8 @@ import android.view.View;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,6 +60,7 @@ import bob.sun.bender.utils.ResUtil;
 import bob.sun.bender.utils.VibrateUtil;
 import bob.sun.bender.view.WheelView;
 
+import static bob.sun.bender.model.MenuMeta.MenuType.About;
 import static bob.sun.bender.service.PlayerService.CMD_PREPARE;
 
 
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         VibrateUtil.getStaticInstance(this);
@@ -350,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             bean = playerService.getCurrentSong();
         } catch (RemoteException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
         bean = bean == null ? lastSongBean : bean;
         if (bean == null){
@@ -376,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             oos.writeObject(saveList);
         } catch (IOException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 
@@ -426,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         wheelView.rippleFrom(WheelView.RipplePoint.Bottom);
         if(playerService == null){
             startService();
+            return;
         }
         if (AIDLDumper.isPlaying(playerService) == true){
             Intent intent = new Intent(this,PlayerService.class);
@@ -648,17 +655,21 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 wheelView.setOnTickListener(nowPlayingFragment);
                 break;
             case SelectionDetail.MENU_TYPE_SETTING:
-                switch ((String) detail.getData()){
-                    case "About":
+                switch ((MenuMeta.MenuType)detail.getData()){
+                    case About:
                         AboutFragment aboutFragment = new AboutFragment();
                         fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,aboutFragment).hide(aboutFragment).commit();
                         switchFragmentTo(aboutFragment, true);
                         break;
-                    case "Shuffle":
+                    case ShuffleSettings:
 
                         break;
-                    case "Repeat":
+                    case RepeatSettings:
 
+                        break;
+                    case GetSourceCode:
+                        break;
+                    case ContactUs:
                         break;
                 }
                 break;

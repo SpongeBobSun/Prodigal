@@ -115,4 +115,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-/DaoGenerator/out
+#Fabric
+app/fabric.properties

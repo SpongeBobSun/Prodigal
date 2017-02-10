@@ -33,9 +33,11 @@ public class SettingAdapter {
     private void initMenuItems(){
         ResUtil r = ResUtil.getInstance(null);
         menutItems = new ArrayList();
-        menutItems.add(new MenuMeta(r.getLocalized(R.string.about),false, MenuMeta.MenuType.About));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.shuffle),false, MenuMeta.MenuType.ShuffleSettings));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.repeat), false, MenuMeta.MenuType.RepeatSettings));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.get_source_code),false, MenuMeta.MenuType.GetSourceCode));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.contact_us),false, MenuMeta.MenuType.ContactUs));
+        menutItems.add(new MenuMeta(r.getLocalized(R.string.about),false, MenuMeta.MenuType.About));
     }
 
     public SettingsAdapter getAdapter(){
