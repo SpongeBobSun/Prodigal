@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.anthonycr.grant.PermissionsManager;
@@ -441,16 +442,23 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             intent = new Intent(this, PlayerService.class);
             intent.putExtra("CMD", PlayerService.CMD_PAUSE);
         } else {
-            if (AIDLDumper.getCurrentSong(playerService) != null) {
+            SongBean current = AIDLDumper.getCurrentSong(playerService);
+            if (current != null && current.getId() != -1) {
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_RESUME);
-            } else {
+            } else if (lastSongBean != null && lastSongBean.getId() != -1){
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_PLAY);
                 intent.putExtra("DATA", (Parcelable) lastSongBean);
+            } else {
+                intent = null;
             }
         }
-        startService(intent);
+        if (intent != null)
+            startService(intent);
+        else
+            Toast.makeText(this, R.string.nothing_to_play, Toast.LENGTH_SHORT).show();
+
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
