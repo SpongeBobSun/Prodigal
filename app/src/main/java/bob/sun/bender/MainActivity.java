@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.RemoteException;
@@ -260,6 +261,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             playerService = PlayerServiceAIDL.Stub.asInterface(service);
+            if (lastPlayList != null)
+                AIDLDumper.setPlaylist(playerService, lastPlayList);
         }
 
         @Override
@@ -321,9 +324,16 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         lastSongBean.setGenre(preferences.getString("Genre", ""));
         lastSongBean.setDuration((int) preferences.getLong("Duration", 0));
 
-        File objectFile = new File("/data/data/bob.sun.bender/playlistobject");
-        if (! objectFile.exists())
+        File objectFile = new File(AppConstants.getPlayistfile());
+        if (!objectFile.exists()) {
             lastPlayList = new ArrayList();
+            try {
+                new File(AppConstants.getExtFolder()).mkdirs();
+                objectFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream( new FileInputStream(objectFile));
             lastPlayList = new ArrayList();
@@ -380,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         PlayList saveList = new PlayList();
         saveList.addAll(lastPlayList);
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/data/data/bob.sun.bender/playlistobject"));
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(AppConstants.getPlayistfile()));
             oos.writeObject(saveList);
         } catch (IOException e) {
             e.printStackTrace();

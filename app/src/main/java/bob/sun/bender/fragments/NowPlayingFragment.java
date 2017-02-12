@@ -102,6 +102,13 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         refreshSong();
     }
 
+    @Override
+    public void onPause() {
+        if (progressFetcher != null)
+            view.removeCallbacks(progressFetcher);
+
+        super.onPause();
+    }
 
     public void setSong(SongBean songBean){
         if (progressFetcher != null)
