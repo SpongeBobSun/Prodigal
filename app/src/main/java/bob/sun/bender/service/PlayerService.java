@@ -75,6 +75,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 try {
                     mediaPlayer.setDataSource(song.getFilePath());
                     mediaPlayer.prepare();
+                    currentSong = song;
                     Intent msg = new Intent(AppConstants.broadcastSongChange);
                     msg.setPackage(this.getPackageName());
                     sendBroadcast(msg);
@@ -83,7 +84,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                     Crashlytics.logException(e);
                 }
                 NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(song);
-                currentSong = song;
                 break;
             case CMD_PAUSE:
                 if (mediaPlayer.isPlaying()){
