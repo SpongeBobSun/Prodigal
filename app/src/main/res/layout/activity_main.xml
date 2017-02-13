@@ -72,71 +72,46 @@
                 android:layout_alignRight="@+id/id_wheel_view"
                 android:background="@null"
                 android:layout_gravity="center">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_alignParentTop="true"
-                    >
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="35dp"
                         android:layout_marginTop="2dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/menu"
                         android:id="@+id/id_menu_button"
                         />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_alignParentBottom="true"
-                    android:id="@+id/linearLayout">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="35dp"
                         android:layout_marginBottom="2dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
                         android:src="@drawable/button"
                         android:id="@+id/id_play_button"
                         />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginLeft="7dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+                        android:layout_marginLeft="7dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/prev"
                         android:id="@+id/id_previous_button"
                         />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginRight="7dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/next"
                         android:id="@+id/id_next_button"
+                        android:layout_marginRight="7dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
                         />
-                </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
