@@ -666,12 +666,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 if (playerService == null)
                     startService();
 
+                AIDLDumper.setPlaylist(playerService, detail.getPlaylist());
                 Intent intent = new Intent(this,PlayerService.class);
                 intent.putExtra("CMD",PlayerService.CMD_PLAY);
                 intent.putExtra("DATA",(Serializable) detail.getData());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
-                AIDLDumper.setPlaylist(playerService, detail.getPlaylist());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;

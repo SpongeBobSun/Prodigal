@@ -67,7 +67,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         switch (intent.getIntExtra("CMD",-1)){
             case CMD_PLAY:
                 song = (SongBean) intent.getSerializableExtra("DATA");
-                index = intent.getIntExtra("INDEX",0);
+                index = playlist.indexOf(song);
+                if (index == -1)
+                    index = intent.getIntExtra("INDEX",0);
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.stop();
                 }
