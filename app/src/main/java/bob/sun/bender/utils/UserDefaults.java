@@ -29,7 +29,7 @@ public class UserDefaults {
 
     public static UserDefaults getStaticInstance(Context context){
         if (staticInstance == null)
-            staticInstance = new UserDefaults(context);
+            staticInstance = new UserDefaults(context.getApplicationContext());
         return staticInstance;
     }
 

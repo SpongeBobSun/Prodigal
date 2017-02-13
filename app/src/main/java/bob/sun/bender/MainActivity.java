@@ -262,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             playerService = PlayerServiceAIDL.Stub.asInterface(service);
             if (lastPlayList != null)
                 AIDLDumper.setPlaylist(playerService, lastPlayList);
+            AIDLDumper.updateSettings(playerService);
         }
 
         @Override
@@ -686,10 +687,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     case ShuffleSettings:
                         UserDefaults.getStaticInstance(this).rollShuffle();
                         settingMenu.reloadSettings();
+                        AIDLDumper.updateSettings(playerService);
                         break;
                     case RepeatSettings:
                         UserDefaults.getStaticInstance(this).rollRepeat();
                         settingMenu.reloadSettings();
+                        AIDLDumper.updateSettings(playerService);
                         break;
                     case GetSourceCode:
                         break;

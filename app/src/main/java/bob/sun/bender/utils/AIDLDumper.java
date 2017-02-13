@@ -79,4 +79,14 @@ public class AIDLDumper {
         }
         return (int) ret;
     }
+
+    public static void updateSettings(PlayerServiceAIDL service) {
+        UserDefaults ud = UserDefaults.getStaticInstance(null);
+        try {
+            service.updateSettings(ud.getRepeat(), ud.isShuffle());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            Crashlytics.logException(e);
+        }
+    }
 }

@@ -27,7 +27,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     private MediaPlayer mediaPlayer;
     private ArrayList<SongBean> playlist;
     private SongBean currentSong;
-    private int index;
+    private int index, repeatMode;
+    private boolean shuffle;
     private AudioManager audioManager;
     public static final int CMD_PLAY = 1;
     public static final int CMD_PAUSE = 2;
@@ -45,6 +46,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         super.onCreate();
 
         Fabric.with(this, new Crashlytics());
+        repeatMode = AppConstants.RepeatAll;
+        shuffle = false;
 
         if(mediaPlayer != null){
             mediaPlayer.reset();
@@ -144,17 +147,43 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        //Todo
-        //Add play sequence logic here.
-        //  *Shuffle
-        //  *Looping
-        //  *Loop list
-        onNext();
+        if (repeatMode == AppConstants.RepeatOne) {
+            if (currentSong == null)
+                return;
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(currentSong.getFilePath());
+                mediaPlayer.prepare();
+                Intent msg = new Intent(AppConstants.broadcastSongChange);
+                msg.setPackage(this.getPackageName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (repeatMode == AppConstants.RepeatNone) {
+            if (playlist != null && playlist.size() > 0) {
+                if (index < playlist.size() - 1) {
+                    onNext();
+                } else {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }
+            }
+        } else {
+            onNext();
+        }
     }
 
     private void onNext(){
-        if (playlist == null || index >= playlist.size()-1){
-            return;
+        if (playlist == null || index >= playlist.size() - 1){
+            if (playlist.size() == 0)
+                return;
+            if (index >= playlist.size() - 1) {
+                //We will increase this later.
+                index = -1;
+            } else {
+                return;
+            }
         }
         index++;
         mediaPlayer.stop();
@@ -239,6 +268,12 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             @Override
             public SongBean getCurrentSong() throws RemoteException {
                 return currentSong;
+            }
+
+            @Override
+            public void updateSettings(int repeatMode, boolean shuffle) throws RemoteException {
+                PlayerService.this.repeatMode = repeatMode;
+                PlayerService.this.shuffle = shuffle;
             }
         };
     }
