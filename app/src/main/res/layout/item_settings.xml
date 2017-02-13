@@ -9,21 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp">
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/id_itemlistview_imageview"
-            android:visibility="gone"
-            android:layout_marginRight="10dp"
-            />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="30dp"
+            android:layout_weight="1.0"
             android:textSize="20dp"
             android:maxLines="1"
             android:id="@+id/id_itemlistview_textview"
             android:paddingTop="2dp"
             android:layout_marginBottom="2dp"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="17dp"
+            android:id="@+id/id_itemlistview_settings"
+            android:textColor="@color/colorPrimary"
+            android:paddingTop="2dp"
+            android:layout_marginBottom="2dp"/>
     </LinearLayout>
 </FrameLayout>

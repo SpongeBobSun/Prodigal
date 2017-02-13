@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import bob.sun.bender.R;
+import bob.sun.bender.adapters.VHSetting;
 import bob.sun.bender.utils.ResUtil;
 import bob.sun.bender.adapters.VHListItem;
+import bob.sun.bender.utils.UserDefaults;
 
 /**
  * Created by bobsun on 15-5-22.
@@ -53,24 +55,46 @@ public class SettingAdapter {
         adapter.notifyDataSetChanged();
     }
 
-    public class SettingsAdapter extends RecyclerView.Adapter<VHListItem> {
+    public class SettingsAdapter extends RecyclerView.Adapter<VHSetting> {
         ArrayList<MenuMeta> arrayList;
+        ResUtil resUtil;
+        UserDefaults ud;
 
         public SettingsAdapter(Context context, int resource,ArrayList<MenuMeta> list) {
             super();
             this.arrayList = list;
+            resUtil = ResUtil.getInstance(context);
+            ud = UserDefaults.getStaticInstance(context);
         }
 
         @Override
-        public VHListItem onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_list_view, parent, false);
-            VHListItem ret = new VHListItem(view);
+        public VHSetting onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_settings, parent, false);
+            VHSetting ret = new VHSetting(view);
             return ret;
         }
 
         @Override
-        public void onBindViewHolder(VHListItem holder, int position) {
-            holder.configureWithString(arrayList.get(position).itemName, arrayList.get(position).highlight ? VHListItem.Status.ListItemHighlighted : VHListItem.Status.ListItemNormal);
+        public void onBindViewHolder(VHSetting holder, int position) {
+            MenuMeta item = arrayList.get(position);
+            switch (item.menuType) {
+                case About:
+                    holder.configureWithStrings(item.itemName, null, item.highlight);
+                    break;
+                case ShuffleSettings:
+                    holder.configureWithStrings(item.itemName, resUtil.getBoolString(ud.isShuffle()), item.highlight);
+                    break;
+                case RepeatSettings:
+                    holder.configureWithStrings(item.itemName, resUtil.getSettingsString(ud.getRepeat()), item.highlight);
+                    break;
+                case GetSourceCode:
+                    holder.configureWithStrings(item.itemName, null, item.highlight);
+                    break;
+                case ContactUs:
+                    holder.configureWithStrings(item.itemName, null, item.highlight);
+                    break;
+            }
+//            holder.configureWithString(arrayList.get(position).itemName, arrayList.get(position).highlight ? VHListItem.Status.ListItemHighlighted : VHListItem.Status.ListItemNormal);
         }
 
         @Override

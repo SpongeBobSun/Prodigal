@@ -11,7 +11,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.RemoteException;
@@ -64,7 +63,6 @@ import bob.sun.bender.utils.ResUtil;
 import bob.sun.bender.utils.VibrateUtil;
 import bob.sun.bender.view.WheelView;
 
-import static bob.sun.bender.model.MenuMeta.MenuType.About;
 import static bob.sun.bender.service.PlayerService.CMD_PREPARE;
 
 
@@ -182,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         if (settingMenu == null){
             settingMenu = new SettingsFragment();
             SettingAdapter adapter = SettingAdapter.getStaticInstance(this);
-            settingMenu.setAdatper(adapter);
+            settingMenu.setAdapter(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,settingMenu,"settingMenu").hide(settingMenu).commit();
         }
 
@@ -686,10 +684,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         switchFragmentTo(aboutFragment, true);
                         break;
                     case ShuffleSettings:
-
+                        UserDefaults.getStaticInstance(this).rollShuffle();
+                        settingMenu.reloadSettings();
                         break;
                     case RepeatSettings:
-
+                        UserDefaults.getStaticInstance(this).rollRepeat();
+                        settingMenu.reloadSettings();
                         break;
                     case GetSourceCode:
                         break;

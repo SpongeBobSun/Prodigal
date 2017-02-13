@@ -3,10 +3,11 @@ package bob.sun.bender.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import static bob.sun.bender.utils.AppConstants.RepeatAll;
+import static bob.sun.bender.utils.AppConstants.RepeatNone;
 import static bob.sun.bender.utils.AppConstants.kRepeat;
 import static bob.sun.bender.utils.AppConstants.kShuffle;
 import static bob.sun.bender.utils.AppConstants.pref_tag;
-import static bob.sun.bender.utils.AppConstants.RepeatMode;
 
 /**
  * Created by sunkuan on 15/5/12.
@@ -17,6 +18,13 @@ public class UserDefaults {
 
     private UserDefaults(Context context){
         preferences = context.getSharedPreferences(pref_tag,0);
+
+        if (!preferences.contains(kRepeat)) {
+            setRepeat(RepeatAll);
+        }
+        if (!preferences.contains(kShuffle)) {
+            setShuffle(false);
+        }
     }
 
     public static UserDefaults getStaticInstance(Context context){
@@ -30,11 +38,11 @@ public class UserDefaults {
     }
 
     public int getRepeat() {
-        return preferences.getInt(kRepeat, AppConstants.RepeatMode.All.getValue());
+        return preferences.getInt(kRepeat, AppConstants.RepeatAll);
     }
 
-    public void setRepeate(RepeatMode mode) {
-        preferences.edit().putInt(kRepeat, mode.getValue()).commit();
+    private void setRepeat(int mode) {
+        preferences.edit().putInt(kRepeat, mode).commit();
     }
 
     public boolean isShuffle(){
@@ -42,7 +50,21 @@ public class UserDefaults {
         return ret;
     }
 
-    public void setShuffle() {
-        preferences.edit().putBoolean(kShuffle, true).commit();
+    private void setShuffle(boolean shuffle) {
+        preferences.edit().putBoolean(kShuffle, shuffle).commit();
+    }
+
+    public void rollShuffle() {
+        boolean current = isShuffle();
+        setShuffle(!current);
+    }
+
+    public void rollRepeat() {
+        int current = getRepeat();
+        if (current == RepeatNone) {
+            setRepeat(RepeatAll);
+        } else {
+            setRepeat(current + 1);
+        }
     }
 }

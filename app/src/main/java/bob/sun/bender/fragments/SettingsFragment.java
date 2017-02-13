@@ -20,26 +20,29 @@ import bob.sun.bender.model.SettingAdapter;
 public class SettingsFragment extends Fragment implements OnTickListener {
 
     private RecyclerView listView;
-    private SettingAdapter adatper;
+    private SettingAdapter adapter;
     int currentItemIndex;
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_simple_list_menu, parent, false);
         listView = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
-        listView.setAdapter(adatper.getAdapter());
+        listView.setAdapter(adapter.getAdapter());
         listView.setLayoutManager(new LinearLayoutManager(parent.getContext()));
         currentItemIndex = 0;
-        adatper.HighlightItem(0);
+        adapter.HighlightItem(0);
         return ret;
     }
 
-    public void setAdatper(SettingAdapter adatper){
-        this.adatper = adatper;
+    public void setAdapter(SettingAdapter adapter){
+        this.adapter = adapter;
+    }
+
+    public void reloadSettings() {
+        adapter.getAdapter().notifyDataSetChanged();;
     }
 
     @Override
     public void onNextTick() {
-        Log.e("index:", currentItemIndex + "");
         if(currentItemIndex >= listView.getAdapter().getItemCount()-1){
             currentItemIndex = listView.getAdapter().getItemCount()-1;
             return;
@@ -48,12 +51,11 @@ public class SettingsFragment extends Fragment implements OnTickListener {
         listView.requestFocus();
         if(currentItemIndex > ((LinearLayoutManager)listView.getLayoutManager()).findLastCompletelyVisibleItemPosition())
             listView.smoothScrollToPosition(currentItemIndex);
-        adatper.HighlightItem(currentItemIndex);
+        adapter.HighlightItem(currentItemIndex);
     }
 
     @Override
     public void onPreviousTick() {
-        Log.e("index:",currentItemIndex+"");
         if(currentItemIndex < 1){
             return;
         }
@@ -61,7 +63,7 @@ public class SettingsFragment extends Fragment implements OnTickListener {
         listView.requestFocus();
         if(currentItemIndex < ((LinearLayoutManager)listView.getLayoutManager()).findFirstCompletelyVisibleItemPosition())
             listView.smoothScrollToPosition(currentItemIndex);
-        adatper.HighlightItem(currentItemIndex);
+        adapter.HighlightItem(currentItemIndex);
     }
 
     @Override

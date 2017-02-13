@@ -8,19 +8,10 @@ import android.os.Environment;
 
 public class AppConstants {
 
-    public enum RepeatMode {
-        All(0x233), One(0x234), None(0x235);
+    public static final int RepeatAll       =   0x233;
+    public static final int RepeatOne       =   0x234;
+    public static final int RepeatNone      =   0x235;
 
-        private final int value;
-
-        RepeatMode(int value) {
-            this.value = value;
-        }
-
-        public int getValue(){
-            return value;
-        }
-    }
 
     public static final String pref_tag = "mpod_app_settings";
     public static final String kShuffle = "mpod_app_settings.key.shuffle";

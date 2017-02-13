@@ -19,4 +19,9 @@
     <string name="get_source_code">Get Source Code</string>
     <string name="contact_us">Contact Us</string>
     <string name="nothing_to_play">Nothing to play now.</string>
+    <string name="repeat_all">Repeat All</string>
+    <string name="repeat_none">Repeat None</string>
+    <string name="repeat_one">Repeat One</string>
+    <string name="str_true">YES</string>
+    <string name="str_false">NO</string>
 </resources>
