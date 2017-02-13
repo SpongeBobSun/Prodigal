@@ -602,8 +602,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 if (playerService != null) {
                                     AIDLDumper.setPlaylist(playerService, playList);
                                 } else {
+                                    lastPlayList = playList;
                                     startService();
-                                    AIDLDumper.setPlaylist(playerService, playList);
                                 }
                                 startService(intent);
                                 switchFragmentTo(nowPlayingFragment, false);

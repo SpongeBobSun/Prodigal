@@ -12,7 +12,9 @@ import bob.sun.bender.R;
 import bob.sun.bender.adapters.VHImageListItem;
 import bob.sun.bender.controller.OnTickListener;
 import bob.sun.bender.adapters.SimpleListMenuAdapter;
+import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SelectionDetail;
+import bob.sun.bender.utils.UserDefaults;
 
 /**
  * Created by sunkuan on 15/4/30.
@@ -105,7 +107,11 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
                 ret.setMenuType(ret.MENU_TYPE_SONGS);
                 ret.setDataType(ret.DATA_TYPE_SONG);
                 ret.setData(adatper.getItem(currentItemIndex));
-                ret.setPlaylist(adatper.getList());
+                if (UserDefaults.getStaticInstance(null).isShuffle()) {
+                    ret.setPlaylist(MediaLibrary.getStaticInstance(null).shuffleList(adatper.getList()));
+                } else {
+                    ret.setPlaylist(adatper.getList());
+                }
                 ret.setIndexOfList(currentItemIndex);
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_ARTIST:

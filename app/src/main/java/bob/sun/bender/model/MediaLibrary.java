@@ -263,6 +263,7 @@ public class MediaLibrary {
 
     public ArrayList<SongBean> shuffleList(ArrayList<SongBean> originalList){
         ArrayList<SongBean> ret = new ArrayList<>();
+        originalList = (ArrayList<SongBean>) originalList.clone();
         while(originalList.size() >0 ){
             ret.add(originalList.remove(new Random().nextInt(originalList.size())));
         }
