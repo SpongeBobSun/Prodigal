@@ -82,8 +82,9 @@ public class WheelView extends View {
     @Override
     protected void onMeasure(int measureWidthSpec,int measureHeightSpec){
         super.onMeasure(measureWidthSpec,measureHeightSpec);
-        int measuredWidth = measureWidth(measureWidthSpec);
+//        int measuredWidth = measureWidth(measureWidthSpec);
         int measuredHeight = measureHeight(measureHeightSpec);
+        int measuredWidth = measuredHeight;
         this.setMeasuredDimension(measuredWidth,measuredHeight);
         radiusOut = (measuredHeight - 20)/ 2;
         radiusIn = radiusOut/3;
@@ -149,7 +150,7 @@ public class WheelView extends View {
         int specSize = MeasureSpec.getSize(measureSpec);
         int result = 0;
         if (specMode == MeasureSpec.AT_MOST) {
-            result = getWidth();
+            result = getHeight();
         } else if (specMode == MeasureSpec.EXACTLY) {
             result = specSize;
         }

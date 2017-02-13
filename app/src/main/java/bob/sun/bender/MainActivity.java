@@ -337,9 +337,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 e.printStackTrace();
             }
         }
+        lastPlayList = new ArrayList();
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream( new FileInputStream(objectFile));
-            lastPlayList = new ArrayList();
             lastPlayList.addAll((ArrayList) objectInputStream.readObject());
         } catch (IOException e) {
             e.printStackTrace();

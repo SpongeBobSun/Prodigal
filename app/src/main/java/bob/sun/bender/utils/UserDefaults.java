@@ -3,6 +3,8 @@ package bob.sun.bender.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import bob.sun.bender.BuildConfig;
+
 import static bob.sun.bender.utils.AppConstants.RepeatAll;
 import static bob.sun.bender.utils.AppConstants.RepeatNone;
 import static bob.sun.bender.utils.AppConstants.kRepeat;
@@ -15,15 +17,23 @@ import static bob.sun.bender.utils.AppConstants.pref_tag;
 public class UserDefaults {
     private static UserDefaults staticInstance;
     private SharedPreferences preferences;
+    private String appVersion;
+    private String kIntroShown = "kIntroShownFor:";
 
     private UserDefaults(Context context){
         preferences = context.getSharedPreferences(pref_tag,0);
+
+        appVersion = BuildConfig.VERSION_NAME;
+        kIntroShown += appVersion;
 
         if (!preferences.contains(kRepeat)) {
             setRepeat(RepeatAll);
         }
         if (!preferences.contains(kShuffle)) {
             setShuffle(false);
+        }
+        if (!preferences.contains(kIntroShown)) {
+            preferences.edit().putBoolean(kIntroShown, false).commit();
         }
     }
 
@@ -66,5 +76,13 @@ public class UserDefaults {
         } else {
             setRepeat(current + 1);
         }
+    }
+
+    public boolean shouldShowIntro() {
+        return preferences.getBoolean(kIntroShown, false);
+    }
+
+    public void introShown() {
+        preferences.edit().putBoolean(kIntroShown, true).commit();
     }
 }

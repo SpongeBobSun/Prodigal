@@ -3,8 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/coverflow/coverflow.iml" filepath="$PROJECT_DIR$/coverflow/coverflow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/coverflow/coverflow.iml" filepath="$PROJECT_DIR$/libraries/coverflow/coverflow.iml" />
       <module fileurl="file://$PROJECT_DIR$/mPod.iml" filepath="$PROJECT_DIR$/mPod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/material-intro/material-intro.iml" filepath="$PROJECT_DIR$/libraries/material-intro/material-intro.iml" />
     </modules>
   </component>
 </project>

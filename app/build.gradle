@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        maven { url 'https://jitpack.io' }
         maven { url 'https://maven.fabric.io/public' }
     }
 
@@ -52,4 +53,5 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
         transitive = true;
     }
+    compile project(':material-intro')
 }

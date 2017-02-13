@@ -9,7 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/coverflow" />
+            <option value="$PROJECT_DIR$/libraries/coverflow" />
+            <option value="$PROJECT_DIR$/libraries/material-intro" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
