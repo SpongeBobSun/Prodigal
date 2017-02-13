@@ -52,7 +52,7 @@ public class NotificationUtil {
 
     private void init() {
         normalView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification);
-        bigView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification);
+        bigView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification_big);
         Intent intentMain = new Intent(appContext, MainActivity.class);
         intentMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         clickIntent = PendingIntent.getActivity(appContext, 1, intentMain, PendingIntent.FLAG_UPDATE_CURRENT);
