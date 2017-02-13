@@ -243,8 +243,6 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     @Override
     public boolean onUnbind(Intent intent){
-        mediaPlayer.reset();
-        mediaPlayer.release();
         return super.onUnbind(intent);
     }
     @Override

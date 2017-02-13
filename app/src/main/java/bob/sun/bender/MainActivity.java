@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
     private boolean permissionGranted;
+    private boolean keepDancing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,8 +299,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     protected void onDestroy(){
         super.onDestroy();
 //        this.stopService(serviceIntent);
-        NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
-        stopService(new Intent(this, PlayerService.class));
+        if (!keepDancing) {
+            NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
+            stopService(new Intent(this, PlayerService.class));
+        }
         unbindService(serviceConnection);
     }
 
@@ -311,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             findViewById(R.id.id_holder_no_permission).setVisibility(View.VISIBLE);
             return;
         }
+        keepDancing = false;
         findViewById(R.id.id_holder_no_permission).setVisibility(View.GONE);
         initFragments();
         lastSongBean = new SongBean();
@@ -402,9 +406,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     public boolean onKeyDown(int keyCode,KeyEvent event){
         switch (keyCode){
             case KeyEvent.KEYCODE_BACK:
-                super.onKeyDown(keyCode,event);
+                keepDancing = true;
                 onPause();
-                return true;
+                break;
         }
         return super.onKeyDown(keyCode,event);
     }
