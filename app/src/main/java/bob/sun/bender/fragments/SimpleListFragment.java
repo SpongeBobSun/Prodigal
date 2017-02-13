@@ -22,30 +22,43 @@ import bob.sun.bender.utils.UserDefaults;
 public class SimpleListFragment extends Fragment implements OnTickListener {
 
     private RecyclerView listView;
-    private SimpleListMenuAdapter adatper;
+    private View emptyView;
+    private SimpleListMenuAdapter adapter;
     int currentItemIndex;
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup parent,
                              Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_simple_list_menu, parent, false);
+        emptyView = ret.findViewById(R.id.id_empty_view);
         listView = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
-        listView.setAdapter(adatper);
+        listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(parent.getContext()));
         currentItemIndex = 0;
-        adatper.highlightItem(0);
+        adapter.highlightItem(0);
+        checkEmpty();
         return ret;
     }
 
-    public void setAdatper(SimpleListMenuAdapter adatper){
-        this.adatper = adatper;
+    public void setAdapter(SimpleListMenuAdapter adapter){
+        this.adapter = adapter;
+    }
+
+    private void checkEmpty() {
+        if (adapter.getItemCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        } else {
+            emptyView.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
      * Compromise for the playinglist fragment.
      */
     public SimpleListMenuAdapter getAdapter(){
-        return adatper;
+        return adapter;
     }
 
     @Override
@@ -54,21 +67,21 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
         if(currentItemIndex >= listView.getAdapter().getItemCount()-1){
             currentItemIndex = listView.getAdapter().getItemCount()-1;
             holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
-            adatper.onBindViewHolder(holder, currentItemIndex);
+            adapter.onBindViewHolder(holder, currentItemIndex);
             return;
         }
         currentItemIndex+=1;
-        adatper.highlightItem(currentItemIndex);
+        adapter.highlightItem(currentItemIndex);
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex - 1);
         if (holder != null)
-            adatper.onBindViewHolder(holder, currentItemIndex - 1);
+            adapter.onBindViewHolder(holder, currentItemIndex - 1);
         if(currentItemIndex > ((LinearLayoutManager) listView.getLayoutManager()).findLastCompletelyVisibleItemPosition()) {
             listView.getLayoutManager().scrollToPosition(currentItemIndex);
             return;
         }
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
         if (holder != null) {
-            adatper.onBindViewHolder(holder, currentItemIndex);
+            adapter.onBindViewHolder(holder, currentItemIndex);
         }
     }
 
@@ -77,21 +90,21 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
         VHImageListItem holder;
         if(currentItemIndex < 1){
             holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
-            adatper.onBindViewHolder(holder, currentItemIndex);
+            adapter.onBindViewHolder(holder, currentItemIndex);
             return;
         }
         currentItemIndex -= 1;
-        adatper.highlightItem(currentItemIndex);
+        adapter.highlightItem(currentItemIndex);
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex + 1);
         if (holder != null)
-            adatper.onBindViewHolder(holder, currentItemIndex + 1);
+            adapter.onBindViewHolder(holder, currentItemIndex + 1);
         if(currentItemIndex < ((LinearLayoutManager) listView.getLayoutManager()).findFirstCompletelyVisibleItemPosition()) {
             listView.getLayoutManager().scrollToPosition(currentItemIndex);
             return;
         }
         holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
         if (holder != null) {
-            adatper.onBindViewHolder(holder, currentItemIndex);
+            adapter.onBindViewHolder(holder, currentItemIndex);
         }
 
     }
@@ -99,34 +112,34 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
     @Override
     public SelectionDetail getCurrentSelection() {
         SelectionDetail ret = new SelectionDetail();
-        if (adatper.getItemCount() == 0){
+        if (adapter.getItemCount() == 0){
             return ret;
         }
-        switch (adatper.getType()){
+        switch (adapter.getType()){
             case SimpleListMenuAdapter.SORT_TYPE_TITLE:
                 ret.setMenuType(ret.MENU_TYPE_SONGS);
                 ret.setDataType(ret.DATA_TYPE_SONG);
-                ret.setData(adatper.getItem(currentItemIndex));
+                ret.setData(adapter.getItem(currentItemIndex));
                 if (UserDefaults.getStaticInstance(null).isShuffle()) {
-                    ret.setPlaylist(MediaLibrary.getStaticInstance(null).shuffleList(adatper.getList()));
+                    ret.setPlaylist(MediaLibrary.getStaticInstance(null).shuffleList(adapter.getList()));
                 } else {
-                    ret.setPlaylist(adatper.getList());
+                    ret.setPlaylist(adapter.getList());
                 }
                 ret.setIndexOfList(currentItemIndex);
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_ARTIST:
                 ret.setMenuType(ret.MENU_TYPE_ARTIST);
                 ret.setData(ret.DATA_TYPE_STRING);
-                ret.setData(adatper.getItem(currentItemIndex));
+                ret.setData(adapter.getItem(currentItemIndex));
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_ALBUM:
                 ret.setMenuType(ret.MENU_TYPE_ALBUM);
                 ret.setData(ret.DATA_TYPE_STRING);
-                ret.setData(adatper.getItem(currentItemIndex));
+                ret.setData(adapter.getItem(currentItemIndex));
                 break;
             case SimpleListMenuAdapter.SORT_TYPE_GENRE:
                 ret.setMenuType(ret.MENU_TYPE_GENRES);
-                ret.setData(adatper.getItem(currentItemIndex));
+                ret.setData(adapter.getItem(currentItemIndex));
         }
         return ret;
     }

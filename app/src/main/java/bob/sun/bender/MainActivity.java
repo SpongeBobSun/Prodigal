@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             songsList = new SimpleListFragment();
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
-            songsList.setAdatper(adapter);
+            songsList.setAdapter(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container, songsList, "songsList").hide(songsList).commit();
         }
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllArtists());
             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ARTIST);
             artistsList = new SimpleListFragment();
-            artistsList.setAdatper(adapter);
+            artistsList.setAdapter(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,artistsList,"artistsList").hide(artistsList).commit();
         }
 
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllAlbums());
             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
             albumsList = new SimpleListFragment();
-            albumsList.setAdatper(adapter);
+            albumsList.setAdapter(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,albumsList,"albumList").hide(albumsList).commit();
         }
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             SimpleListMenuAdapter adapter = new SimpleListMenuAdapter(this,R.layout.item_simple_list_view,MediaLibrary.getStaticInstance(this).getAllGenre());
             adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_GENRE);
             genresList = new SimpleListFragment();
-            genresList.setAdatper(adapter);
+            genresList.setAdapter(adapter);
             fragmentManager.beginTransaction().add(R.id.id_screen_fragment_container,genresList,"genresList").hide(genresList).commit();
         }
 
@@ -552,18 +552,18 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 SimpleListMenuAdapter adapter;
                                 if (playerService != null && AIDLDumper.getPlayList(playerService) != null) {
                                     adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,AIDLDumper.getPlayList(playerService));
-                                    menu.setAdatper(adapter);
+                                    menu.setAdapter(adapter);
                                     adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                                 }else {
                                     if (lastPlayList != null){
                                         adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,lastPlayList);
-                                        menu.setAdatper(adapter);
+                                        menu.setAdapter(adapter);
                                         adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                                     } else {
                                         ArrayList crap = new ArrayList();
                                         crap.add("No playing list.");
                                         adapter = new SimpleListMenuAdapter(MainActivity.this, R.layout.item_simple_list_view, crap);
-                                        menu.setAdatper(adapter);
+                                        menu.setAdapter(adapter);
                                         adapter.setArrayListType(-1);
                                     }
                                 }
@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         MediaLibrary.getStaticInstance(this)
                                 .getAlbumsByArtist((String) detail.getData()));
                 SimpleListFragment artistMenu = new SimpleListFragment();
-                artistMenu.setAdatper(artistAdapter);
+                artistMenu.setAdapter(artistAdapter);
                 artistAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ALBUM);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,artistMenu).hide(artistMenu).commit();
@@ -640,7 +640,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         MediaLibrary.getStaticInstance(this)
                                 .getSongsByAlbum((String)detail.getData()));
                 SimpleListFragment albumMenu = new SimpleListFragment();
-                albumMenu.setAdatper(albumAdapter);
+                albumMenu.setAdapter(albumAdapter);
                 albumAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,albumMenu).hide(albumMenu).commit();
@@ -652,7 +652,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         MediaLibrary.getStaticInstance(this)
                                 .getArtistsByGenre((String) detail.getData()));
                 SimpleListFragment genresMenu = new SimpleListFragment();
-                genresMenu.setAdatper(genresAdapter);
+                genresMenu.setAdapter(genresAdapter);
                 genresAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_ARTIST);
                 fragmentManager.beginTransaction()
                         .add(R.id.id_screen_fragment_container,genresMenu).hide(genresMenu).commit();
