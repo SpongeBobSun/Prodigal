@@ -6,8 +6,8 @@
     android:layout_height="132dp"
     android:gravity="center_vertical">
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="132dp"
+        android:layout_height="132dp"
         android:id="@+id/id_image_view_notification"
         />
     <LinearLayout
