@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".intro.PrdIntroActivity"  android:theme="@style/AppTheme"/>
+        <activity android:name=".intro.BDIntroActivity"  android:theme="@style/AppTheme"/>
         <service
             android:name="bob.sun.bender.service.PlayerService"
             android:process=".PrdPlayer"

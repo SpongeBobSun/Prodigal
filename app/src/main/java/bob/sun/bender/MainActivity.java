@@ -27,6 +27,8 @@ import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import com.crashlytics.android.Crashlytics;
+
+import bob.sun.bender.intro.BDIntroActivity;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
         ResUtil.getInstance(getApplicationContext());
+        UserDefaults ud = UserDefaults.getStaticInstance(this);
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);
 
@@ -110,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         initOnButtonListener();
 
         startService();
+
+        if (ud.shouldShowIntro()) {
+            Intent intent = new Intent(this, BDIntroActivity.class);
+            startActivity(intent);
+        }
 
     }
 

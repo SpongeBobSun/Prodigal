@@ -5,33 +5,39 @@ import android.support.v4.app.Fragment;
 
 import com.heinrichreimersoftware.materialintro.slide.Slide;
 
+import bob.sun.bender.R;
+
 /**
  * Created by bob.sun on 13/02/2017.
  */
 
 public class IntroStepTwo implements Slide {
+    Fragment fragment;
+
     @Override
     public Fragment getFragment() {
-        return null;
+        if (fragment == null)
+            fragment = new AnimateIntroFragment().setStep(AnimateIntroFragment.IntroStep.Two);
+        return fragment;
     }
 
     @Override
     public int getBackground() {
-        return 0;
+        return R.color.colorPrimary;
     }
 
     @Override
     public int getBackgroundDark() {
-        return 0;
+        return R.color.colorPrimary;
     }
 
     @Override
     public boolean canGoForward() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean canGoBackward() {
-        return false;
+        return true;
     }
 }

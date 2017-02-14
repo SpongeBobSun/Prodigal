@@ -79,7 +79,7 @@ public class UserDefaults {
     }
 
     public boolean shouldShowIntro() {
-        return preferences.getBoolean(kIntroShown, false);
+        return !preferences.getBoolean(kIntroShown, false);
     }
 
     public void introShown() {

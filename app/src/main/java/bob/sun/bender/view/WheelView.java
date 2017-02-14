@@ -151,6 +151,8 @@ public class WheelView extends View {
         int result = 0;
         if (specMode == MeasureSpec.AT_MOST) {
             result = getHeight();
+            if (result == 0)
+                result = specSize;
         } else if (specMode == MeasureSpec.EXACTLY) {
             result = specSize;
         }
