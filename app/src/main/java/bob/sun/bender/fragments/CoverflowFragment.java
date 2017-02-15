@@ -88,13 +88,18 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
                     }
                 });
                 resized = true;
+
+                if (pagerAdapter.getCount() == 0) {
+                    emptyView.setVisibility(View.VISIBLE);
+                    pagerContainer.setVisibility(View.GONE);
+                } else {
+                    emptyView.setVisibility(View.GONE);
+                    pagerContainer.setVisibility(View.VISIBLE);
+                }
             }
         });
         emptyView = ret.findViewById(R.id.id_empty_view);
-        if (pagerAdapter.getCount() == 0) {
-            emptyView.setVisibility(View.VISIBLE);
-            pagerContainer.setVisibility(View.GONE);
-        }
+
         return ret;
     }
 

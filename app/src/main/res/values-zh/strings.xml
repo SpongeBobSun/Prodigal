@@ -34,5 +34,6 @@
     <string name="send_mail_using">给我发邮件</string>
     <string name="nobody">Nobody</string>
     <string name="nothing">Nothing</string>
+    <string name="contact_me_at">给我发邮件</string>
 
 </resources>
