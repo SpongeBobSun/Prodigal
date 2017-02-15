@@ -36,4 +36,10 @@ public class BDIntroActivity extends IntroActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        UserDefaults.getStaticInstance(getApplicationContext()).introShown();
+        super.onBackPressed();
+    }
 }

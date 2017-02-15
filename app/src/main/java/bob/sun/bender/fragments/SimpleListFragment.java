@@ -35,7 +35,6 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(parent.getContext()));
         currentItemIndex = 0;
-        adapter.highlightItem(0);
         checkEmpty();
         return ret;
     }

@@ -14,4 +14,25 @@
     <string name="about">关于</string>
     <string name="shuffle">随机</string>
     <string name="repeat">重复</string>
+    <string name="get_source_code">获取源代码</string>
+    <string name="contact_us">联系我们</string>
+    <string name="nothing_to_play">现在没有歌曲可播放</string>
+    <string name="repeat_all">重复全部</string>
+    <string name="repeat_none">不重复</string>
+    <string name="repeat_one">单曲循环</string>
+    <string name="str_true">是</string>
+    <string name="str_false">否</string>
+    <string name="empty">空的!</string>
+    <string name="finger_spinning_on_wheel_will_control_the_screen">转动滚轮来控制屏幕上的内容</string>
+    <string name="tap_on_middle_button_to_select">点击中间的按钮来选择</string>
+    <string name="music_player_which_looks_feels_like_a_real_device">一个APP看起来摸起来都像真的播放器</string>
+    <string name="about_prodigal">关于 Prodigal</string>
+    <string name="brought_you_by_bob_sun">由Bob Sun为你带来</string>
+    <string name="if_you_like_this_app">如果你喜欢这个APP, 请在GitHub上给我一颗星星</string>
+    <string name="credits">鸣谢</string>
+    <string name="icons_by">图标来自https://icons8.com</string>
+    <string name="send_mail_using">给我发邮件</string>
+    <string name="nobody">Nobody</string>
+    <string name="nothing">Nothing</string>
+
 </resources>
