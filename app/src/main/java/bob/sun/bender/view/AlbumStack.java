@@ -72,6 +72,7 @@ public class AlbumStack extends SwipeStack {
     }
 
     private void stopAutoSwipe() {
-        handler.removeCallbacks(swiper);
+        if (handler != null)
+            handler.removeCallbacks(swiper);
     }
 }

@@ -106,7 +106,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         if (currentItemIndex == theList.getAdapter().getItemCount() -1){
             refreshCurrentSong();
             return;
-        } else if (currentItemIndex == 1) {
+        } else if (currentItemIndex == 1 && albumStack.getAdapter().getCount() > 0) {
             albumStack.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
             return;
@@ -127,7 +127,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
             nowPlayingPage.setVisibility(View.GONE);
         }
         currentItemIndex -= 1;
-        if (currentItemIndex == 1) {
+        if (currentItemIndex == 1 && albumStack.getAdapter().getCount() > 1) {
             albumStack.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
         } else {

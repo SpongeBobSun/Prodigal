@@ -424,7 +424,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onMenu() {
         wheelView.rippleFrom(WheelView.RipplePoint.Top);
-        if(fragmentStack.isEmpty())
+        if(fragmentStack == null || fragmentStack.isEmpty())
             return;
 
         Fragment fragment = fragmentStack.pop();
@@ -487,6 +487,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onNext() {
         wheelView.rippleFrom(WheelView.RipplePoint.Right);
+        if (!permissionGranted)
+            return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_NEXT);
         startService(intent);
@@ -496,6 +498,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     public void onPrevious() {
         wheelView.rippleFrom(WheelView.RipplePoint.Left);
+        if (!permissionGranted)
+            return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
         startService(intent);

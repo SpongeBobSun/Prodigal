@@ -37,6 +37,7 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
     private CoverflowPagerAdapter pagerAdapter;
     private PagerContainer pagerContainer;
     private CoverFlow flow;
+    private View emptyView;
     private boolean resized;
 
     public CoverflowFragment() {
@@ -89,6 +90,11 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
                 resized = true;
             }
         });
+        emptyView = ret.findViewById(R.id.id_empty_view);
+        if (pagerAdapter.getCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            pagerContainer.setVisibility(View.GONE);
+        }
         return ret;
     }
 
