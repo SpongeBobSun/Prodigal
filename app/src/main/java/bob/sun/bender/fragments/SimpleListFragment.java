@@ -44,7 +44,7 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
     }
 
     private void checkEmpty() {
-        if (adapter.getItemCount() == 0) {
+        if (adapter == null || adapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
         } else {
