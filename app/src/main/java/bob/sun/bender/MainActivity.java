@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
-        ResUtil.getInstance(getApplicationContext());
+        ResUtil.getInstance(this);
         UserDefaults ud = UserDefaults.getStaticInstance(this);
 
         wheelView = (WheelView) findViewById(R.id.id_wheel_view);

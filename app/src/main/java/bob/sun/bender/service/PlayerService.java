@@ -176,6 +176,8 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
 
     private void onNext(){
         if (playlist == null || index >= playlist.size() - 1){
+            if (playlist == null)
+                return;
             if (playlist.size() == 0)
                 return;
             if (index >= playlist.size() - 1) {
