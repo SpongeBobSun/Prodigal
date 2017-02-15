@@ -1,10 +1,8 @@
 package bob.sun.bender.intro;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
-import com.heinrichreimersoftware.materialintro.app.NavigationPolicy;
 import com.heinrichreimersoftware.materialintro.app.OnNavigationBlockedListener;
 
 /**
@@ -29,7 +27,7 @@ public class BDIntroActivity extends IntroActivity {
             @Override
             public void onNavigationBlocked(int position, int direction) {
                 if (position == 2 && direction == DIRECTION_FORWARD) {
-                    // TODO: 14/02/2017 Call UserDefaults.introShown(); 
+                    // TODO: 14/02/2017 Call UserDefaults.introShown();
                     finish();
                 }
             }

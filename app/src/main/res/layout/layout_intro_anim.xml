@@ -5,20 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     >
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
+        android:layout_weight="2.0"
         android:elevation="10dp"
         android:layout_marginTop="16dp"
+        android:padding="16dp"
+        android:background="@color/colorPrimaryDark"
         >
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:id="@+id/fake_wheel"
             android:layout_gravity="center"
             >
@@ -101,7 +103,7 @@
     </RelativeLayout>
 
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0">
@@ -127,5 +129,5 @@
             android:textSize="16dp"
             android:id="@+id/intro_text_step_three"
             android:text="@string/tap_on_middle_button_to_select"/>
-    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
