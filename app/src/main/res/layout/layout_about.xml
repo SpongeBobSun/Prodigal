@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_margin="16dp"
     android:id="@+id/id_scroll_view_about">
     <LinearLayout android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,14 +13,14 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:text="About mPod :"
+        android:text="@string/about_prodigal"
         android:layout_marginBottom="3dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:text="Brought you by bob.sun."
+        android:text="@string/brought_you_by_bob_sun"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="20dp"
         />
@@ -35,16 +36,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15dp"
-        android:text="widekuan@outlook.com"
+        android:text="bobsun@outlook.com"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="40dp"
+        android:textColorLink="@color/colorPrimaryDark"
         android:autoLink="email"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:text="If you like this app, please star it on GitHub."
+        android:text="@string/if_you_like_this_app"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="20dp"
         />
@@ -52,32 +54,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15dp"
-        android:text="https://github.com/SpongeBobSun/mPod"
+        android:text="https://github.com/SpongeBobSun/Prodigal"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="40dp"
         android:autoLink="web"
+        android:textColorLink="@color/colorPrimaryDark"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:text="This App is distributed under Apache License 2.0. You could use this app and its source code for free."
-        android:layout_marginBottom="3dp"
-        android:layout_marginLeft="20dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:text="Also, this app is non-commercial. I'll not gain profits in any form from it."
-        android:layout_marginBottom="3dp"
-        android:layout_marginLeft="20dp"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:text="Credits:"
+        android:text="@string/credits"
         android:textStyle="bold|italic"
         android:layout_marginBottom="3dp"
         />
@@ -85,9 +72,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
-        android:text="Icons by http://dryicons.com"
+        android:text="@string/icons_by"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="3dp"
+        android:textColorLink="@color/colorPrimaryDark"
         android:autoLink="web"
         />
 

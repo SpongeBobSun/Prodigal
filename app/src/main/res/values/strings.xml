@@ -28,4 +28,10 @@
     <string name="finger_spinning_on_wheel_will_control_the_screen">Finger Spinning on Wheel will Control the Screen</string>
     <string name="tap_on_middle_button_to_select">Tap on Middle Button to Select</string>
     <string name="music_player_which_looks_feels_like_a_real_device">Music Player Which Looks and Feels Like a Real Device</string>
+    <string name="about_prodigal">About Prodigal</string>
+    <string name="brought_you_by_bob_sun">Brought you by Bob Sun</string>
+    <string name="if_you_like_this_app">If you like this app, please star it on GitHub.</string>
+    <string name="credits">Credits</string>
+    <string name="icons_by">Icons by https://icons8.com</string>
+    <string name="send_mail_using">Send mail to me</string>
 </resources>

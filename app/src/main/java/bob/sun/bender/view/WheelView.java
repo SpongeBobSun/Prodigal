@@ -65,8 +65,8 @@ public class WheelView extends View {
         }
         ripplePaint.setColor(rippleColor);
         ripplePaint.setAlpha(80);
-        paintOut.setShadowLayer(10f, 0.0f, 10f,
-                Color.rgb(126, 126, 126));
+        paintOut.setShadowLayer(8f, 0.0f, 8f,
+                Color.GRAY);
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
         buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);
@@ -82,7 +82,6 @@ public class WheelView extends View {
     @Override
     protected void onMeasure(int measureWidthSpec,int measureHeightSpec){
         super.onMeasure(measureWidthSpec,measureHeightSpec);
-//        int measuredWidth = measureWidth(measureWidthSpec);
         int measuredHeight = measureHeight(measureHeightSpec);
         int measuredWidth = measuredHeight;
         this.setMeasuredDimension(measuredWidth,measuredHeight);
@@ -168,10 +167,6 @@ public class WheelView extends View {
                 float y = event.getY() / (center.y * 2);
 
                 startDeg = xyToDegrees(x, y);
-//                Log.d("deg = ", "" + startDeg);
-//                if (Float.isNaN(startDeg)) {
-//                    return false;
-//                }
                 return true;
 
             case MotionEvent.ACTION_MOVE:

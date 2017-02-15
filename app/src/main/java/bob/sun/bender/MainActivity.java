@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -703,8 +704,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         AIDLDumper.updateSettings(playerService);
                         break;
                     case GetSourceCode:
+                        Intent source = new Intent(Intent.ACTION_VIEW);
+                        source.setData(Uri.parse("https://github.com/SpongeBobSun/Prodigal"));
+                        startActivity(source);
                         break;
                     case ContactUs:
+                        Intent contact = new Intent(Intent.ACTION_SEND, Uri.parse("mailto:bobsun@outlook.com"));
+                        contact.setType("text/html");
+                        contact.putExtra(Intent.EXTRA_EMAIL, new String[]{"bobsun@outlook.com"});
+                        contact.putExtra(Intent.EXTRA_SUBJECT, "");
+                        contact.putExtra(Intent.EXTRA_TEXT, "");
+                        startActivity(Intent.createChooser(contact, getResources().getString(R.string.send_mail_using)));
                         break;
                 }
                 break;

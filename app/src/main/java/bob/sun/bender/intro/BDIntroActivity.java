@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.heinrichreimersoftware.materialintro.app.IntroActivity;
 import com.heinrichreimersoftware.materialintro.app.OnNavigationBlockedListener;
 
+import bob.sun.bender.utils.UserDefaults;
+
 /**
  * Created by bob.sun on 13/02/2017.
  */
@@ -27,7 +29,7 @@ public class BDIntroActivity extends IntroActivity {
             @Override
             public void onNavigationBlocked(int position, int direction) {
                 if (position == 2 && direction == DIRECTION_FORWARD) {
-                    // TODO: 14/02/2017 Call UserDefaults.introShown();
+                    UserDefaults.getStaticInstance(BDIntroActivity.this.getApplicationContext()).introShown();
                     finish();
                 }
             }
