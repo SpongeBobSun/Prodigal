@@ -1,6 +1,6 @@
 # Prodigal
 
-Music Player APP looks and feels like an classic device.
+Music Player APP looks and feels like a classic device.
 
 Bring back the good old player to life.
 
