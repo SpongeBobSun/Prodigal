@@ -306,12 +306,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-//        this.stopService(serviceIntent);
+    }
+
+    @Override
+    public void finish() {
         if (!keepDancing) {
             NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
             stopService(new Intent(this, PlayerService.class));
         }
         unbindService(serviceConnection);
+
+        super.finish();
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
