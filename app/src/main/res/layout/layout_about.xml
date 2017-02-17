@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:scrollbars="none"
     android:id="@+id/id_scroll_view_about">
     <LinearLayout android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,6 +75,25 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:text="@string/icons_by"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="3dp"
+        android:textColorLink="@color/colorPrimaryDark"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="https://icons8.com"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="3dp"
+        android:textColorLink="@color/colorPrimaryDark"
+        android:autoLink="web"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="http://www.freepik.com"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="3dp"
         android:textColorLink="@color/colorPrimaryDark"

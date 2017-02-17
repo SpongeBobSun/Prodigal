@@ -32,7 +32,7 @@
     <string name="brought_you_by_bob_sun">Brought you by Bob Sun</string>
     <string name="if_you_like_this_app">If you like this app, please star it on GitHub.</string>
     <string name="credits">Credits</string>
-    <string name="icons_by">Icons by https://icons8.com</string>
+    <string name="icons_by">Icons by </string>
     <string name="send_mail_using">Send mail to me</string>
     <string name="contact_me_at">Contact me at</string>
 </resources>
