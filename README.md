@@ -7,7 +7,14 @@ Bring back the good old player to life.
 
 ###Screen Record
 
+<img style="float:left" src="artworks/demo.gif" width="300"/>
+
+
 ###Screenshots
+
+| ![Home](artworks/home.png) | ![Cover](artworks/cover.png) | ![Home2](artworks/home2.png) | ![Now](artworks/nowplaying.png) |
+| -------------------------- | ---------------------------- | ---------------------------- | ------------------------------- |
+|                            |                              |                              |                                 |
 
 ###Credits
 
