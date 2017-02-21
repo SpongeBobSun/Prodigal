@@ -4,6 +4,7 @@ Music Player APP looks and feels like a classic device.
 
 Bring back the good old player to life.
 
+<a href="https://play.google.com/store/apps/details?id=bob.sun.prodigal"><img src="artworks/google-play-badge.png" height="60"></a>
 
 ###Screen Record
 
