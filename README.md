@@ -17,6 +17,15 @@ Bring back the good old player to life.
 | -------------------------- | ---------------------------- | ---------------------------- | ------------------------------- |
 |                            |                              |                              |                                 |
 
+
+###Notice
+
+PLEASE DO NOT TAKE MY SOURCE CODE AND MAKE COPY CAT APPs of Prodigal Music Player!
+
+I'm talking about you - owner of [this app](https://play.google.com/store/apps/details?id=com.uzbiapp.audioplayer).
+Since you don't reply any of my emails, you can go %#@& yourself.
+
+
 ###Credits
 
 Icons in this app are brought you by [Icons8.com](https://icons8.com)
