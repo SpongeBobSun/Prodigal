@@ -1,77 +1,87 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:background="@color/colorPrimary"
-    tools:context=".MainActivity">
-
-    <android.support.v7.widget.CardView
+    tools:context=".MainActivity"
+    >
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#FFFFFF"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="16dp"
-        >
-        <FrameLayout
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        android:background="#000000FF">
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/id_screen_fragment_container">
-        </FrameLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="#FFFFFF"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="16dp"
+            >
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/id_screen_fragment_container">
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/id_holder_no_permission"
+                android:visibility="gone"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/icon_sad"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.0"
+                    android:text="Please grant permission I request."
+                    android:textSize="20sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/id_holder_no_permission"
-            android:visibility="gone"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:src="@drawable/icon_sad"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.0"
-                android:text="Please grant permission I request."
-                android:textSize="20sp"
-                android:gravity="center"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:id="@+id/id_wheel_container"
-        android:orientation="vertical">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1.0">
-            <bob.sun.bender.view.WheelView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:id="@+id/id_wheel_view"/>
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:id="@+id/id_wheel_container"
+            android:orientation="vertical">
             <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_alignLeft="@+id/id_wheel_view"
-                android:layout_alignRight="@+id/id_wheel_view"
-                android:background="@null"
-                android:layout_gravity="center">
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1.0">
+                <bob.sun.bender.view.WheelView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/id_wheel_view"/>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignLeft="@+id/id_wheel_view"
+                    android:layout_alignRight="@+id/id_wheel_view"
+                    android:background="@null"
+                    android:layout_gravity="center">
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="35dp"
@@ -112,7 +122,11 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         />
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>
+
+

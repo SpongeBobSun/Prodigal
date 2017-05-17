@@ -23,6 +23,8 @@ public class AppConstants {
     private static final String playlistfile = "/data/data/bob.sun.bender/playlistobject";
     private static final String packageFolder = "/data/data/bob.sun.bender/";
 
+    public static final String themeFolder = "/data/Prodigal/Themes/";
+
     public static String getPlayistfile() {
         return Environment.getExternalStorageDirectory().getPath() + playlistfile;
     }
