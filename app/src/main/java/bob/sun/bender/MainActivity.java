@@ -19,8 +19,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 
@@ -30,6 +32,8 @@ import com.anthonycr.grant.PermissionsResultAction;
 import com.crashlytics.android.Crashlytics;
 
 import bob.sun.bender.intro.BDIntroActivity;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.FileInputStream;
@@ -119,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             Intent intent = new Intent(this, BDIntroActivity.class);
             startActivity(intent);
         }
+
+        loadTheme();
 
     }
 
@@ -239,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 })) {
+            ThemeManager.getInstance(getApplicationContext());
             permissionGranted = true;
             return;
         }
@@ -247,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             public void onGranted() {
                 permissionGranted = true;
                 findViewById(R.id.id_holder_no_permission).setVisibility(View.GONE);
+                ThemeManager.getInstance(getApplicationContext());
             }
 
             @Override
@@ -741,6 +749,19 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         currentFragment = fragment;
         this.currentTickObject = (OnTickListener) fragment;
         wheelView.setOnTickListener((OnTickListener) fragment);
+    }
+
+    public void loadTheme() {
+        Theme theme = ThemeManager.getInstance(getApplicationContext()).loadCurrentTheme();
+        CardView cardView = (CardView) findViewById(R.id.id_main_card);
+        cardView.setBackgroundColor(theme.getCardColor());
+        findViewById(R.id.id_main).setBackgroundColor(theme.getBackgroundColor());
+        getWindow().getDecorView();
+
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(theme.getBackgroundColor());
+        }
     }
 
     class ServiceBroadcastReceiver extends BroadcastReceiver {

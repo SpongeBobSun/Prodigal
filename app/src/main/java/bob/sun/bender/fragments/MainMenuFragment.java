@@ -2,6 +2,7 @@ package bob.sun.bender.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
+        ret.setBackgroundColor(Color.TRANSPARENT);
         theList = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
         theList.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

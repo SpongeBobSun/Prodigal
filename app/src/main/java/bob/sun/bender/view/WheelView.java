@@ -16,6 +16,8 @@ import android.view.View;
 import bob.sun.bender.R;
 import bob.sun.bender.controller.OnButtonListener;
 import bob.sun.bender.controller.OnTickListener;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.VibrateUtil;
 
 /**
@@ -52,8 +54,10 @@ public class WheelView extends View {
         paintIn = new Paint();
         paintOut = new Paint();
         ripplePaint = new Paint();
-        paintOut.setColor(getResources().getColor(R.color.colorAccent));
-        paintIn.setColor(getResources().getColor(R.color.colorPrimary));
+        Theme theme = ThemeManager.getInstance(context.getApplicationContext()).loadCurrentTheme();
+        paintOut.setColor(theme.getWheelColor());
+        paintIn.setColor(theme.getBackgroundColor());
+        paintIn.setStrokeCap(Paint.Cap.ROUND);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
 
@@ -120,6 +124,21 @@ public class WheelView extends View {
 
         if (Build.VERSION.SDK_INT != 23)
             canvas.restore();
+    }
+
+    private void drawPolygon(Canvas canvas, int sides) {
+        Path path = new Path();
+        assert sides > 3;
+
+        path.moveTo(center.x + radiusOut, center.y);
+
+        for(int side = 0; side < sides; side++) {
+            double theta = 2 * Math.PI / sides * side;
+            double xCoordinate = center.x + radiusOut * Math.cos(theta);
+            double yCoordinate = center.y + radiusOut * Math.sin(theta);
+            path.lineTo((float) xCoordinate, (float) yCoordinate);
+        }
+        path.close();
     }
 
     private float xyToDegrees(float x, float y) {
