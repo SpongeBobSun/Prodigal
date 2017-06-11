@@ -54,9 +54,6 @@ public class WheelView extends View {
         paintIn = new Paint();
         paintOut = new Paint();
         ripplePaint = new Paint();
-        Theme theme = ThemeManager.getInstance(context.getApplicationContext()).loadCurrentTheme();
-        paintOut.setColor(theme.getWheelColor());
-        paintIn.setColor(theme.getBackgroundColor());
         paintIn.setStrokeCap(Paint.Cap.ROUND);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
@@ -81,6 +78,12 @@ public class WheelView extends View {
                 invalidate();
             }
         };
+    }
+
+    public void loadTheme() {
+        Theme theme = ThemeManager.getInstance(getContext().getApplicationContext()).loadCurrentTheme();
+        paintOut.setColor(theme.getWheelColor());
+        paintIn.setColor(theme.getBackgroundColor());
     }
 
     @Override

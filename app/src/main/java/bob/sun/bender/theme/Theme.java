@@ -103,7 +103,8 @@ public class Theme {
 
     public static @NonNull Theme defaultTheme() {
         if (defaultTheme == null) {
-            defaultTheme = new Theme(null, null, null, null, 1.0f, 0.5f, 20, "#FFFFFF", "#FFFFFFFF", "#CCCCCC", "#FFFFFF", "#CCCCCC", "#000000", AppConstants.ThemeShapeOval, 0);
+            defaultTheme = new Theme(null, null, null, null, 1.0f, 0.5f, 20, "#99" +
+                    "F99F1B", "#000000FF", "#87BACB", "#000000FF", "#F3423599", "#EEEEEE", AppConstants.ThemeShapeOval, 0);
             defaultTheme.setName("Default");
         }
         return defaultTheme;
