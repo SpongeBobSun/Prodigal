@@ -18,6 +18,7 @@ import bob.sun.bender.controller.OnButtonListener;
 import bob.sun.bender.controller.OnTickListener;
 import bob.sun.bender.theme.Theme;
 import bob.sun.bender.theme.ThemeManager;
+import bob.sun.bender.utils.AppConstants;
 import bob.sun.bender.utils.VibrateUtil;
 
 /**
@@ -35,6 +36,7 @@ public class WheelView extends View {
     private OnButtonListener onButtonListener;
     private Point ripplePoint;
     private float buttonWidth, buttonHeight;
+    private Theme theme;
 
     public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,7 +64,7 @@ public class WheelView extends View {
     }
 
     public void loadTheme() {
-        Theme theme = ThemeManager.getInstance(getContext().getApplicationContext()).loadCurrentTheme();
+        this.theme = ThemeManager.getInstance(getContext().getApplicationContext()).loadCurrentTheme();
         paintOut.setColor(theme.getWheelColor());
         paintIn.setColor(theme.getBackgroundColor());
     }
@@ -85,15 +87,19 @@ public class WheelView extends View {
 
     @Override
     public void onDraw(Canvas canvas){
-        canvas.drawCircle(center.x,center.y,radiusOut,paintOut);
-        canvas.save();
-        if (viewBound != null)
-            canvas.clipPath(viewBound, Region.Op.REPLACE);
+        switch (theme.shape) {
+            case AppConstants.ThemeShapeOval:
+                drawCircle(canvas);
+                break;
+            case AppConstants.ThemeShapePolygon:
+                drawPolygon(canvas, theme.sides);
+                break;
+            case AppConstants.ThemeShapeRect:
 
-        canvas.drawCircle(center.x,center.y,radiusIn,paintIn);
-
-        if (Build.VERSION.SDK_INT != 23)
-            canvas.restore();
+                break;
+            default:
+                drawCircle(canvas);
+        }
     }
 
     private void drawCircle(Canvas canvas) {
@@ -109,18 +115,26 @@ public class WheelView extends View {
     }
 
     private void drawPolygon(Canvas canvas, int sides) {
-        Path path = new Path();
+        Path pathIn = new Path();
+        Path pathOut = new Path();
         assert sides > 3;
 
-        path.moveTo(center.x + radiusOut, center.y);
+        pathIn.moveTo(center.x + radiusIn, center.y);
+        pathOut.moveTo(center.x + radiusOut, center.y);
 
         for(int side = 0; side < sides; side++) {
             double theta = 2 * Math.PI / sides * side;
-            double xCoordinate = center.x + radiusOut * Math.cos(theta);
-            double yCoordinate = center.y + radiusOut * Math.sin(theta);
-            path.lineTo((float) xCoordinate, (float) yCoordinate);
+            double xOut = center.x + radiusOut * Math.cos(theta);
+            double yOut = center.y + radiusOut * Math.sin(theta);
+            double xIn = center.x + radiusIn * Math.cos(theta);
+            double yIn = center.y + radiusIn * Math.sin(theta);
+            pathIn.lineTo((float) xIn, (float) yIn);
+            pathOut.lineTo((float) xOut, (float) yOut);
         }
-        path.close();
+        pathOut.close();
+        pathIn.close();
+        canvas.drawPath(pathOut, paintOut);
+        canvas.drawPath(pathIn, paintIn);
     }
 
     private float xyToDegrees(float x, float y) {
