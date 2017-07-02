@@ -436,7 +436,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onMenu() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Top);
         if(fragmentStack == null || fragmentStack.isEmpty())
             return;
 
@@ -467,7 +466,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onPlay() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Bottom);
         if(playerService == null){
             startService();
             return;
@@ -499,7 +497,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onNext() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Right);
         if (!permissionGranted)
             return;
         Intent intent = new Intent(this,PlayerService.class);
@@ -510,7 +507,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onPrevious() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Left);
         if (!permissionGranted)
             return;
         Intent intent = new Intent(this,PlayerService.class);
@@ -762,6 +758,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(theme.getBackgroundColor());
         }
+        wheelView.loadTheme();
     }
 
     class ServiceBroadcastReceiver extends BroadcastReceiver {

@@ -25,12 +25,6 @@ import bob.sun.bender.utils.VibrateUtil;
  */
 public class WheelView extends View {
 
-    public enum RipplePoint {
-        Top,
-        Bottom,
-        Left,
-        Right,
-    }
 
     private Point center;
     private Path viewBound;
@@ -41,12 +35,6 @@ public class WheelView extends View {
     private OnButtonListener onButtonListener;
     private Point ripplePoint;
     private float buttonWidth, buttonHeight;
-
-    private boolean animating;
-    private float timer;
-    private static final int duration = 200, frameRate = 10;
-    private float maxRadius = 1000;
-    private Runnable runnable;
 
     public WheelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -71,13 +59,6 @@ public class WheelView extends View {
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
         buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);
-        animating = false;
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        };
     }
 
     public void loadTheme() {
@@ -98,7 +79,6 @@ public class WheelView extends View {
         center.y = measuredHeight/2;
         setLayerType(LAYER_TYPE_SOFTWARE, null);
 
-        maxRadius = radiusOut * 2f;
         viewBound = new Path();
         viewBound.addCircle(center.x, center.y, radiusOut, Path.Direction.CW);
     }
@@ -110,18 +90,17 @@ public class WheelView extends View {
         if (viewBound != null)
             canvas.clipPath(viewBound, Region.Op.REPLACE);
 
-        if (animating) {
-            if (timer >= duration) {
-                getHandler().removeCallbacks(runnable);
-                animating = false;
-            } else {
-                postDelayed(runnable, (long) timer);
-                timer = (float)2 * (timer + frameRate);
-                canvas.drawCircle(ripplePoint.x, ripplePoint.y, (timer / duration) * maxRadius + buttonWidth, ripplePaint);
-            }
-        } else {
-            getHandler().removeCallbacks(runnable);
-        }
+        canvas.drawCircle(center.x,center.y,radiusIn,paintIn);
+
+        if (Build.VERSION.SDK_INT != 23)
+            canvas.restore();
+    }
+
+    private void drawCircle(Canvas canvas) {
+        canvas.drawCircle(center.x,center.y,radiusOut,paintOut);
+        canvas.save();
+        if (viewBound != null)
+            canvas.clipPath(viewBound, Region.Op.REPLACE);
 
         canvas.drawCircle(center.x,center.y,radiusIn,paintIn);
 
@@ -242,28 +221,5 @@ public class WheelView extends View {
 
     public void setOnButtonListener(OnButtonListener listener){
         this.onButtonListener = listener;
-    }
-
-    public void rippleFrom(RipplePoint point) {
-        if (animating)
-            return;
-        animating = false;
-        switch (point) {
-            case Top:
-                ripplePoint = new Point(getWidth() / 2, (int) (buttonHeight / 2));
-                break;
-            case Bottom:
-                ripplePoint = new Point(getWidth() / 2, (int) (getHeight() - (buttonHeight / 2)));
-                break;
-            case Left:
-                ripplePoint = new Point((int) ((getWidth() - radiusOut - buttonWidth) / 2), getHeight() / 2);
-                break;
-            case Right:
-                ripplePoint = new Point((int) ((getWidth() + radiusOut + buttonWidth) / 2), getHeight() / 2);
-                break;
-        }
-        timer = 0;
-        animating = true;
-        invalidate();
     }
 }
