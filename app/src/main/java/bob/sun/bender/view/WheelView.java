@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import bob.sun.bender.BuildConfig;
 import bob.sun.bender.R;
 import bob.sun.bender.controller.OnButtonListener;
 import bob.sun.bender.controller.OnTickListener;
@@ -87,6 +88,9 @@ public class WheelView extends View {
 
     @Override
     public void onDraw(Canvas canvas){
+        if (this.theme == null) {
+            loadTheme();
+        }
         switch (theme.shape) {
             case AppConstants.ThemeShapeOval:
                 drawCircle(canvas);
@@ -117,19 +121,28 @@ public class WheelView extends View {
     private void drawPolygon(Canvas canvas, int sides) {
         Path pathIn = new Path();
         Path pathOut = new Path();
-        assert sides > 3;
-
-        pathIn.moveTo(center.x + radiusIn, center.y);
-        pathOut.moveTo(center.x + radiusOut, center.y);
-
+        if (sides <= 3) {
+            sides = 4;
+        }
+        pathIn.moveTo(center.x, center.y - radiusIn);
+        pathOut.moveTo(center.x, center.y - radiusOut);
+        Paint tp = null;
+        if (BuildConfig.DEBUG) {
+            tp = new Paint();
+            tp.setTextSize(50);
+            tp.setColor(Color.BLACK);
+        }
         for(int side = 0; side < sides; side++) {
-            double theta = 2 * Math.PI / sides * side;
+            double theta = 2 * Math.PI / sides * side + Math.PI / 2;
             double xOut = center.x + radiusOut * Math.cos(theta);
-            double yOut = center.y + radiusOut * Math.sin(theta);
+            double yOut = center.y - radiusOut * Math.sin(theta);
             double xIn = center.x + radiusIn * Math.cos(theta);
-            double yIn = center.y + radiusIn * Math.sin(theta);
+            double yIn = center.y - radiusIn * Math.sin(theta);
             pathIn.lineTo((float) xIn, (float) yIn);
             pathOut.lineTo((float) xOut, (float) yOut);
+            if (BuildConfig.DEBUG) {
+                canvas.drawText("" + side, (float) xOut, (float)yOut, tp);
+            }
         }
         pathOut.close();
         pathIn.close();
