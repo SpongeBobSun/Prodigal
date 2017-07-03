@@ -141,6 +141,11 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
             case SimpleListMenuAdapter.SORT_TYPE_GENRE:
                 ret.setMenuType(ret.MENU_TYPE_GENRES);
                 ret.setData(adapter.getItem(currentItemIndex));
+                break;
+            case SimpleListMenuAdapter.SORT_TYPE_THEME:
+                ret.setMenuType(ret.MENU_TYPE_THEMES);
+                ret.setData(adapter.getItem(currentItemIndex));
+                break;
         }
         return ret;
     }

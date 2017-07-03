@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -711,6 +712,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         settingMenu.reloadSettings();
                         AIDLDumper.updateSettings(playerService);
                         break;
+                    case ThemeSettings:
+                        SimpleListMenuAdapter themesAdapter = new SimpleListMenuAdapter(getApplicationContext(),
+                                R.layout.item_simple_list_view,
+                                ThemeManager.getInstance(getApplicationContext()).getAllThemes());
+                        SimpleListFragment themesFragment = new SimpleListFragment();
+                        themesFragment.setAdapter(themesAdapter);
+                        themesAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_THEME);
+                        fragmentManager.beginTransaction()
+                                .add(R.id.id_screen_fragment_container,themesFragment).hide(themesFragment).commit();
+                        switchFragmentTo(themesFragment, true);
+                        break;
                     case RepeatSettings:
                         UserDefaults.getStaticInstance(this).rollRepeat();
                         settingMenu.reloadSettings();
@@ -730,6 +742,11 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         startActivity(Intent.createChooser(contact, getResources().getString(R.string.send_mail_using)));
                         break;
                 }
+                break;
+            case SelectionDetail.MENU_TYPE_THEMES:
+                String theme = (String) detail.getData();
+                ThemeManager.getInstance(getApplicationContext()).loadThemeNamed(theme);
+                loadTheme();
                 break;
             default:
                 break;

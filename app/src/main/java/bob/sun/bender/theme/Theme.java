@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import bob.sun.bender.utils.AppConstants;
 
 /**
@@ -13,11 +15,44 @@ import bob.sun.bender.utils.AppConstants;
 public class Theme {
 
     static private Theme defaultTheme;
-    public String icNext, icPrev, icPlay, icMenu;
-    public float outer, inner, buttonSize;
-    public String wheelColor, buttonColor, backgroundColor, cardColor, itemColor, textColor;
+
+    class Icons {
+        @SerializedName("next")
+        public String icNext;
+        @SerializedName("prev")
+        public String icPrev;
+        @SerializedName("play")
+        public String icPlay;
+        @SerializedName("menu")
+        public String icMenu;
+    }
+
+    private Icons icons;
+    @SerializedName("wheel_outer")
+    private float outer;
+    @SerializedName("wheel_inner")
+    private float inner;
+    @SerializedName("button_size")
+    private float buttonSize;
+    @SerializedName("wheel_color")
+    private String wheelColor;
+    @SerializedName("button_color")
+    private String buttonColor;
+    @SerializedName("background_color")
+    private String backgroundColor;
+    @SerializedName("card_color")
+    private String cardColor;
+    @SerializedName("item_color")
+    private String itemColor;
+    @SerializedName("text_color")
+    private String textColor;
     private String name;
-    public int shape;
+
+    @SerializedName("wheel_shape")
+    private String wheelShape;
+
+    private int shape;
+    @SerializedName("polygon_sides")
     public int sides;
 
     public Theme(String icNext,
@@ -35,10 +70,12 @@ public class Theme {
                  String textColor,
                  int shape,
                  int sides) {
-        this.icNext = icNext;
-        this.icPrev = icPrev;
-        this.icPlay = icPlay;
-        this.icMenu = icMenu;
+        this.icons = new Icons();
+        this.icons.icNext = icNext;
+        this.icons.icPrev = icPrev;
+        this.icons.icPlay = icPlay;
+        this.icons.icMenu = icMenu;
+
         this.outer = outer;
         this.inner = inner;
         this.buttonSize = buttonSize;
@@ -57,20 +94,24 @@ public class Theme {
         return this;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getNextIcon() {
-        return themeFolder() + icNext;
+        return themeFolder() + icons.icNext;
     }
 
     public String getPrevIcon() {
-        return themeFolder() + icPrev;
+        return themeFolder() + icons.icPrev;
     }
 
     public String getPlayIcon() {
-        return themeFolder() + icPlay;
+        return themeFolder() + icons.icPlay;
     }
 
     public String getMenuIcon() {
-        return themeFolder() + icMenu;
+        return themeFolder() + icons.icMenu;
     }
 
     public int getWheelColor() {
@@ -97,14 +138,45 @@ public class Theme {
         return Color.parseColor(textColor);
     }
 
+    public int getShape() {
+        switch (wheelShape) {
+            case "rect":
+                shape =  AppConstants.ThemeShapeRect;
+            break;
+            case "oval":
+                shape = AppConstants.ThemeShapeOval;
+            break;
+            case "polygon":
+                shape = AppConstants.ThemeShapePolygon;
+            break;
+
+            default:
+                shape = AppConstants.ThemeShapeOval;
+            break;
+        }
+        return shape;
+    }
+
+    public float getOuter() {
+        return outer;
+    }
+
+    public float getInner() {
+        return 1.0f - inner;
+    }
+
+    public float getButtonSize() {
+        return buttonSize;
+    }
+
     private String themeFolder() {
         return Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name + "/";
     }
 
     public static @NonNull Theme defaultTheme() {
         if (defaultTheme == null) {
-            defaultTheme = new Theme(null, null, null, null, 1.0f, 0.5f, 20, "#99" +
-                    "F99F1B", "#000000FF", "#87BACB", "#000000FF", "#F3423599", "#EEEEEE", AppConstants.ThemeShapeOval, 0);
+            defaultTheme = new Theme(null, null, null, null, 1.0f, 0.3f, 20, "#99" +
+                    "F99F1B", "#000000FF", "#87BACB", "#000000FF", "#F3423599", "#EEEEEE", AppConstants.ThemeShapeOval, 8);
             defaultTheme.setName("Default");
         }
         return defaultTheme;

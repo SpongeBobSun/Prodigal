@@ -18,6 +18,7 @@ public class MenuMeta {
         About,
         ShuffleSettings,
         RepeatSettings,
+        ThemeSettings,
         GetSourceCode,
         ContactUs,
     }

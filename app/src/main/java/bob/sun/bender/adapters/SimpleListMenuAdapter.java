@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SongBean;
+import bob.sun.bender.theme.Theme;
 
 import static bob.sun.bender.adapters.VHImageListItem.Status.ListItemHighlighted;
 import static bob.sun.bender.adapters.VHImageListItem.Status.ListItemNormal;
@@ -23,6 +24,7 @@ public class SimpleListMenuAdapter extends RecyclerView.Adapter<VHImageListItem>
     public static final int SORT_TYPE_TITLE = 1;
     public static final int SORT_TYPE_ALBUM = 2;
     public static final int SORT_TYPE_GENRE = 3;
+    public static final int SORT_TYPE_THEME = 4;
 
 
     private ArrayList list;
@@ -114,9 +116,10 @@ public class SimpleListMenuAdapter extends RecyclerView.Adapter<VHImageListItem>
                 return ((SongBean) bean).getTitle();
             case SORT_TYPE_GENRE :
                 return (String) bean;
-            default:
-                return (String)bean;
+            case SORT_TYPE_THEME:
+                return (String) bean;
         }
+        return "";
     }
 
     public int getType() {

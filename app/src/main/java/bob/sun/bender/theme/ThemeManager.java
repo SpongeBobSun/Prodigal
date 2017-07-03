@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -93,7 +94,7 @@ public class ThemeManager {
 
     private void unzip() { //Oh, naughty~
         String folder = Environment.getExternalStorageDirectory().getAbsolutePath() + AppConstants.themeFolder;
-        String zipFile = folder + "themes.zip";
+        String zipFile = folder + "builtin.zip";
         try  {
             FileInputStream fin = new FileInputStream(zipFile);
             ZipInputStream zin = new ZipInputStream(fin);
@@ -119,20 +120,21 @@ public class ThemeManager {
 
             }
             zin.close();
+            new File(zipFile).delete();
         } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
-    public @Nullable Theme loadThemeNamed(@NonNull String name) {
+    public @NonNull Theme loadThemeNamed(@NonNull String name) {
         Theme ret = null;
         File folder = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name);
         if (!folder.exists()) {
-            return ret;
+            return Theme.defaultTheme();
         }
         File config = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name + "/config.json");
         if (!config.exists()) {
-            return ret;
+            return Theme.defaultTheme();
         }
         JsonParser parser = new JsonParser();
         JsonReader reader = null;
@@ -148,7 +150,11 @@ public class ThemeManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        UserDefaults.getStaticInstance(context).setTheme(name);
+        if (ret == null) {
+            ret = Theme.defaultTheme();
+        } else {
+            UserDefaults.getStaticInstance(context).setTheme(name);
+        }
         return ret;
     }
 
@@ -158,6 +164,37 @@ public class ThemeManager {
         ret = loadThemeNamed(name);
         if (ret == null) {
             ret = Theme.defaultTheme();
+        }
+        return ret;
+    }
+
+    public boolean validateByName(String name) {
+        boolean ret = true;
+        File theme = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + '/' + name);
+        if (!theme.isDirectory()) {
+            return false;
+        }
+        String[] files = theme.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return "config.json".equalsIgnoreCase(name);
+            }
+        });
+        if (files.length == 0) {
+            return false;
+        }
+        return ret;
+    }
+
+    public @NonNull ArrayList<String> getAllThemes() {
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(Theme.defaultTheme().getName());
+        File folder = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder);
+        String[] themes = folder.list();
+        for (String t : themes) {
+            if (validateByName(t)) {
+                ret.add(t);
+            }
         }
         return ret;
     }

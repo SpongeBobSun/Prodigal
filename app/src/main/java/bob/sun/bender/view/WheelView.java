@@ -68,6 +68,7 @@ public class WheelView extends View {
         this.theme = ThemeManager.getInstance(getContext().getApplicationContext()).loadCurrentTheme();
         paintOut.setColor(theme.getWheelColor());
         paintIn.setColor(theme.getBackgroundColor());
+        this.invalidate();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class WheelView extends View {
         if (this.theme == null) {
             loadTheme();
         }
-        switch (theme.shape) {
+        switch (theme.getShape()) {
             case AppConstants.ThemeShapeOval:
                 drawCircle(canvas);
                 break;
@@ -99,7 +100,7 @@ public class WheelView extends View {
                 drawPolygon(canvas, theme.sides);
                 break;
             case AppConstants.ThemeShapeRect:
-
+                drawRect(canvas);
                 break;
             default:
                 drawCircle(canvas);
@@ -107,6 +108,8 @@ public class WheelView extends View {
     }
 
     private void drawCircle(Canvas canvas) {
+        float radiusIn = this.radiusIn * theme.getInner();
+        float radiusOut = this.radiusOut * theme.getOuter();
         canvas.drawCircle(center.x,center.y,radiusOut,paintOut);
         canvas.save();
         if (viewBound != null)
@@ -118,7 +121,25 @@ public class WheelView extends View {
             canvas.restore();
     }
 
+    private void drawRect(Canvas canvas) {
+        float radiusIn = this.radiusIn * theme.getInner();
+        float radiusOut = this.radiusOut * theme.getOuter();
+        float halfIn = radiusIn / 2.0f;
+        float halfOut= radiusOut / 2.0f;
+        canvas.drawRect(center.x - halfOut, center.y - halfOut, center.x + halfOut, center.y + halfOut, paintOut);
+        canvas.save();
+        if (viewBound != null) {
+            canvas.clipPath(viewBound, Region.Op.REPLACE);
+        }
+        canvas.drawRect(center.x - halfIn, center.y - halfIn, center.x + halfIn, center.y + halfIn, paintOut);
+        if (Build.VERSION.SDK_INT != 23) {
+            canvas.restore();
+        }
+    }
+
     private void drawPolygon(Canvas canvas, int sides) {
+        float radiusIn = this.radiusIn * theme.getInner();
+        float radiusOut = this.radiusOut * theme.getOuter();
         Path pathIn = new Path();
         Path pathOut = new Path();
         if (sides <= 3) {
