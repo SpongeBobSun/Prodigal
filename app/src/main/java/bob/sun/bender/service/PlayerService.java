@@ -277,6 +277,22 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 PlayerService.this.repeatMode = repeatMode;
                 PlayerService.this.shuffle = shuffle;
             }
+
+            @Override
+            public SongBean getPrevSong() {
+                if (index <= 0 || playlist.size() == 0) {
+                    return null;
+                }
+                return playlist.get(index - 1);
+            }
+
+            @Override
+            public SongBean getNextSong() {
+                if (index >= playlist.size() - 1 || playlist.size() == 0) {
+                    return null;
+                }
+                return playlist.get(index + 1);
+            }
         };
     }
 

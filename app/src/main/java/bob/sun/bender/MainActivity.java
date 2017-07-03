@@ -106,12 +106,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private boolean keepDancing;
 
     private ImageView bNext, bPrev, bMenu, bPlay;
+    private ImageView backgroundImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+        backgroundImage = (ImageView) findViewById(R.id.id_album_background);
 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
@@ -387,6 +389,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             intent.putExtra("INDEX", index);
             startService(intent);
         }
+
+        if (playerService != null) {
+            try {
+                if (playerService.isPlaying()) {
+                    SongBean current = playerService.getCurrentSong();
+                    loadBackground(current);
+                }
+            } catch (RemoteException e) {
+                //Eat it
+            }
+        }
     }
 
     @Override
@@ -487,17 +500,19 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             if (current != null && current.getId() != -1) {
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_RESUME);
+                loadBackground(current);
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_PLAY);
                 intent.putExtra("DATA", (Parcelable) lastSongBean);
+                loadBackground(lastSongBean);
             } else {
                 intent = null;
             }
         }
-        if (intent != null)
+        if (intent != null) {
             startService(intent);
-        else
+        } else
             Toast.makeText(this, R.string.nothing_to_play, Toast.LENGTH_SHORT).show();
 
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -509,6 +524,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_NEXT);
+        try {
+            SongBean next = playerService.getNextSong();
+            loadBackground(next);
+        } catch (RemoteException e) {
+            loadBackground(null);
+            e.printStackTrace();
+        }
+
         startService(intent);
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
@@ -519,6 +542,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
+        try {
+            SongBean prev = playerService.getPrevSong();
+            loadBackground(prev);
+        } catch (RemoteException e) {
+            loadBackground(null);
+            e.printStackTrace();
+        }
+
         startService(intent);
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
@@ -638,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                                 startService(intent);
                                 switchFragmentTo(nowPlayingFragment, false);
                                 nowPlayingFragment.setSong((SongBean) playList.get(0));
+                                loadBackground((SongBean) playList.get(0));
                             }
                         });
 
@@ -701,6 +733,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 intent.putExtra("DATA",(Serializable) detail.getData());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
+                loadBackground((SongBean) detail.getData());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;
@@ -799,6 +832,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 .config(Bitmap.Config.RGB_565).into(bPlay);
         Picasso.with(this).load("file://" + theme.getPrevIcon()).fit().centerInside()
                 .config(Bitmap.Config.RGB_565).into(bPrev);
+    }
+
+    public void loadBackground(SongBean bean) {
+        if (bean == null ) {
+            backgroundImage.setImageBitmap(null);
+            return;
+        }
+        Uri image = Uri.parse(MediaLibrary.getStaticInstance(getApplicationContext())
+                .getCoverUriByAlbumId(bean.getAlbumId()));
+        Picasso.with(this).load(image).config(Bitmap.Config.RGB_565)
+                .into(backgroundImage);
     }
 
     class ServiceBroadcastReceiver extends BroadcastReceiver {

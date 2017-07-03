@@ -14,4 +14,6 @@ interface PlayerServiceAIDL {
     long getCurrent();
     SongBean getCurrentSong();
     void updateSettings(int repeatMode, boolean shuffle);
+    SongBean getPrevSong();
+    SongBean getNextSong();
 }
