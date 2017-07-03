@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +26,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -31,6 +35,7 @@ import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.picasso.Picasso;
 
 import bob.sun.bender.intro.BDIntroActivity;
 import bob.sun.bender.theme.Theme;
@@ -99,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private ArrayList lastPlayList;
     private boolean permissionGranted;
     private boolean keepDancing;
+
+    private ImageView bNext, bPrev, bMenu, bPlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -776,6 +783,22 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             window.setStatusBarColor(theme.getBackgroundColor());
         }
         wheelView.loadTheme();
+        if (bMenu == null) {
+            bMenu = (ImageView) findViewById(R.id.id_menu_button);
+            bNext = (ImageView) findViewById(R.id.id_next_button);
+            bPrev = (ImageView) findViewById(R.id.id_previous_button);
+            bPlay = (ImageView) findViewById(R.id.id_play_button);
+        }
+        //Using Picasso here since we are allow user using their creativity.
+        int size = getResources().getDimensionPixelSize(R.dimen.button_width);
+        Picasso.with(this).load("file://" + theme.getMenuIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).into(bMenu);
+        Picasso.with(this).load("file://" + theme.getNextIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).into(bNext);
+        Picasso.with(this).load("file://" + theme.getPlayIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).into(bPlay);
+        Picasso.with(this).load("file://" + theme.getPrevIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).into(bPrev);
     }
 
     class ServiceBroadcastReceiver extends BroadcastReceiver {
