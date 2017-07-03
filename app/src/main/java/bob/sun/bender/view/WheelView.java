@@ -124,14 +124,12 @@ public class WheelView extends View {
     private void drawRect(Canvas canvas) {
         float radiusIn = this.radiusIn * theme.getInner();
         float radiusOut = this.radiusOut * theme.getOuter();
-        float halfIn = radiusIn / 2.0f;
-        float halfOut= radiusOut / 2.0f;
-        canvas.drawRect(center.x - halfOut, center.y - halfOut, center.x + halfOut, center.y + halfOut, paintOut);
+        canvas.drawRect(center.x - radiusOut, center.y - radiusOut, center.x + radiusOut, center.y + radiusOut, paintOut);
         canvas.save();
         if (viewBound != null) {
             canvas.clipPath(viewBound, Region.Op.REPLACE);
         }
-        canvas.drawRect(center.x - halfIn, center.y - halfIn, center.x + halfIn, center.y + halfIn, paintOut);
+        canvas.drawRect(center.x - radiusIn, center.y - radiusIn, center.x + radiusIn, center.y + radiusIn, paintIn);
         if (Build.VERSION.SDK_INT != 23) {
             canvas.restore();
         }

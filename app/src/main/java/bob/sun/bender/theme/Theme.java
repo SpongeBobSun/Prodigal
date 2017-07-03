@@ -139,6 +139,9 @@ public class Theme {
     }
 
     public int getShape() {
+        if (wheelShape == null) {
+            return AppConstants.ThemeShapeOval;
+        }
         switch (wheelShape) {
             case "rect":
                 shape =  AppConstants.ThemeShapeRect;

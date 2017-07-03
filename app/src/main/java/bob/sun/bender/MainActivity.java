@@ -745,7 +745,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 break;
             case SelectionDetail.MENU_TYPE_THEMES:
                 String theme = (String) detail.getData();
-                ThemeManager.getInstance(getApplicationContext()).loadThemeNamed(theme);
+                UserDefaults.getStaticInstance(getApplicationContext()).setTheme(theme);
                 loadTheme();
                 break;
             default:

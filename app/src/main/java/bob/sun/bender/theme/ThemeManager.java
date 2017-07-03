@@ -127,6 +127,9 @@ public class ThemeManager {
     }
 
     public @NonNull Theme loadThemeNamed(@NonNull String name) {
+        if (name != null && "Default".equalsIgnoreCase(name)) {
+            return Theme.defaultTheme();
+        }
         Theme ret = null;
         File folder = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name);
         if (!folder.exists()) {
