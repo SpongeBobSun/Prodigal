@@ -10,10 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,29 +23,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
-
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
-import bob.sun.bender.intro.BDIntroActivity;
-import bob.sun.bender.theme.Theme;
-import bob.sun.bender.theme.ThemeManager;
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -69,6 +55,7 @@ import bob.sun.bender.fragments.NowPlayingFragment;
 import bob.sun.bender.fragments.SettingsFragment;
 import bob.sun.bender.fragments.SimpleListFragment;
 import bob.sun.bender.fragments.TwoPanelFragment;
+import bob.sun.bender.intro.BDIntroActivity;
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.MenuMeta;
 import bob.sun.bender.model.PlayList;
@@ -76,14 +63,16 @@ import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SettingAdapter;
 import bob.sun.bender.model.SongBean;
 import bob.sun.bender.service.PlayerService;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.utils.AppConstants;
 import bob.sun.bender.utils.NotificationUtil;
-import bob.sun.bender.utils.UserDefaults;
 import bob.sun.bender.utils.ResUtil;
+import bob.sun.bender.utils.UserDefaults;
 import bob.sun.bender.utils.VibrateUtil;
 import bob.sun.bender.view.WheelView;
-import jp.wasabeef.blurry.Blurry;
+import io.fabric.sdk.android.Fabric;
 import jp.wasabeef.blurry.internal.Blur;
 import jp.wasabeef.blurry.internal.BlurFactor;
 
@@ -514,12 +503,10 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             if (current != null && current.getId() != -1) {
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_RESUME);
-//                loadBackground(current);
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_PLAY);
                 intent.putExtra("DATA", (Parcelable) lastSongBean);
-//                loadBackground(lastSongBean);
             } else {
                 intent = null;
             }
@@ -732,7 +719,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 intent.putExtra("DATA",(Serializable) detail.getData());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
-//                loadBackground((SongBean) detail.getData());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:id="@+id/id_main"
+    android:fitsSystemWindows="true"
     >
     <ImageView
         android:layout_width="match_parent"
@@ -13,7 +14,6 @@
         android:id="@+id/id_album_background"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:fitsSystemWindows="true"
         android:layout_margin="0dp"
         />
 
