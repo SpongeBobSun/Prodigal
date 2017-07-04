@@ -10,6 +10,7 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
+import android.graphics.Shader;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -49,8 +50,6 @@ public class WheelView extends View {
         paintIn.setStrokeCap(Paint.Cap.ROUND);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-        paintOut.setShadowLayer(8f, 0.0f, 8f,
-                Color.GRAY);
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
         buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);

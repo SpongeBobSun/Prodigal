@@ -11,6 +11,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,11 +23,14 @@ import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,6 +42,8 @@ import com.anthonycr.grant.PermissionsResultAction;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
 
 import bob.sun.bender.intro.BDIntroActivity;
 import bob.sun.bender.theme.Theme;
@@ -75,6 +83,9 @@ import bob.sun.bender.utils.UserDefaults;
 import bob.sun.bender.utils.ResUtil;
 import bob.sun.bender.utils.VibrateUtil;
 import bob.sun.bender.view.WheelView;
+import jp.wasabeef.blurry.Blurry;
+import jp.wasabeef.blurry.internal.Blur;
+import jp.wasabeef.blurry.internal.BlurFactor;
 
 import static bob.sun.bender.service.PlayerService.CMD_PREPARE;
 
@@ -107,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     private ImageView bNext, bPrev, bMenu, bPlay;
     private ImageView backgroundImage;
+    private Point windowSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         backgroundImage = (ImageView) findViewById(R.id.id_album_background);
+        windowSize = new Point();
+        getWindow().getWindowManager().getDefaultDisplay().getSize(windowSize);
 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
@@ -500,12 +514,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             if (current != null && current.getId() != -1) {
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_RESUME);
-                loadBackground(current);
+//                loadBackground(current);
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
                 intent = new Intent(this, PlayerService.class);
                 intent.putExtra("CMD", PlayerService.CMD_PLAY);
                 intent.putExtra("DATA", (Parcelable) lastSongBean);
-                loadBackground(lastSongBean);
+//                loadBackground(lastSongBean);
             } else {
                 intent = null;
             }
@@ -524,13 +538,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_NEXT);
-        try {
-            SongBean next = playerService.getNextSong();
-            loadBackground(next);
-        } catch (RemoteException e) {
-            loadBackground(null);
-            e.printStackTrace();
-        }
 
         startService(intent);
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -542,14 +549,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             return;
         Intent intent = new Intent(this,PlayerService.class);
         intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
-        try {
-            SongBean prev = playerService.getPrevSong();
-            loadBackground(prev);
-        } catch (RemoteException e) {
-            loadBackground(null);
-            e.printStackTrace();
-        }
-
         startService(intent);
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
@@ -733,7 +732,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 intent.putExtra("DATA",(Serializable) detail.getData());
                 intent.putExtra("INDEX",detail.getIndexOfList());
                 startService(intent);
-                loadBackground((SongBean) detail.getData());
+//                loadBackground((SongBean) detail.getData());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;
@@ -825,13 +824,13 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         //Using Picasso here since we are allow user using their creativity.
         int size = getResources().getDimensionPixelSize(R.dimen.button_width);
         Picasso.with(this).load("file://" + theme.getMenuIcon()).fit().centerInside()
-                .config(Bitmap.Config.RGB_565).into(bMenu);
+                .config(Bitmap.Config.RGB_565).error(R.drawable.menu).into(bMenu);
         Picasso.with(this).load("file://" + theme.getNextIcon()).fit().centerInside()
-                .config(Bitmap.Config.RGB_565).into(bNext);
+                .config(Bitmap.Config.RGB_565).error(R.drawable.next).into(bNext);
         Picasso.with(this).load("file://" + theme.getPlayIcon()).fit().centerInside()
-                .config(Bitmap.Config.RGB_565).into(bPlay);
+                .config(Bitmap.Config.RGB_565).error(R.drawable.button).into(bPlay);
         Picasso.with(this).load("file://" + theme.getPrevIcon()).fit().centerInside()
-                .config(Bitmap.Config.RGB_565).into(bPrev);
+                .config(Bitmap.Config.RGB_565).error(R.drawable.prev).into(bPrev);
     }
 
     public void loadBackground(SongBean bean) {
@@ -839,10 +838,33 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             backgroundImage.setImageBitmap(null);
             return;
         }
-        Uri image = Uri.parse(MediaLibrary.getStaticInstance(getApplicationContext())
+        final Uri image = Uri.parse(MediaLibrary.getStaticInstance(getApplicationContext())
                 .getCoverUriByAlbumId(bean.getAlbumId()));
-        Picasso.with(this).load(image).config(Bitmap.Config.RGB_565)
-                .into(backgroundImage);
+        Picasso.with(this).load(image).resize(windowSize.x, windowSize.y)
+                .centerCrop()
+                .transform(new Transformation() {
+                    @Override
+                    public Bitmap transform(Bitmap source) {
+                        BlurFactor factor = new BlurFactor();
+                        factor.radius = 25;
+                        factor.sampling = 4;
+                        factor.width = windowSize.x;
+                        factor.height = windowSize.y;
+                        factor.color = ColorUtils.setAlphaComponent(
+                                ThemeManager.getInstance(getApplicationContext())
+                                .loadCurrentTheme().getBackgroundColor(), 20);
+                        Bitmap ret = Blur.of(getApplicationContext(), source, factor);
+                        source.recycle();
+                        return ret;
+                    }
+
+                    @Override
+                    public String key() {
+                        return image.toString() + "/blured";
+                    }
+                })
+                .config(Bitmap.Config.RGB_565).into(backgroundImage);
+
     }
 
     class ServiceBroadcastReceiver extends BroadcastReceiver {
@@ -853,6 +875,13 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 nowPlayingFragment.refreshSong();
             if (mainMenu != null && !mainMenu.isHidden())
                 mainMenu.refreshCurrentSongIfNeeded();
+            try {
+                SongBean bean = playerService.getCurrentSong();
+                loadBackground(bean);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
