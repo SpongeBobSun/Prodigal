@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -35,7 +37,6 @@ public class WheelView extends View {
     private OnTickListener onTickListener;
     private float startDeg = Float.NaN;
     private OnButtonListener onButtonListener;
-    private Point ripplePoint;
     private float buttonWidth, buttonHeight;
     private Theme theme;
 
@@ -48,26 +49,24 @@ public class WheelView extends View {
         paintIn.setStrokeCap(Paint.Cap.ROUND);
         paintOut.setAntiAlias(true);
         paintIn.setAntiAlias(true);
-
-        int rippleColor = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            rippleColor = getContext().getResources().getColor(R.color.colorPrimary, null);
-        } else {
-            rippleColor = getContext().getResources().getColor(R.color.colorPrimary);
-        }
-        ripplePaint.setColor(rippleColor);
-        ripplePaint.setAlpha(80);
         paintOut.setShadowLayer(8f, 0.0f, 8f,
                 Color.GRAY);
 
         buttonWidth = getResources().getDimensionPixelSize(R.dimen.button_width);
         buttonHeight = getResources().getDimensionPixelSize(R.dimen.button_height);
+        this.setBackgroundColor(Color.TRANSPARENT);
     }
 
     public void loadTheme() {
+        if (isInEditMode()) {
+            this.theme = Theme.defaultTheme();
+            this.invalidate();
+            return;
+        }
         this.theme = ThemeManager.getInstance(getContext().getApplicationContext()).loadCurrentTheme();
         paintOut.setColor(theme.getWheelColor());
-        paintIn.setColor(theme.getBackgroundColor());
+        paintIn.setColor(Color.TRANSPARENT);
+        paintIn.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
         this.invalidate();
     }
 
