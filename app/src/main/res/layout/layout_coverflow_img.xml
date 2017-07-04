@@ -10,7 +10,7 @@
         android:id="@+id/cover_image"/>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="16dp"
+        android:layout_height="18dp"
         android:gravity="center"
         android:layout_marginTop="2dp"
         android:textColor="#000"
