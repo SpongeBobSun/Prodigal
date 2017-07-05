@@ -16,4 +16,11 @@ interface PlayerServiceAIDL {
     void updateSettings(int repeatMode, boolean shuffle);
     SongBean getPrevSong();
     SongBean getNextSong();
+    void play(in SongBean song, int index);
+    void next();
+    void previous();
+    void pause();
+    void resume(in SongBean song);
+    void prepare(int index);
+    void seek(int position);
 }

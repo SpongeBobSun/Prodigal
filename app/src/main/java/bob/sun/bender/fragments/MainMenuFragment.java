@@ -34,7 +34,6 @@ import bob.sun.bender.view.AlbumStack;
  * Created by sunkuan on 2015/4/23.
  */
 public class MainMenuFragment extends TwoPanelFragment implements OnTickListener {
-//    ListView listView;
     RecyclerView theList;
     int currentItemIndex;
     ImageView imageView;
@@ -43,6 +42,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     LinearLayout rightPanel;
     FrameLayout leftPanel;
     AlbumStack albumStack;
+    AIDLDumper dumper;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -92,6 +92,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     public void onResume() {
         super.onResume();
         refreshCurrentSongIfNeeded();
+        dumper = AIDLDumper.getInstance((MainActivity) getActivity());
     }
 
     @Override
@@ -157,13 +158,13 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         rightPanelContent.setVisibility(View.GONE);
         nowPlayingPage.setVisibility(View.VISIBLE);
         PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
-        if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
+        if (playerService == null || dumper.getCurrentSong() == null){
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(R.string.nothing);
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(R.string.nobody);
             ((ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover)).setImageResource(R.drawable.album);
             return;
         }
-        SongBean song = AIDLDumper.getCurrentSong(playerService);
+        SongBean song = dumper.getCurrentSong();
         ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
         ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
         ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);

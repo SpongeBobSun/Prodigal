@@ -45,6 +45,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     VolumeUtil volume;
     ViewMode viewMode;
     Runnable progressFetcher;
+    AIDLDumper dumper;
 
     private final float seekStep = 0.1f;
     int seekedPosistiton;
@@ -84,10 +85,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
                 progressFetcher = new Runnable() {
                     @Override
                     public void run() {
-                        PlayerServiceAIDL service = ((MainActivity)getActivity()).playerService;
-                        if (service != null) {
-                            onProcessChanged(AIDLDumper.getCurrent(service), AIDLDumper.getDuration(service));
-                        }
+                        onProcessChanged(dumper.getCurrent(), dumper.getDuration());
                         view.postDelayed(this, 1000);
                     }
                 };
@@ -100,6 +98,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     public void onResume() {
         super.onResume();
         refreshSong();
+        dumper = AIDLDumper.getInstance((MainActivity) getActivity());
     }
 
     @Override
@@ -214,7 +213,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         PlayerServiceAIDL serviceAIDL = ((MainActivity) getActivity()).playerService;
         if (serviceAIDL == null)
             return;
-        SongBean bean = AIDLDumper.getCurrentSong(serviceAIDL);
+        SongBean bean = dumper.getCurrentSong();
         if (bean == null)
             return;
         setSong(bean);
@@ -266,9 +265,6 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     }
 
     private void doSeek() {
-        Intent intent = new Intent(getActivity(), PlayerService.class);
-        intent.putExtra("CMD", PlayerService.CMD_SEEK);
-        intent.putExtra("DATA", seekedPosistiton);
-        getActivity().startService(intent);
+        dumper.seek(seekedPosistiton);
     }
 }

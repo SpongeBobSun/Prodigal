@@ -57,17 +57,17 @@ public class NotificationUtil {
         intentMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         clickIntent = PendingIntent.getActivity(appContext, 1, intentMain, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent intentPlay = new Intent(appContext, PlayerService.class);
-        intentPlay.putExtra("CMD", PlayerService.CMD_PAUSE);
-        playIntent = PendingIntent.getService(appContext, PlayerService.CMD_PAUSE, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent intentNext = new Intent(appContext, PlayerService.class);
-        intentNext.putExtra("CMD", PlayerService.CMD_NEXT);
-        nextIntent = PendingIntent.getService(appContext, PlayerService.CMD_NEXT, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent intentPrev = new Intent(appContext, PlayerService.class);
-        intentPrev.putExtra("CMD", PlayerService.CMD_PREVIOUS);
-        prevIntent = PendingIntent.getService(appContext, PlayerService.CMD_PREVIOUS, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent intentPlay = new Intent(appContext, PlayerService.class);
+//        intentPlay.putExtra("CMD", PlayerService.CMD_PAUSE);
+//        playIntent = PendingIntent.getService(appContext, PlayerService.CMD_PAUSE, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Intent intentNext = new Intent(appContext, PlayerService.class);
+//        intentNext.putExtra("CMD", PlayerService.CMD_NEXT);
+//        nextIntent = PendingIntent.getService(appContext, PlayerService.CMD_NEXT, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        Intent intentPrev = new Intent(appContext, PlayerService.class);
+//        intentPrev.putExtra("CMD", PlayerService.CMD_PREVIOUS);
+//        prevIntent = PendingIntent.getService(appContext, PlayerService.CMD_PREVIOUS, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT);
 
         normalView.setOnClickPendingIntent(R.id.id_button_notification_pause, playIntent);
         normalView.setOnClickPendingIntent(R.id.id_button_notification_prev, prevIntent);

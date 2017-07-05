@@ -14,7 +14,9 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
@@ -76,9 +78,6 @@ import io.fabric.sdk.android.Fabric;
 import jp.wasabeef.blurry.internal.Blur;
 import jp.wasabeef.blurry.internal.BlurFactor;
 
-import static bob.sun.bender.service.PlayerService.CMD_PREPARE;
-
-
 public class MainActivity extends AppCompatActivity implements OnButtonListener {
     private FragmentManager fragmentManager;
     private MainMenuFragment mainMenu;
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private Stack<Fragment> fragmentStack;
 
     private Intent serviceIntent;
+    private AIDLDumper dumper;
 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         initOnButtonListener();
 
         startService();
+
+        dumper = AIDLDumper.getInstance(this);
 
         if (ud.shouldShowIntro()) {
             Intent intent = new Intent(this, BDIntroActivity.class);
@@ -291,8 +293,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         public void onServiceConnected(ComponentName name, IBinder service) {
             playerService = PlayerServiceAIDL.Stub.asInterface(service);
             if (lastPlayList != null)
-                AIDLDumper.setPlaylist(playerService, lastPlayList);
-            AIDLDumper.updateSettings(playerService);
+                dumper.setPlaylist(lastPlayList);
+            dumper.onServiceBinded();
+            dumper.updateSettings();
         }
 
         @Override
@@ -382,15 +385,12 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             e.printStackTrace();
         }
         if (lastSongBean.getId() != -1 && playerService != null) {
-            AIDLDumper.setPlaylist(playerService, lastPlayList);
+            dumper.setPlaylist(lastPlayList);
         }
         int index;
         if (lastPlayList.contains(lastSongBean)) {
             index = lastPlayList.indexOf(lastSongBean);
-            Intent intent = new Intent(this, PlayerService.class);
-            intent.putExtra("CMD", CMD_PREPARE);
-            intent.putExtra("INDEX", index);
-            startService(intent);
+            dumper.prepare(index);
         }
 
         if (playerService != null) {
@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 .putString("Genre",bean.getGenre())
                 .putLong("Duration",bean.getDuration())
                 .commit();
-        lastPlayList = AIDLDumper.getPlayList(playerService);
+        lastPlayList = dumper.getPlayList();
         if (lastPlayList == null)
             return;
         PlayList saveList = new PlayList();
@@ -494,26 +494,27 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             startService();
             return;
         }
-        Intent intent;
-        if (AIDLDumper.isPlaying(playerService)) {
-            intent = new Intent(this, PlayerService.class);
-            intent.putExtra("CMD", PlayerService.CMD_PAUSE);
+        boolean playing = false;
+        if (dumper.isPlaying()) {
+            dumper.pause();
+            playing = true;
         } else {
-            SongBean current = AIDLDumper.getCurrentSong(playerService);
+            SongBean current = dumper.getCurrentSong();
             if (current != null && current.getId() != -1) {
-                intent = new Intent(this, PlayerService.class);
-                intent.putExtra("CMD", PlayerService.CMD_RESUME);
+//                intent = new Intent(this, PlayerService.class);
+//                intent.putExtra("CMD", PlayerService.CMD_RESUME);
+                //TODO: Is this causing crash?
+                dumper.resume(null);
+                playing = true;
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
-                intent = new Intent(this, PlayerService.class);
-                intent.putExtra("CMD", PlayerService.CMD_PLAY);
-                intent.putExtra("DATA", (Parcelable) lastSongBean);
-            } else {
-                intent = null;
+//                intent = new Intent(this, PlayerService.class);
+//                intent.putExtra("CMD", PlayerService.CMD_PLAY);
+//                intent.putExtra("DATA", (Parcelable) lastSongBean);
+                dumper.play(lastSongBean, -1);
+                playing = true;
             }
         }
-        if (intent != null) {
-            startService(intent);
-        } else
+        if (!playing)
             Toast.makeText(this, R.string.nothing_to_play, Toast.LENGTH_SHORT).show();
 
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -523,10 +524,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     public void onNext() {
         if (!permissionGranted)
             return;
-        Intent intent = new Intent(this,PlayerService.class);
-        intent.putExtra("CMD",PlayerService.CMD_NEXT);
-
-        startService(intent);
+        dumper.next();
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
@@ -534,9 +532,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     public void onPrevious() {
         if (!permissionGranted)
             return;
-        Intent intent = new Intent(this,PlayerService.class);
-        intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
-        startService(intent);
+        dumper.previous();
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
@@ -597,8 +593,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             public void dismissed() {
                                 SimpleListFragment menu = new SimpleListFragment();
                                 SimpleListMenuAdapter adapter;
-                                if (playerService != null && AIDLDumper.getPlayList(playerService) != null) {
-                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,AIDLDumper.getPlayList(playerService));
+                                if (playerService != null && dumper.getPlayList() != null) {
+                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,dumper.getPlayList());
                                     menu.setAdapter(adapter);
                                     adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                                 }else {
@@ -625,7 +621,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             @Override
                             public void dismissed() {
                                 switchFragmentTo(nowPlayingFragment, false);
-                                SongBean song = AIDLDumper.getCurrentSong(playerService);
+                                SongBean song = dumper.getCurrentSong();
                                 if (song != null) {
                                     nowPlayingFragment.setSong(song);
                                 } else {
@@ -639,20 +635,22 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                Intent intent = new Intent(MainActivity.this,PlayerService.class);
+//                                Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                                 if (playList == null || playList.size() == 0)
                                     return;
-                                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                                intent.putExtra("DATA",(Serializable) playList.get(0));
-                                intent.putExtra("INDEX", 0);
+//                                intent.putExtra("CMD",PlayerService.CMD_PLAY);
+//                                intent.putExtra("DATA",(Serializable) playList.get(0));
+//                                intent.putExtra("INDEX", 0);
                                 if (playerService != null) {
-                                    AIDLDumper.setPlaylist(playerService, playList);
+//                                    AIDLDumper.setPlaylist(playerService, playList);
+                                    dumper.setPlaylist(playList);
                                 } else {
                                     lastPlayList = playList;
                                     startService();
                                 }
-                                startService(intent);
+                                dumper.play((SongBean) playList.get(0), 0);
+//                                startService(intent);
                                 switchFragmentTo(nowPlayingFragment, false);
                                 nowPlayingFragment.setSong((SongBean) playList.get(0));
                                 loadBackground((SongBean) playList.get(0));
@@ -713,12 +711,13 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 if (playerService == null)
                     startService();
 
-                AIDLDumper.setPlaylist(playerService, detail.getPlaylist());
-                Intent intent = new Intent(this,PlayerService.class);
-                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                intent.putExtra("DATA",(Serializable) detail.getData());
-                intent.putExtra("INDEX",detail.getIndexOfList());
-                startService(intent);
+                dumper.setPlaylist(detail.getPlaylist());
+//                Intent intent = new Intent(this,PlayerService.class);
+//                intent.putExtra("CMD",PlayerService.CMD_PLAY);
+//                intent.putExtra("DATA",(Serializable) detail.getData());
+//                intent.putExtra("INDEX",detail.getIndexOfList());
+//                startService(intent);
+                dumper.play((SongBean) detail.getData(), detail.getIndexOfList());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;
@@ -735,7 +734,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     case ShuffleSettings:
                         UserDefaults.getStaticInstance(this).rollShuffle();
                         settingMenu.reloadSettings();
-                        AIDLDumper.updateSettings(playerService);
+                        dumper.updateSettings();
                         break;
                     case ThemeSettings:
                         SimpleListMenuAdapter themesAdapter = new SimpleListMenuAdapter(getApplicationContext(),
@@ -751,7 +750,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     case RepeatSettings:
                         UserDefaults.getStaticInstance(this).rollRepeat();
                         settingMenu.reloadSettings();
-                        AIDLDumper.updateSettings(playerService);
+                        dumper.updateSettings();
                         break;
                     case GetSourceCode:
                         Intent source = new Intent(Intent.ACTION_VIEW);
