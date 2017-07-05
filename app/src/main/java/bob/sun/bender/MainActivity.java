@@ -14,10 +14,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +40,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -494,27 +490,22 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             startService();
             return;
         }
-        boolean playing = false;
+        boolean empty = false;
         if (dumper.isPlaying()) {
             dumper.pause();
-            playing = true;
+            empty = true;
         } else {
             SongBean current = dumper.getCurrentSong();
             if (current != null && current.getId() != -1) {
-//                intent = new Intent(this, PlayerService.class);
-//                intent.putExtra("CMD", PlayerService.CMD_RESUME);
                 //TODO: Is this causing crash?
                 dumper.resume(null);
-                playing = true;
+                empty = true;
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
-//                intent = new Intent(this, PlayerService.class);
-//                intent.putExtra("CMD", PlayerService.CMD_PLAY);
-//                intent.putExtra("DATA", (Parcelable) lastSongBean);
                 dumper.play(lastSongBean, -1);
-                playing = true;
+                empty = true;
             }
         }
-        if (!playing)
+        if (!empty)
             Toast.makeText(this, R.string.nothing_to_play, Toast.LENGTH_SHORT).show();
 
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -635,22 +626,16 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-//                                Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                                 if (playList == null || playList.size() == 0)
                                     return;
-//                                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-//                                intent.putExtra("DATA",(Serializable) playList.get(0));
-//                                intent.putExtra("INDEX", 0);
                                 if (playerService != null) {
-//                                    AIDLDumper.setPlaylist(playerService, playList);
                                     dumper.setPlaylist(playList);
                                 } else {
                                     lastPlayList = playList;
                                     startService();
                                 }
                                 dumper.play((SongBean) playList.get(0), 0);
-//                                startService(intent);
                                 switchFragmentTo(nowPlayingFragment, false);
                                 nowPlayingFragment.setSong((SongBean) playList.get(0));
                                 loadBackground((SongBean) playList.get(0));
@@ -712,11 +697,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     startService();
 
                 dumper.setPlaylist(detail.getPlaylist());
-//                Intent intent = new Intent(this,PlayerService.class);
-//                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-//                intent.putExtra("DATA",(Serializable) detail.getData());
-//                intent.putExtra("INDEX",detail.getIndexOfList());
-//                startService(intent);
                 dumper.play((SongBean) detail.getData(), detail.getIndexOfList());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
