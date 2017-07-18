@@ -40,7 +40,7 @@ public class NotificationUtil {
     private NotificationManager notificationManager;
     private Notification notification;
     private NotificationCompat.Builder builder;
-    private PendingIntent clickIntent, nextIntent, prevIntent, playIntent;
+    private PendingIntent clickIntent, nextIntent, prevIntent, playIntent, pauseIntent;
     private RemoteViews bigView, normalView;
     private Target imgLoaderTarget;
 
@@ -70,6 +70,10 @@ public class NotificationUtil {
         intentPlay.putExtra("CMD", PlayerService.cmdPause);
         playIntent = PendingIntent.getService(appContext, PlayerService.cmdPause, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent intentPause = new Intent(appContext, PlayerService.class);
+        intentPause.putExtra("CMD", PlayerService.cmdPlay);
+        pauseIntent = PendingIntent.getService(appContext, PlayerService.cmdPlay, intentPause, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Intent intentNext = new Intent(appContext, PlayerService.class);
         intentNext.putExtra("CMD", PlayerService.cmdNext);
         nextIntent = PendingIntent.getService(appContext, PlayerService.cmdNext, intentNext, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -96,13 +100,17 @@ public class NotificationUtil {
         if( builder == null ) {
             return;
         }
+        NotificationCompat.Action action;
+        if (session.isActive()) {
+            action = new NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause", playIntent);
+        } else {
+            action = new NotificationCompat.Action(android.R.drawable.ic_media_play, "Play", pauseIntent);
+        }
         builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_previous, "Previous",
                 prevIntent));
-        builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause",
-                playIntent));
+        builder.addAction(action);
         builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_next, "Next",
                 nextIntent));
-
 
         builder.setOngoing(true);
 

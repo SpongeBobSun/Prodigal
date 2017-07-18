@@ -46,7 +46,7 @@ import io.fabric.sdk.android.Fabric;
 public class PlayerService extends MediaBrowserServiceCompat implements MediaPlayer.OnCompletionListener,
         AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnPreparedListener {
 
-    public static int cmdPlay   = 0x60;
+    public final static int cmdPlay   = 0x60;
     public final static int cmdPause  = 0x61;
     public final static int cmdNext   = 0x62;
     public final static int cmdPrev   = 0x63;
@@ -83,7 +83,7 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
     private void initMediaSession() {
         ComponentName mediaButtonReceiver = new ComponentName(getApplicationContext(), MediaButtonReceiver.class);
         mediaSession = new MediaSessionCompat(getApplicationContext(), "PrdPlayer", mediaButtonReceiver, null);
-        mediaSession.setCallback(mMediaSessionCallback);
+//        mediaSession.setCallback(mMediaSessionCallback);
         mediaSession.setFlags( MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS );
 
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
@@ -105,6 +105,9 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
                 break;
             case cmdPrev:
                 onPrevious();
+                break;
+            case cmdPlay:
+                onPause();
                 break;
             default:
                 break;
@@ -169,6 +172,7 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
             e.printStackTrace();
             Crashlytics.logException(e);
         }
+        mediaSession.setActive(true);
         sendNotification(currentSong);
     }
     private void onPrevious(){
@@ -190,19 +194,19 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
             e.printStackTrace();
             Crashlytics.logException(e);
         }
+        mediaSession.setActive(true);
         sendNotification(playlist.get(index));
     }
 
     private void onPause() {
         if (mediaPlayer.isPlaying()){
-            NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
             mediaPlayer.pause();
             mediaSession.setActive(false);
+            sendNotification(currentSong);
         } else {
             mediaPlayer.start();
             mediaSession.setActive(true);
-            NotificationUtil.getStaticInstance(getApplicationContext())
-                    .showPlayingNotification(PlayerService.this, mediaSession);
+            sendNotification(currentSong);
         }
     }
 
@@ -383,6 +387,7 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
                         e.printStackTrace();
                         Crashlytics.logException(e);
                     }
+                    mediaSession.setActive(true);
                     sendNotification(song);
                     }
                 });
@@ -445,6 +450,7 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
                     }
                     song = song == null ? currentSong : song;
                     if (song != null) {
+                        mediaSession.setActive(true);
                         sendNotification(song);
                     }
                 }
@@ -468,107 +474,6 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
         }
     }
 
-
-    private void setMediaPlaybackState(int state) {
-        PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
-        if( state == PlaybackStateCompat.STATE_PLAYING ) {
-            playbackStateBuilder.setActions(
-                            PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                            PlaybackStateCompat.ACTION_PAUSE |
-                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-            );
-        } else {
-            playbackStateBuilder.setActions(
-                            PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                            PlaybackStateCompat.ACTION_PLAY |
-                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
-        }
-        playbackStateBuilder.setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0);
-        mediaSession.setPlaybackState(playbackStateBuilder.build());
-    }
-
-    private MediaSessionCompat.Callback mMediaSessionCallback = new MediaSessionCompat.Callback() {
-
-        @Override
-        public void onPlay() {
-            super.onPlay();
-//            if( !successfullyRetrievedAudioFocus() ) {
-//                return;
-//            }
-//
-//            mediaSession.setActive(true);
-//            setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-//
-//            showPlayingNotification();
-//            mediaPlayer.start();
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-
-            if( mediaPlayer.isPlaying() ) {
-                mediaPlayer.pause();
-                setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
-//                showPausedNotification();
-            }
-        }
-
-        @Override
-        public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            super.onPlayFromMediaId(mediaId, extras);
-
-//            try {
-//                AssetFileDescriptor afd = getResources().openRawResourceFd(Integer.valueOf(mediaId));
-//                if( afd == null ) {
-//                    return;
-//                }
-//
-//                try {
-//                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-//
-//                } catch( IllegalStateException e ) {
-//                    mediaPlayer.release();
-//                    initMediaPlayer();
-//                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-//                }
-//
-//                afd.close();
-//                initMediaSessionMetadata();
-//
-//            } catch (IOException e) {
-//                return;
-//            }
-//
-//            try {
-//                mediaPlayer.prepare();
-//            } catch (IOException e) {}
-//
-//            //Work with extras here if you want
-        }
-
-        @Override
-        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
-            Log.e("MediaButtonReceiver", "OnMediaButtonEvent called");
-//            MediaButtonIntentReceiver.MediaButtonReceiverHelper.onReceive(MusicService.this, mediaButtonEvent);
-            return true;
-        }
-
-        @Override
-        public void onSkipToQueueItem(long qId) {
-            Log.e("skip", "" + qId);
-        }
-
-
-        @Override
-        public void onSeekTo(long pos) {
-            super.onSeekTo(pos);
-        }
-
-    };
-
     private MediaMetadataCompat getMediaMetaFrom(SongBean bean, Bitmap bitmap) {
         MediaMetadataCompat ret;
         ret = new MediaMetadataCompat.Builder()
@@ -582,6 +487,9 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
     }
 
     private void sendNotification(final SongBean bean) {
+        if (bean == null) {
+            return;
+        }
         Picasso.with(getApplicationContext())
                 .load(MediaLibrary.getStaticInstance(getApplicationContext()).getCoverUriByAlbumId(bean.getAlbumId()))
                 .config(Bitmap.Config.RGB_565)
@@ -591,7 +499,6 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                         MediaMetadataCompat metaData = getMediaMetaFrom(bean, bitmap);
                         mediaSession.setMetadata(metaData);
-                        mediaSession.setActive(true);
                         NotificationUtil.getStaticInstance(getApplicationContext())
                                 .showPlayingNotification(PlayerService.this, mediaSession);
                     }
@@ -605,7 +512,6 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
 
                         MediaMetadataCompat metaData = getMediaMetaFrom(bean, bitmap);
                         mediaSession.setMetadata(metaData);
-                        mediaSession.setActive(true);
                         NotificationUtil.getStaticInstance(getApplicationContext())
                                 .showPlayingNotification(PlayerService.this, mediaSession);
                     }
