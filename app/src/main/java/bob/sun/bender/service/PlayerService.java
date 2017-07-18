@@ -125,8 +125,6 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
             try {
                 mediaPlayer.setDataSource(currentSong.getFilePath());
                 mediaPlayer.prepare();
-                Intent msg = new Intent(AppConstants.broadcastSongChange);
-                msg.setPackage(this.getPackageName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
