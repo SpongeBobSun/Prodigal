@@ -1,21 +1,40 @@
 package bob.sun.bender.service;
 
-import android.app.Service;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaBrowserServiceCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaButtonReceiver;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import bob.sun.bender.PlayerServiceAIDL;
+import bob.sun.bender.R;
+import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SongBean;
 import bob.sun.bender.utils.AppConstants;
 import bob.sun.bender.utils.NotificationUtil;
@@ -24,14 +43,21 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by sunkuan on 15/4/29.
  */
-public class PlayerService extends Service implements MediaPlayer.OnCompletionListener,
+public class PlayerService extends MediaBrowserServiceCompat implements MediaPlayer.OnCompletionListener,
         AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnPreparedListener {
+
+    public static int cmdPlay   = 0x60;
+    public final static int cmdPause  = 0x61;
+    public final static int cmdNext   = 0x62;
+    public final static int cmdPrev   = 0x63;
+
     private MediaPlayer mediaPlayer;
     private ArrayList<SongBean> playlist;
     private SongBean currentSong;
     private int index, repeatMode;
     private boolean shuffle;
     private AudioManager audioManager;
+    private MediaSessionCompat mediaSession;
 
     @Override
     public void onCreate(){
@@ -51,10 +77,38 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         mediaPlayer.setOnPreparedListener(this);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        initMediaSession();
+    }
+
+    private void initMediaSession() {
+        ComponentName mediaButtonReceiver = new ComponentName(getApplicationContext(), MediaButtonReceiver.class);
+        mediaSession = new MediaSessionCompat(getApplicationContext(), "PrdPlayer", mediaButtonReceiver, null);
+        mediaSession.setCallback(mMediaSessionCallback);
+        mediaSession.setFlags( MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS );
+
+        Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        mediaButtonIntent.setClass(this, MediaButtonReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, mediaButtonIntent, 0);
+        mediaSession.setMediaButtonReceiver(pendingIntent);
+        setSessionToken(mediaSession.getSessionToken());
 
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags,int startId){
+        switch (intent.getIntExtra("CMD", -1)) {
+            case cmdPause:
+                onPause();
+                break;
+            case cmdNext:
+                onNext();
+                break;
+            case cmdPrev:
+                onPrevious();
+                break;
+            default:
+                break;
+        }
         return START_REDELIVER_INTENT;
     }
 
@@ -88,6 +142,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     }
 
     private void onNext(){
+        mediaSession.setActive(false);
         if (playlist == null || index >= playlist.size() - 1){
             if (playlist == null)
                 return;
@@ -114,9 +169,10 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             e.printStackTrace();
             Crashlytics.logException(e);
         }
-        NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
+        sendNotification(currentSong);
     }
     private void onPrevious(){
+        mediaSession.setActive(false);
         if (playlist == null || index <= 0){
             return;
         }
@@ -134,7 +190,20 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             e.printStackTrace();
             Crashlytics.logException(e);
         }
-        NotificationUtil.getStaticInstance(getApplicationContext()).changeSong(playlist.get(index));
+        sendNotification(playlist.get(index));
+    }
+
+    private void onPause() {
+        if (mediaPlayer.isPlaying()){
+            NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
+            mediaPlayer.pause();
+            mediaSession.setActive(false);
+        } else {
+            mediaPlayer.start();
+            mediaSession.setActive(true);
+            NotificationUtil.getStaticInstance(getApplicationContext())
+                    .showPlayingNotification(PlayerService.this, mediaSession);
+        }
     }
 
     private void onSeek(int position) {
@@ -148,6 +217,20 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
     @Override
     public IBinder onBind(Intent intent) {
         return new PlayerServiceBinder();
+    }
+
+    @Nullable
+    @Override
+    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
+        if(TextUtils.equals(clientPackageName, getPackageName())) {
+            return new BrowserRoot(getString(R.string.app_name), null);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        result.sendResult(null);
     }
 
     @Override
@@ -166,15 +249,46 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
         }
     }
 
-    public boolean isPlaying(){
-        return mediaPlayer.isPlaying();
-    }
-
     @Override
     public void onAudioFocusChange(int focusChange) {
         if (focusChange <= 0) {
             if (mediaPlayer.isPlaying())
                 mediaPlayer.pause();
+        }
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_LOSS: {
+                if(mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                }
+                break;
+            }
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT: {
+                mediaPlayer.pause();
+                break;
+            }
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK: {
+                if(mediaPlayer != null) {
+                    mediaPlayer.setVolume(0.3f, 0.3f);
+                }
+                break;
+            }
+            case AudioManager.AUDIOFOCUS_GAIN: {
+                if(mediaPlayer != null) {
+                    if( !mediaPlayer.isPlaying() ) {
+                        mediaPlayer.start();
+                    }
+                    mediaPlayer.setVolume(1.0f, 1.0f);
+                }
+                break;
+            }
+            default: {
+                if (focusChange <= 0) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                }
+                break;
+            }
         }
     }
 
@@ -269,7 +383,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         e.printStackTrace();
                         Crashlytics.logException(e);
                     }
-                    NotificationUtil.getStaticInstance(getApplicationContext()).sendPlayNotification(song);
+                    sendNotification(song);
                     }
                 });
         }
@@ -299,12 +413,7 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mediaPlayer.isPlaying()){
-                        NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
-                        mediaPlayer.pause();
-                    } else {
-                        mediaPlayer.start();
-                    }
+                    onPause();
                 }
             });
         }
@@ -335,10 +444,9 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                         mediaPlayer.start();
                     }
                     song = song == null ? currentSong : song;
-                    if (song != null)
-                        NotificationUtil
-                                .getStaticInstance(getApplicationContext())
-                                .sendPlayNotification(song);
+                    if (song != null) {
+                        sendNotification(song);
+                    }
                 }
             });
         }
@@ -358,5 +466,154 @@ public class PlayerService extends Service implements MediaPlayer.OnCompletionLi
                 }
             });
         }
+    }
+
+
+    private void setMediaPlaybackState(int state) {
+        PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
+        if( state == PlaybackStateCompat.STATE_PLAYING ) {
+            playbackStateBuilder.setActions(
+                            PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                            PlaybackStateCompat.ACTION_PAUSE |
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            );
+        } else {
+            playbackStateBuilder.setActions(
+                            PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                            PlaybackStateCompat.ACTION_PLAY |
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
+        }
+        playbackStateBuilder.setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0);
+        mediaSession.setPlaybackState(playbackStateBuilder.build());
+    }
+
+    private MediaSessionCompat.Callback mMediaSessionCallback = new MediaSessionCompat.Callback() {
+
+        @Override
+        public void onPlay() {
+            super.onPlay();
+//            if( !successfullyRetrievedAudioFocus() ) {
+//                return;
+//            }
+//
+//            mediaSession.setActive(true);
+//            setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
+//
+//            showPlayingNotification();
+//            mediaPlayer.start();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+
+            if( mediaPlayer.isPlaying() ) {
+                mediaPlayer.pause();
+                setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
+//                showPausedNotification();
+            }
+        }
+
+        @Override
+        public void onPlayFromMediaId(String mediaId, Bundle extras) {
+            super.onPlayFromMediaId(mediaId, extras);
+
+//            try {
+//                AssetFileDescriptor afd = getResources().openRawResourceFd(Integer.valueOf(mediaId));
+//                if( afd == null ) {
+//                    return;
+//                }
+//
+//                try {
+//                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+//
+//                } catch( IllegalStateException e ) {
+//                    mediaPlayer.release();
+//                    initMediaPlayer();
+//                    mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+//                }
+//
+//                afd.close();
+//                initMediaSessionMetadata();
+//
+//            } catch (IOException e) {
+//                return;
+//            }
+//
+//            try {
+//                mediaPlayer.prepare();
+//            } catch (IOException e) {}
+//
+//            //Work with extras here if you want
+        }
+
+        @Override
+        public boolean onMediaButtonEvent(Intent mediaButtonEvent) {
+            Log.e("MediaButtonReceiver", "OnMediaButtonEvent called");
+//            MediaButtonIntentReceiver.MediaButtonReceiverHelper.onReceive(MusicService.this, mediaButtonEvent);
+            return true;
+        }
+
+        @Override
+        public void onSkipToQueueItem(long qId) {
+            Log.e("skip", "" + qId);
+        }
+
+
+        @Override
+        public void onSeekTo(long pos) {
+            super.onSeekTo(pos);
+        }
+
+    };
+
+    private MediaMetadataCompat getMediaMetaFrom(SongBean bean, Bitmap bitmap) {
+        MediaMetadataCompat ret;
+        ret = new MediaMetadataCompat.Builder()
+                .putText(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, bean.getArtist())
+                .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, bean.getAlbum())
+                .putText(MediaMetadataCompat.METADATA_KEY_TITLE, bean.getTitle())
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, bean.getDuration())
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, bitmap)
+                .build();
+        return ret;
+    }
+
+    private void sendNotification(final SongBean bean) {
+        Picasso.with(getApplicationContext())
+                .load(MediaLibrary.getStaticInstance(getApplicationContext()).getCoverUriByAlbumId(bean.getAlbumId()))
+                .config(Bitmap.Config.RGB_565)
+                .error(R.drawable.album)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        MediaMetadataCompat metaData = getMediaMetaFrom(bean, bitmap);
+                        mediaSession.setMetadata(metaData);
+                        mediaSession.setActive(true);
+                        NotificationUtil.getStaticInstance(getApplicationContext())
+                                .showPlayingNotification(PlayerService.this, mediaSession);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inPreferredConfig = Bitmap.Config.RGB_565;
+                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                                R.drawable.album, options);
+
+                        MediaMetadataCompat metaData = getMediaMetaFrom(bean, bitmap);
+                        mediaSession.setMetadata(metaData);
+                        mediaSession.setActive(true);
+                        NotificationUtil.getStaticInstance(getApplicationContext())
+                                .showPlayingNotification(PlayerService.this, mediaSession);
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
     }
 }
