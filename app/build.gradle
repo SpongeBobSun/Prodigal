@@ -15,6 +15,10 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+gradle.projectsEvaluated {
+    preBuild.dependsOn(zipThemes)
+}
+
 
 android {
     compileSdkVersion 25
@@ -58,4 +62,13 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'jp.wasabeef:blurry:2.1.1'
+}
+
+task zipThemes(type: Zip) {
+    from '../themes/'
+    include '*'
+    include '*/*'
+    archiveName 'themes.zip'
+    duplicatesStrategy 'exclude'
+    destinationDir(file('src/main/assets/'))
 }

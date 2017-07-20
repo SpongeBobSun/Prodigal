@@ -1,0 +1,18 @@
+{
+    "icons": {
+              "next":"right.png",
+              "prev":"left.png",
+              "play":"go.png",
+              "menu":"menu.png"
+    },
+    "wheel_outer":"1.0",
+    "wheel_inner":"0.5",
+    "wheel_color":"#AACCCCCC",
+    "button_size":"0.2",
+    "button_background": "#FF000000",
+    "background_color": "#59A5C6",
+    "wheel_shape": "polygon",
+    "polygon_sides": "8",
+    "card_color": "#AACCCCCC",
+    "item_color": "#4D93C6"
+}
