@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -273,15 +274,19 @@ public class MediaLibrary {
     public Bitmap getCoverImageBySong(long songId){
         Uri sArtworkUri = Uri.parse("content://media/external/audio/media/" + songId + "/albumart");
         ContentResolver res = appContext.getContentResolver();
-        InputStream in = null;
+        InputStream in;
+        Bitmap ret = null;
         try {
             in = res.openInputStream(sArtworkUri);
-            // TODO: 06/02/2017 Close input stream!
-            return BitmapFactory.decodeStream(in);
+            ret = BitmapFactory.decodeStream(in);
+            in.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.album);
+            ret = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.album);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return ret;
     }
 
     public String getCoverUriByAlbumId(long albumId){
@@ -295,13 +300,18 @@ public class MediaLibrary {
         Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
         ContentResolver res = appContext.getContentResolver();
         InputStream in = null;
+        Bitmap ret = null;
         try {
             in = res.openInputStream(uri);
-            return BitmapFactory.decodeStream(in);
+            ret = BitmapFactory.decodeStream(in);
+            in.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+            ret = BitmapFactory.decodeResource(appContext.getResources(), R.drawable.ic_launcher);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return ret;
     }
 
     public Bitmap getCoverImageByAlbum(String albumName){

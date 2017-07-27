@@ -242,6 +242,7 @@ public class PlayerService extends MediaBrowserServiceCompat implements MediaPla
     @Override
     public void onDestroy() {
         audioManager.abandonAudioFocus(this);
+        mediaSession.setActive(false);
         NotificationUtil.getStaticInstance(getApplicationContext()).dismiss();
         try{
             mediaPlayer.reset();

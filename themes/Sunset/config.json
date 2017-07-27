@@ -9,10 +9,9 @@
     "wheel_inner":"0.3",
     "wheel_color":"#99F99F1B",
     "button_size":"0.2",
-    "button_background": "#FF000000",
     "background_color": "#87BACB",
     "wheel_shape": "oval",
-    "card_color": "#FF000000",
+    "card_color": "#000000FF",
     "item_color": "#99F34235",
     "text_color": "#EEEEEE"
 }
