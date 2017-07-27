@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -796,6 +797,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 .config(Bitmap.Config.RGB_565).error(R.drawable.button).into(bPlay);
         Picasso.with(this).load("file://" + theme.getPrevIcon()).fit().centerInside()
                 .config(Bitmap.Config.RGB_565).error(R.drawable.prev).into(bPrev);
+        this.getWindow().getDecorView().invalidate();
     }
 
     public void loadBackground(SongBean bean) {

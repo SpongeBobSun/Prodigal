@@ -38,6 +38,7 @@ import bob.sun.bender.utils.UserDefaults;
 public class ThemeManager {
 
     private static ThemeManager instance;
+    private volatile Theme currentTheme = null;
     private Context context;
     private Gson gson;
 
@@ -130,14 +131,20 @@ public class ThemeManager {
         if (name != null && "Default".equalsIgnoreCase(name)) {
             return Theme.defaultTheme();
         }
+        if (!validateByName(name)) {
+            UserDefaults.getStaticInstance(context).setTheme("Default");
+            return Theme.defaultTheme();
+        }
         Theme ret = null;
         File folder = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name);
         if (!folder.exists()) {
-            return Theme.defaultTheme();
+            currentTheme = Theme.defaultTheme();
+            return currentTheme;
         }
         File config = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder + name + "/config.json");
         if (!config.exists()) {
-            return Theme.defaultTheme();
+            currentTheme = Theme.defaultTheme();
+            return currentTheme;
         }
         JsonParser parser = new JsonParser();
         JsonReader reader = null;
@@ -158,6 +165,7 @@ public class ThemeManager {
         } else {
             UserDefaults.getStaticInstance(context).setTheme(name);
         }
+        currentTheme = ret;
         return ret;
     }
 
@@ -168,7 +176,15 @@ public class ThemeManager {
         if (ret == null) {
             ret = Theme.defaultTheme();
         }
+        currentTheme = ret;
         return ret;
+    }
+
+    public @NonNull Theme getCurrentTheme() {
+        if (currentTheme == null) {
+            currentTheme = loadCurrentTheme();
+        }
+        return currentTheme;
     }
 
     public boolean validateByName(String name) {

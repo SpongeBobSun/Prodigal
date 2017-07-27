@@ -13,5 +13,6 @@
     "wheel_shape": "polygon",
     "polygon_sides": "8",
     "card_color": "#AACCCCCC",
-    "item_color": "#4D93C6"
+    "item_color": "#4D93C6",
+    "text_color": "#FFFFFF"
 }

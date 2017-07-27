@@ -12,5 +12,6 @@
     "background_color": "#59A5C6",
     "wheel_shape": "rect",
     "card_color": "#AACCCCCC",
-    "item_color": "#4D93C6"
+    "item_color": "#4D93C6",
+    "text_color": "#FFFFFF"
 }
