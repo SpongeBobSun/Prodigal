@@ -8,7 +8,7 @@ Bring back the good old player to life.
 
 ### Screen Record
 
-<img style="float:left" src="artworks/demo.gif" width="300"/>
+<img style="float:left" src="artworks/demov1.1.gif" width="300"/>
 
 
 ### Screenshots
