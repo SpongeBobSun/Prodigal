@@ -55,7 +55,7 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
         flow = new CoverFlow.Builder()
                 .with(pager)
                 .pagerMargin(0)
-                .scale(0.3f)
+                .scale(0.05f)
                 .spaceSize(0f)
                 .rotationY(30f)
                 .build();
