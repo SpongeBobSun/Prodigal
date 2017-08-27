@@ -210,6 +210,10 @@ public class ThemeManager {
         ret.add(Theme.defaultTheme().getName());
         File folder = new File(Environment.getExternalStorageDirectory() + AppConstants.themeFolder);
         String[] themes = folder.list();
+        if (themes == null) {
+            ret.add("Default");
+            return ret;
+        }
         for (String t : themes) {
             if (validateByName(t)) {
                 ret.add(t);
