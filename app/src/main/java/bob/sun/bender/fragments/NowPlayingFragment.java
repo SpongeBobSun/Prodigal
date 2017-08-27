@@ -97,8 +97,8 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     @Override
     public void onResume() {
         super.onResume();
-        refreshSong();
         dumper = AIDLDumper.getInstance((MainActivity) getActivity());
+        refreshSong();
     }
 
     @Override
