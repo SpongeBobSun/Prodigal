@@ -6,27 +6,39 @@ Bring back the good old player to life.
 
 <a href="https://play.google.com/store/apps/details?id=bob.sun.prodigal"><img src="artworks/google-play-badge.png" height="60"></a>
 
-###Screen Record
+### Screen Record
 
 <img style="float:left" src="artworks/demo.gif" width="300"/>
 
 
-###Screenshots
+### Screenshots
 
-| ![Home](artworks/home.png) | ![Cover](artworks/cover.png) | ![Home2](artworks/home2.png) | ![Now](artworks/nowplaying.png) |
-| -------------------------- | ---------------------------- | ---------------------------- | ------------------------------- |
-|                            |                              |                              |                                 |
-
-
-###Notice
-
-PLEASE DO NOT TAKE MY SOURCE CODE AND MAKE COPY CAT APPs of Prodigal Music Player!
-
-I'm talking about you - owner of [this app](https://play.google.com/store/apps/details?id=com.uzbiapp.audioplayer).
-Since you don't reply any of my emails, you can go %#@& yourself.
+| ![Home](artworks/home_cover.png)         | ![Cover](artworks/coverflow.png)   | ![Home2](artworks/home_np.png)      | ![Now](artworks/now_playing.png)       |
+| ---------------------------------------- | ---------------------------------- | ----------------------------------- | -------------------------------------- |
+| Home page                                | Browse Cover                       | Now playing widget                  | Now playing page                       |
+| ![home_cover2](artworks/home_cover2.png) | ![Cover](artworks/cover_flow2.png) | ![Home2](artworks/now_playing2.png) | ![Now](artworks/theme_default.png)     |
+| Home page                                | Browse Cover                       | Now playing page                    | Theme 'default'                        |
+| ![Now](artworks/theme_gray.png)          | ![Now](artworks/theme_ruby.png)    | ![Now](artworks/theme_sunset.png)   | ![Now](artworks/theme_transparent.png) |
+| Theme 'grey'                             | Theme 'ruby'                       | Theme 'sunset'                      | Theme 'transparent'                    |
 
 
-###Credits
+
+### Customizing Themes
+
+See this [link](https://github.com/SpongeBobSun/Prodigal/blob/v1.1/Themes.md) for customizing themes.
+
+
+
+### Building
+
+To build Prodigal for Android you need import the project in AndroidStudio.
+
+Before you hit the run or debug button, you may need to run the `zipThemes` gradle task, which will zip the theme folder and copy it to `assets` folder.
+
+After themes are zipped as assets, you can switch to the `app` configuration and hit the run button.
+
+
+### Credits
 
 Icons in this app are brought you by [Icons8.com](https://icons8.com)
 

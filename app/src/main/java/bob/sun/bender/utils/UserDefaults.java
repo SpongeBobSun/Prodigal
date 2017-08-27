@@ -19,6 +19,7 @@ public class UserDefaults {
     private SharedPreferences preferences;
     private String appVersion;
     private String kIntroShown = "kIntroShownFor:";
+    private String kThemeName = "kThemeName";
 
     private UserDefaults(Context context){
         preferences = context.getSharedPreferences(pref_tag,0);
@@ -84,5 +85,13 @@ public class UserDefaults {
 
     public void introShown() {
         preferences.edit().putBoolean(kIntroShown, true).commit();
+    }
+
+    public void setTheme(String name) {
+        preferences.edit().putString(kThemeName, name).commit();
+    }
+
+    public String getTheme() {
+        return preferences.getString(kThemeName, "Default");
     }
 }

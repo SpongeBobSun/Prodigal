@@ -11,12 +11,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import bob.sun.bender.R;
+import bob.sun.bender.theme.ThemeManager;
 
 /**
  * Created by bob.sun on 24/01/2017.
  */
 
 public class VHImageListItem extends RecyclerView.ViewHolder {
+
+    ThemeManager themeManager;
 
     public enum Status {
         ListItemNormal,
@@ -30,12 +33,16 @@ public class VHImageListItem extends RecyclerView.ViewHolder {
         super(itemView);
         contentView = itemView;
         imageView = (ImageView) contentView.findViewById(R.id.id_itemlistview_imageview);
+        themeManager = ThemeManager.getInstance(null);
     }
 
     public void configure(String str, String imgUri, VHImageListItem.Status status) {
         ((TextView) contentView.findViewById(R.id.id_itemlistview_textview)).setText(str);
+        TextView textView = (TextView) contentView.findViewById(R.id.id_itemlistview_textview);
+        textView.setText(str);
+        textView.setTextColor(themeManager.getCurrentTheme().getTextColor());
         if(status == VHImageListItem.Status.ListItemHighlighted){
-            contentView.setBackgroundColor(Color.LTGRAY);
+            contentView.setBackgroundColor(themeManager.loadCurrentTheme().getItemColor());
         }else{
             contentView.setBackgroundColor(Color.TRANSPARENT);
         }

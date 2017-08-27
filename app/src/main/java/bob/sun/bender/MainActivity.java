@@ -9,35 +9,38 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.Toast;
-
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
-
 import com.crashlytics.android.Crashlytics;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
-import bob.sun.bender.intro.BDIntroActivity;
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -51,6 +54,7 @@ import bob.sun.bender.fragments.NowPlayingFragment;
 import bob.sun.bender.fragments.SettingsFragment;
 import bob.sun.bender.fragments.SimpleListFragment;
 import bob.sun.bender.fragments.TwoPanelFragment;
+import bob.sun.bender.intro.BDIntroActivity;
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.MenuMeta;
 import bob.sun.bender.model.PlayList;
@@ -58,16 +62,18 @@ import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SettingAdapter;
 import bob.sun.bender.model.SongBean;
 import bob.sun.bender.service.PlayerService;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.utils.AppConstants;
 import bob.sun.bender.utils.NotificationUtil;
-import bob.sun.bender.utils.UserDefaults;
 import bob.sun.bender.utils.ResUtil;
+import bob.sun.bender.utils.UserDefaults;
 import bob.sun.bender.utils.VibrateUtil;
 import bob.sun.bender.view.WheelView;
-
-import static bob.sun.bender.service.PlayerService.CMD_PREPARE;
-
+import io.fabric.sdk.android.Fabric;
+import jp.wasabeef.blurry.internal.Blur;
+import jp.wasabeef.blurry.internal.BlurFactor;
 
 public class MainActivity extends AppCompatActivity implements OnButtonListener {
     private FragmentManager fragmentManager;
@@ -89,17 +95,25 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
     private Stack<Fragment> fragmentStack;
 
     private Intent serviceIntent;
+    private AIDLDumper dumper;
 
     private SongBean lastSongBean;
     private ArrayList lastPlayList;
     private boolean permissionGranted;
     private boolean keepDancing;
 
+    private ImageView bNext, bPrev, bMenu, bPlay;
+    private ImageView backgroundImage;
+    private Point windowSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
+        backgroundImage = (ImageView) findViewById(R.id.id_album_background);
+        windowSize = new Point();
+        getWindow().getWindowManager().getDefaultDisplay().getSize(windowSize);
 
         VibrateUtil.getStaticInstance(this);
         MediaLibrary.getStaticInstance(this);
@@ -115,10 +129,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
         startService();
 
+        dumper = AIDLDumper.getInstance(this);
+
         if (ud.shouldShowIntro()) {
             Intent intent = new Intent(this, BDIntroActivity.class);
             startActivity(intent);
         }
+
+        loadTheme();
 
     }
 
@@ -239,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 })) {
+            ThemeManager.getInstance(getApplicationContext());
             permissionGranted = true;
             return;
         }
@@ -247,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             public void onGranted() {
                 permissionGranted = true;
                 findViewById(R.id.id_holder_no_permission).setVisibility(View.GONE);
+                ThemeManager.getInstance(getApplicationContext());
             }
 
             @Override
@@ -270,8 +290,9 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         public void onServiceConnected(ComponentName name, IBinder service) {
             playerService = PlayerServiceAIDL.Stub.asInterface(service);
             if (lastPlayList != null)
-                AIDLDumper.setPlaylist(playerService, lastPlayList);
-            AIDLDumper.updateSettings(playerService);
+                dumper.setPlaylist(lastPlayList);
+            dumper.onServiceBinded();
+            dumper.updateSettings();
         }
 
         @Override
@@ -361,15 +382,23 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             e.printStackTrace();
         }
         if (lastSongBean.getId() != -1 && playerService != null) {
-            AIDLDumper.setPlaylist(playerService, lastPlayList);
+            dumper.setPlaylist(lastPlayList);
         }
         int index;
         if (lastPlayList.contains(lastSongBean)) {
             index = lastPlayList.indexOf(lastSongBean);
-            Intent intent = new Intent(this, PlayerService.class);
-            intent.putExtra("CMD", CMD_PREPARE);
-            intent.putExtra("INDEX", index);
-            startService(intent);
+            dumper.prepare(index);
+        }
+
+        if (playerService != null) {
+            try {
+                if (playerService.isPlaying()) {
+                    SongBean current = playerService.getCurrentSong();
+                    loadBackground(current);
+                }
+            } catch (RemoteException e) {
+                //Eat it
+            }
         }
     }
 
@@ -401,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 .putString("Genre",bean.getGenre())
                 .putLong("Duration",bean.getDuration())
                 .commit();
-        lastPlayList = AIDLDumper.getPlayList(playerService);
+        lastPlayList = dumper.getPlayList();
         if (lastPlayList == null)
             return;
         PlayList saveList = new PlayList();
@@ -428,7 +457,6 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onMenu() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Top);
         if(fragmentStack == null || fragmentStack.isEmpty())
             return;
 
@@ -459,31 +487,26 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onPlay() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Bottom);
         if(playerService == null){
             startService();
             return;
         }
-        Intent intent;
-        if (AIDLDumper.isPlaying(playerService)) {
-            intent = new Intent(this, PlayerService.class);
-            intent.putExtra("CMD", PlayerService.CMD_PAUSE);
+        boolean empty = false;
+        if (dumper.isPlaying()) {
+            dumper.pause();
+            empty = true;
         } else {
-            SongBean current = AIDLDumper.getCurrentSong(playerService);
+            SongBean current = dumper.getCurrentSong();
             if (current != null && current.getId() != -1) {
-                intent = new Intent(this, PlayerService.class);
-                intent.putExtra("CMD", PlayerService.CMD_RESUME);
+                //TODO: Is this causing crash?
+                dumper.resume(null);
+                empty = true;
             } else if (lastSongBean != null && lastSongBean.getId() != -1){
-                intent = new Intent(this, PlayerService.class);
-                intent.putExtra("CMD", PlayerService.CMD_PLAY);
-                intent.putExtra("DATA", (Parcelable) lastSongBean);
-            } else {
-                intent = null;
+                dumper.play(lastSongBean, -1);
+                empty = true;
             }
         }
-        if (intent != null)
-            startService(intent);
-        else
+        if (!empty)
             Toast.makeText(this, R.string.nothing_to_play, Toast.LENGTH_SHORT).show();
 
         VibrateUtil.getStaticInstance(null).TickVibrate();
@@ -491,23 +514,17 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
 
     @Override
     public void onNext() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Right);
         if (!permissionGranted)
             return;
-        Intent intent = new Intent(this,PlayerService.class);
-        intent.putExtra("CMD",PlayerService.CMD_NEXT);
-        startService(intent);
+        dumper.next();
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
     @Override
     public void onPrevious() {
-        wheelView.rippleFrom(WheelView.RipplePoint.Left);
         if (!permissionGranted)
             return;
-        Intent intent = new Intent(this,PlayerService.class);
-        intent.putExtra("CMD",PlayerService.CMD_PREVIOUS);
-        startService(intent);
+        dumper.previous();
         VibrateUtil.getStaticInstance(null).TickVibrate();
     }
 
@@ -568,8 +585,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             public void dismissed() {
                                 SimpleListFragment menu = new SimpleListFragment();
                                 SimpleListMenuAdapter adapter;
-                                if (playerService != null && AIDLDumper.getPlayList(playerService) != null) {
-                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,AIDLDumper.getPlayList(playerService));
+                                if (playerService != null && dumper.getPlayList() != null) {
+                                    adapter = new SimpleListMenuAdapter(MainActivity.this,R.layout.item_simple_list_view,dumper.getPlayList());
                                     menu.setAdapter(adapter);
                                     adapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_TITLE);
                                 }else {
@@ -596,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                             @Override
                             public void dismissed() {
                                 switchFragmentTo(nowPlayingFragment, false);
-                                SongBean song = AIDLDumper.getCurrentSong(playerService);
+                                SongBean song = dumper.getCurrentSong();
                                 if (song != null) {
                                     nowPlayingFragment.setSong(song);
                                 } else {
@@ -610,22 +627,19 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         ((MainMenuFragment) currentFragment).dismiss(new TwoPanelFragment.DismissCallback() {
                             @Override
                             public void dismissed() {
-                                Intent intent = new Intent(MainActivity.this,PlayerService.class);
                                 ArrayList playList = MediaLibrary.getStaticInstance(MainActivity.this).shuffleList(MediaLibrary.getStaticInstance(MainActivity.this).getAllSongs(MediaLibrary.ORDER_BY_ARTIST));
                                 if (playList == null || playList.size() == 0)
                                     return;
-                                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                                intent.putExtra("DATA",(Serializable) playList.get(0));
-                                intent.putExtra("INDEX", 0);
                                 if (playerService != null) {
-                                    AIDLDumper.setPlaylist(playerService, playList);
+                                    dumper.setPlaylist(playList);
                                 } else {
                                     lastPlayList = playList;
                                     startService();
                                 }
-                                startService(intent);
+                                dumper.play((SongBean) playList.get(0), 0);
                                 switchFragmentTo(nowPlayingFragment, false);
                                 nowPlayingFragment.setSong((SongBean) playList.get(0));
+                                loadBackground((SongBean) playList.get(0));
                             }
                         });
 
@@ -683,12 +697,8 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 if (playerService == null)
                     startService();
 
-                AIDLDumper.setPlaylist(playerService, detail.getPlaylist());
-                Intent intent = new Intent(this,PlayerService.class);
-                intent.putExtra("CMD",PlayerService.CMD_PLAY);
-                intent.putExtra("DATA",(Serializable) detail.getData());
-                intent.putExtra("INDEX",detail.getIndexOfList());
-                startService(intent);
+                dumper.setPlaylist(detail.getPlaylist());
+                dumper.play((SongBean) detail.getData(), detail.getIndexOfList());
 
                 fragmentManager.beginTransaction().hide(currentFragment).show(nowPlayingFragment).commit();
                 currentFragment = nowPlayingFragment;
@@ -705,12 +715,23 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                     case ShuffleSettings:
                         UserDefaults.getStaticInstance(this).rollShuffle();
                         settingMenu.reloadSettings();
-                        AIDLDumper.updateSettings(playerService);
+                        dumper.updateSettings();
+                        break;
+                    case ThemeSettings:
+                        SimpleListMenuAdapter themesAdapter = new SimpleListMenuAdapter(getApplicationContext(),
+                                R.layout.item_simple_list_view,
+                                ThemeManager.getInstance(getApplicationContext()).getAllThemes());
+                        SimpleListFragment themesFragment = new SimpleListFragment();
+                        themesFragment.setAdapter(themesAdapter);
+                        themesAdapter.setArrayListType(SimpleListMenuAdapter.SORT_TYPE_THEME);
+                        fragmentManager.beginTransaction()
+                                .add(R.id.id_screen_fragment_container,themesFragment).hide(themesFragment).commit();
+                        switchFragmentTo(themesFragment, true);
                         break;
                     case RepeatSettings:
                         UserDefaults.getStaticInstance(this).rollRepeat();
                         settingMenu.reloadSettings();
-                        AIDLDumper.updateSettings(playerService);
+                        dumper.updateSettings();
                         break;
                     case GetSourceCode:
                         Intent source = new Intent(Intent.ACTION_VIEW);
@@ -726,6 +747,11 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                         startActivity(Intent.createChooser(contact, getResources().getString(R.string.send_mail_using)));
                         break;
                 }
+                break;
+            case SelectionDetail.MENU_TYPE_THEMES:
+                String theme = (String) detail.getData();
+                UserDefaults.getStaticInstance(getApplicationContext()).setTheme(theme);
+                loadTheme();
                 break;
             default:
                 break;
@@ -743,6 +769,79 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
         wheelView.setOnTickListener((OnTickListener) fragment);
     }
 
+    public void loadTheme() {
+        Theme theme = ThemeManager.getInstance(getApplicationContext()).loadCurrentTheme();
+        CardView cardView = (CardView) findViewById(R.id.id_main_card);
+        cardView.setBackgroundColor(theme.getCardColor());
+        findViewById(R.id.id_main).setBackgroundColor(theme.getBackgroundColor());
+        getWindow().getDecorView();
+
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(theme.getBackgroundColor());
+        }
+        wheelView.loadTheme();
+        if (bMenu == null) {
+            bMenu = (ImageView) findViewById(R.id.id_menu_button);
+            bNext = (ImageView) findViewById(R.id.id_next_button);
+            bPrev = (ImageView) findViewById(R.id.id_previous_button);
+            bPlay = (ImageView) findViewById(R.id.id_play_button);
+        }
+
+        if (mainMenu != null) {
+            mainMenu.loadTheme();
+        }
+        if (nowPlayingFragment != null) {
+            nowPlayingFragment.loadTheme();
+        }
+
+        //Using Picasso here since we are allow user using their creativity.
+        int size = getResources().getDimensionPixelSize(R.dimen.button_width);
+        Picasso.with(this).load("file://" + theme.getMenuIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).error(R.drawable.menu).into(bMenu);
+        Picasso.with(this).load("file://" + theme.getNextIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).error(R.drawable.next).into(bNext);
+        Picasso.with(this).load("file://" + theme.getPlayIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).error(R.drawable.button).into(bPlay);
+        Picasso.with(this).load("file://" + theme.getPrevIcon()).fit().centerInside()
+                .config(Bitmap.Config.RGB_565).error(R.drawable.prev).into(bPrev);
+        this.getWindow().getDecorView().invalidate();
+    }
+
+    public void loadBackground(SongBean bean) {
+        if (bean == null ) {
+            backgroundImage.setImageBitmap(null);
+            return;
+        }
+        final Uri image = Uri.parse(MediaLibrary.getStaticInstance(getApplicationContext())
+                .getCoverUriByAlbumId(bean.getAlbumId()));
+        Picasso.with(this).load(image).resize(windowSize.x, windowSize.y)
+                .centerCrop()
+                .transform(new Transformation() {
+                    @Override
+                    public Bitmap transform(Bitmap source) {
+                        BlurFactor factor = new BlurFactor();
+                        factor.radius = 25;
+                        factor.sampling = 4;
+                        factor.width = windowSize.x;
+                        factor.height = windowSize.y;
+                        factor.color = ColorUtils.setAlphaComponent(
+                                ThemeManager.getInstance(getApplicationContext())
+                                .loadCurrentTheme().getBackgroundColor(), 20);
+                        Bitmap ret = Blur.of(getApplicationContext(), source, factor);
+                        source.recycle();
+                        return ret;
+                    }
+
+                    @Override
+                    public String key() {
+                        return image.toString() + "/blured";
+                    }
+                })
+                .config(Bitmap.Config.RGB_565).into(backgroundImage);
+
+    }
+
     class ServiceBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -751,6 +850,13 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
                 nowPlayingFragment.refreshSong();
             if (mainMenu != null && !mainMenu.isHidden())
                 mainMenu.refreshCurrentSongIfNeeded();
+            try {
+                SongBean bean = playerService.getCurrentSong();
+                loadBackground(bean);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

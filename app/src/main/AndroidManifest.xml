@@ -17,6 +17,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".App"
         android:icon="@drawable/ic_launcher"
         android:persistent="true"
         android:label="@string/app_name"
@@ -38,7 +39,8 @@
             />
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="" />
+            android:value="8e19b2f9462d4928f267906b4f96d4ac60741643" /><![CDATA[b2f9462d4928f267906b4f96d4ac60741643" />
+        ]]>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

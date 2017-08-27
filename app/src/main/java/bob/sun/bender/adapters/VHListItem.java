@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import bob.sun.bender.R;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 
 /**
  * Created by bob.sun on 24/01/2017.
@@ -19,16 +21,21 @@ public class VHListItem extends RecyclerView.ViewHolder {
     }
 
     private View contentView;
+    ThemeManager themeManager;
 
     public VHListItem(View itemView) {
         super(itemView);
         contentView = itemView;
+        themeManager = ThemeManager.getInstance(itemView.getContext());
     }
 
     public void configureWithString(String str, Status status) {
-        ((TextView) contentView.findViewById(R.id.id_itemlistview_textview)).setText(str);
+        TextView textView = (TextView) contentView.findViewById(R.id.id_itemlistview_textview);
+        textView.setText(str);
+        textView.setTextColor(themeManager.getCurrentTheme().getTextColor());
             if(status == Status.ListItemHighlighted){
-                contentView.setBackgroundColor(Color.LTGRAY);
+                contentView.setBackgroundColor(
+                        themeManager.getCurrentTheme().getItemColor());
             }else{
                 contentView.setBackgroundColor(Color.TRANSPARENT);
             }

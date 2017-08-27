@@ -13,6 +13,7 @@ public class SelectionDetail {
     public static final int MENU_TYPE_SONGS = 4;
     public static final int MENU_TYPE_GENRES = 5;
     public static final int MENU_TYPE_SETTING = 6;
+    public static final int MENU_TYPE_THEMES = 7;
     public static final int MENU_TYPE_UNUSED = -1;
 
     public static final int DATA_TYPE_STRING = 1;

@@ -2,6 +2,7 @@ package bob.sun.bender.fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import bob.sun.bender.controller.OnTickListener;
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SongBean;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.view.AlbumStack;
 
@@ -33,7 +36,6 @@ import bob.sun.bender.view.AlbumStack;
  * Created by sunkuan on 2015/4/23.
  */
 public class MainMenuFragment extends TwoPanelFragment implements OnTickListener {
-//    ListView listView;
     RecyclerView theList;
     int currentItemIndex;
     ImageView imageView;
@@ -42,6 +44,8 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     LinearLayout rightPanel;
     FrameLayout leftPanel;
     AlbumStack albumStack;
+    AIDLDumper dumper;
+    TextView npTitle, npArtist;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -57,6 +61,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup parent,Bundle savedInstanceState){
         View ret = inflater.inflate(R.layout.layout_main_menu,parent,false);
+        ret.setBackgroundColor(Color.TRANSPARENT);
         theList = (RecyclerView) ret.findViewById(R.id.id_list_view_main_menu);
         theList.setAdapter(MenuAdapter.getStaticInstance(getActivity()).getMainMenuAdapter());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -76,6 +81,10 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
 
         leftPanel = (FrameLayout) ret.findViewById(R.id.main_menu_left);
         rightPanel = (LinearLayout) ret.findViewById(R.id.main_menu_right);
+
+        npTitle = (TextView) ret.findViewById(R.id.id_mainmenu_nowplaying_title);
+        npArtist = (TextView) ret.findViewById(R.id.id_mainmenu_nowplaying_artist);
+        loadTheme();
         return ret;
     }
 
@@ -90,6 +99,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     public void onResume() {
         super.onResume();
         refreshCurrentSongIfNeeded();
+        dumper = AIDLDumper.getInstance((MainActivity) getActivity());
     }
 
     @Override
@@ -155,15 +165,15 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
         rightPanelContent.setVisibility(View.GONE);
         nowPlayingPage.setVisibility(View.VISIBLE);
         PlayerServiceAIDL playerService = ((MainActivity) getActivity()).playerService;
-        if (playerService == null || AIDLDumper.getCurrentSong(playerService) == null){
+        if (playerService == null || dumper.getCurrentSong() == null){
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(R.string.nothing);
             ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(R.string.nobody);
             ((ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover)).setImageResource(R.drawable.album);
             return;
         }
-        SongBean song = AIDLDumper.getCurrentSong(playerService);
-        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
-        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
+        SongBean song = dumper.getCurrentSong();
+        npArtist.setText(song.getArtist());
+        npTitle.setText(song.getTitle());
         ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
         String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriByAlbumId(song.getAlbumId());
 
@@ -191,5 +201,12 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     @Override
     public View getRightPanel() {
         return rightPanel;
+    }
+
+    public void loadTheme() {
+        Theme theme = ThemeManager.getInstance(getActivity().getApplicationContext())
+                .loadCurrentTheme();
+        npArtist.setTextColor(theme.getTextColor());
+        npTitle.setTextColor(theme.getTextColor());
     }
 }

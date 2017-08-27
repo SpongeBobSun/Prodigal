@@ -12,6 +12,11 @@ public class AppConstants {
     public static final int RepeatOne       =   0x234;
     public static final int RepeatNone      =   0x235;
 
+    //Theme
+    public static final int ThemeShapeOval    = 0;
+    public static final int ThemeShapeRect    = 1;
+    public static final int ThemeShapePolygon = 2;
+
 
     public static final String pref_tag = "mpod_app_settings";
     public static final String kShuffle = "mpod_app_settings.key.shuffle";
@@ -22,6 +27,8 @@ public class AppConstants {
 
     private static final String playlistfile = "/data/data/bob.sun.bender/playlistobject";
     private static final String packageFolder = "/data/data/bob.sun.bender/";
+
+    public static final String themeFolder = "/data/Prodigal/Themes/";
 
     public static String getPlayistfile() {
         return Environment.getExternalStorageDirectory().getPath() + playlistfile;

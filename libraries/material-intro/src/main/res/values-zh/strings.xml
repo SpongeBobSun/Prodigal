@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mi_content_description_next_finish">下一步/完成</string>
+    <string name="mi_content_description_back">返回</string>
+    <string name="mi_content_description_next">下一步</string>
+    <string name="mi_content_description_skip">跳过</string>
+    <string name="mi_label_button_cta">开始</string>
+</resources>

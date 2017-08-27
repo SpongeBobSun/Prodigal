@@ -37,6 +37,7 @@ public class SettingAdapter {
         menutItems = new ArrayList();
         menutItems.add(new MenuMeta(r.getLocalized(R.string.shuffle),false, MenuMeta.MenuType.ShuffleSettings));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.repeat), false, MenuMeta.MenuType.RepeatSettings));
+        menutItems.add(new MenuMeta("Themes", false, MenuMeta.MenuType.ThemeSettings));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.get_source_code),false, MenuMeta.MenuType.GetSourceCode));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.contact_us),false, MenuMeta.MenuType.ContactUs));
         menutItems.add(new MenuMeta(r.getLocalized(R.string.about),false, MenuMeta.MenuType.About));
@@ -86,6 +87,9 @@ public class SettingAdapter {
                     break;
                 case RepeatSettings:
                     holder.configureWithStrings(item.itemName, resUtil.getSettingsString(ud.getRepeat()), item.highlight);
+                    break;
+                case ThemeSettings:
+                    holder.configureWithStrings(item.itemName, null, item.highlight);
                     break;
                 case GetSourceCode:
                     holder.configureWithStrings(item.itemName, null, item.highlight);

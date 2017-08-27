@@ -1,118 +1,143 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:background="@color/colorPrimary"
-    tools:context=".MainActivity">
-
-    <android.support.v7.widget.CardView
+    tools:context=".MainActivity"
+    android:id="@+id/id_main"
+    android:fitsSystemWindows="true"
+    >
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="#FFFFFF"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="16dp"
-        >
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/id_screen_fragment_container">
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/id_holder_no_permission"
-            android:visibility="gone"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.5"
-                android:src="@drawable/icon_sad"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.0"
-                android:text="Please grant permission I request."
-                android:textSize="20sp"
-                android:gravity="center"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        android:layout_height="match_parent"
+        android:id="@+id/id_album_background"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_margin="0dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:id="@+id/id_wheel_container"
-        android:orientation="vertical">
-        <RelativeLayout
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/id_main_card"
             android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1.0">
-            <bob.sun.bender.view.WheelView
-                android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1.0"
+            android:background="#FFFFFF"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="16dp">
+
+            <LinearLayout
+                android:id="@+id/id_holder_no_permission"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:id="@+id/id_wheel_view"/>
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5"
+                    android:src="@drawable/icon_sad" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.0"
+                    android:gravity="center"
+                    android:text="Please grant permission I request."
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/id_screen_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></FrameLayout>
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/id_wheel_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            android:orientation="vertical">
+
             <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_alignLeft="@+id/id_wheel_view"
-                android:layout_alignRight="@+id/id_wheel_view"
-                android:background="@null"
-                android:layout_gravity="center">
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1.0">
+
+                <bob.sun.bender.view.WheelView
+                    android:id="@+id/id_wheel_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true" />
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignLeft="@+id/id_wheel_view"
+                    android:layout_alignRight="@+id/id_wheel_view"
+                    android:layout_gravity="center"
+                    android:background="@null">
+
                     <ImageView
+                        android:id="@+id/id_menu_button"
                         android:layout_width="30dp"
                         android:layout_height="35dp"
-                        android:layout_marginTop="2dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/menu"
-                        android:id="@+id/id_menu_button"
-                        />
+                        android:layout_marginTop="12dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/menu" />
 
                     <ImageView
+                        android:id="@+id/id_play_button"
                         android:layout_width="30dp"
                         android:layout_height="35dp"
-                        android:layout_marginBottom="2dp"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/button"
-                        android:id="@+id/id_play_button"
-                        />
+                        android:layout_marginBottom="12dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/button" />
 
                     <ImageView
+                        android:id="@+id/id_previous_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginLeft="7dp"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/prev"
-                        android:id="@+id/id_previous_button"
-                        />
+                        android:layout_marginLeft="12dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/prev" />
+
                     <ImageView
+                        android:id="@+id/id_next_button"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/next"
-                        android:id="@+id/id_next_button"
-                        android:layout_marginRight="7dp"
-                        android:layout_alignParentRight="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        />
+                        android:scaleType="centerInside"
+                        android:layout_marginRight="12dp"
+                        android:src="@drawable/next" />
+                </RelativeLayout>
             </RelativeLayout>
-        </RelativeLayout>
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>
+
+
