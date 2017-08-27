@@ -6,12 +6,12 @@ Bring back the good old player to life.
 
 <a href="https://play.google.com/store/apps/details?id=bob.sun.prodigal"><img src="artworks/google-play-badge.png" height="60"></a>
 
-###Screen Record
+### Screen Record
 
 <img style="float:left" src="artworks/demo.gif" width="300"/>
 
 
-###Screenshots
+### Screenshots
 
 | ![Home](artworks/home_cover.png)         | ![Cover](artworks/coverflow.png)   | ![Home2](artworks/home_np.png)      | ![Now](artworks/now_playing.png)       |
 | ---------------------------------------- | ---------------------------------- | ----------------------------------- | -------------------------------------- |
@@ -23,14 +23,22 @@ Bring back the good old player to life.
 
 
 
-###Customizing Themes
+### Customizing Themes
+
+See this [link](https://github.com/SpongeBobSun/Prodigal/blob/v1.1/Themes.md) for customizing themes.
 
 
 
+### Building
+
+To build Prodigal for Android you need import the project in AndroidStudio.
+
+Before you hit the run or debug button, you may need to run the `zipThemes` gradle task, which will zip the theme folder and copy it to `assets` folder.
+
+After themes are zipped as assets, you can switch to the `app` configuration and hit the run button.
 
 
-
-###Credits
+### Credits
 
 Icons in this app are brought you by [Icons8.com](https://icons8.com)
 
