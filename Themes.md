@@ -1,5 +1,9 @@
 # Prodigal Player Theme Help
 
+## Where are those themes thingy?
+
+Prodigal keeps its themes in this folder - `/sdcard/data/data/Prodigal/Themes`.
+
 ## How to create customize theme
 
 Themes for `Prodigal Music Player` are basically folders. Folder name is the theme name.

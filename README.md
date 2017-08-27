@@ -25,7 +25,7 @@ Bring back the good old player to life.
 
 ### Customizing Themes
 
-See this [link](https://github.com/SpongeBobSun/Prodigal/blob/v1.1/Themes.md) for customizing themes.
+See this [link](https://github.com/SpongeBobSun/Prodigal/blob/master/Themes.md) for customizing themes.
 
 
 
