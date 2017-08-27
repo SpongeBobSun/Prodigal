@@ -131,6 +131,9 @@ public class CoverflowFragment extends Fragment implements OnTickListener {
 
     @Override
     public SelectionDetail getCurrentSelection() {
+        if (pagerAdapter.getCount() == 0) {
+            return null;
+        }
         SelectionDetail ret = new SelectionDetail();
         ret.setMenuType(MENU_TYPE_ALBUM);
         ret.setData(pagerAdapter.getItem(pager.getCurrentItem()).getName());

@@ -64,6 +64,9 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
 
     @Override
     public void onNextTick() {
+        if (listView.getAdapter().getItemCount() == 0) {
+            return;
+        }
         VHImageListItem holder;
         if(currentItemIndex >= listView.getAdapter().getItemCount()-1){
             currentItemIndex = listView.getAdapter().getItemCount()-1;
@@ -88,6 +91,9 @@ public class SimpleListFragment extends Fragment implements OnTickListener {
 
     @Override
     public void onPreviousTick() {
+        if (listView.getAdapter().getItemCount() == 0) {
+            return;
+        }
         VHImageListItem holder;
         if(currentItemIndex < 1){
             holder = (VHImageListItem) listView.findViewHolderForAdapterPosition(currentItemIndex);
