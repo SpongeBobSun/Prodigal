@@ -22,6 +22,8 @@ import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SongBean;
 import bob.sun.bender.service.PlayerService;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.utils.VolumeUtil;
 
@@ -40,7 +42,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     SongBean song;
     View view, contentView, seekView;
     NumberProgressBar progressView, seeker;
-    TextView currentTime, totalTime, seekerTitle, seekerHint;
+    TextView currentTime, totalTime, seekerTitle, seekerHint, title, album, artist;
     Runnable dismissRunnable;
     VolumeUtil volume;
     ViewMode viewMode;
@@ -50,6 +52,7 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
     private final float seekStep = 0.1f;
     int seekedPosistiton;
     private long lastTick;
+    private Theme theme;
 
     public NowPlayingFragment() {
         viewMode = ViewMode.Playing;
@@ -70,7 +73,12 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
         seekerHint = (TextView) view.findViewById(R.id.id_seeker_hint);
         currentTime = (TextView) view.findViewById(R.id.current_time);
         totalTime = (TextView) view.findViewById(R.id.total_time);
+        title = (TextView) view.findViewById(R.id.id_now_playing_text_view_title);
+        album = (TextView) view.findViewById(R.id.id_now_playing_text_view_album);
+        artist = (TextView) view.findViewById(R.id.id_now_playing_text_view_artist);
         volume = VolumeUtil.getStaticInstance(getActivity());
+
+        loadTheme();
         return ret;
     }
 
@@ -114,9 +122,9 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
             view.removeCallbacks(progressFetcher);
 
         song = songBean;
-        ((TextView) view.findViewById(R.id.id_now_playing_text_view_title)).setText(song.getTitle());
-        ((TextView) view.findViewById(R.id.id_now_playing_text_view_artist)).setText(song.getArtist());
-        ((TextView) view.findViewById(R.id.id_now_playing_text_view_album)).setText(song.getAlbum());
+        title.setText(song.getTitle());
+        artist.setText(song.getArtist());
+        album.setText(song.getAlbum());
         progressView.setMax(100);
         onProcessChanged(0, song.getDuration());
         String img = MediaLibrary.getStaticInstance(view.getContext())
@@ -266,5 +274,12 @@ public class NowPlayingFragment extends Fragment implements OnTickListener {
 
     private void doSeek() {
         dumper.seek(seekedPosistiton);
+    }
+
+    public void loadTheme() {
+        theme = ThemeManager.getInstance(getActivity().getApplicationContext()).loadCurrentTheme();
+        title.setTextColor(theme.getTextColor());
+        album.setTextColor(theme.getTextColor());
+        artist.setTextColor(theme.getTextColor());
     }
 }

@@ -27,6 +27,8 @@ import bob.sun.bender.controller.OnTickListener;
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SongBean;
+import bob.sun.bender.theme.Theme;
+import bob.sun.bender.theme.ThemeManager;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.view.AlbumStack;
 
@@ -43,6 +45,7 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     FrameLayout leftPanel;
     AlbumStack albumStack;
     AIDLDumper dumper;
+    TextView npTitle, npArtist;
 
     private static int menuIcons[] = {
             R.drawable.artist,
@@ -78,6 +81,10 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
 
         leftPanel = (FrameLayout) ret.findViewById(R.id.main_menu_left);
         rightPanel = (LinearLayout) ret.findViewById(R.id.main_menu_right);
+
+        npTitle = (TextView) ret.findViewById(R.id.id_mainmenu_nowplaying_title);
+        npArtist = (TextView) ret.findViewById(R.id.id_mainmenu_nowplaying_artist);
+        loadTheme();
         return ret;
     }
 
@@ -165,8 +172,8 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
             return;
         }
         SongBean song = dumper.getCurrentSong();
-        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_artist)).setText(song.getArtist());
-        ((TextView) nowPlayingPage.findViewById(R.id.id_mainmenu_nowplaying_title)).setText(song.getTitle());
+        npArtist.setText(song.getArtist());
+        npTitle.setText(song.getTitle());
         ImageView currentCover = (ImageView) nowPlayingPage.findViewById(R.id.id_now_playing_cover);
         String img = MediaLibrary.getStaticInstance(nowPlayingPage.getContext()).getCoverUriByAlbumId(song.getAlbumId());
 
@@ -194,5 +201,12 @@ public class MainMenuFragment extends TwoPanelFragment implements OnTickListener
     @Override
     public View getRightPanel() {
         return rightPanel;
+    }
+
+    public void loadTheme() {
+        Theme theme = ThemeManager.getInstance(getActivity().getApplicationContext())
+                .loadCurrentTheme();
+        npArtist.setTextColor(theme.getTextColor());
+        npTitle.setTextColor(theme.getTextColor());
     }
 }

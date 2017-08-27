@@ -787,6 +787,14 @@ public class MainActivity extends AppCompatActivity implements OnButtonListener 
             bPrev = (ImageView) findViewById(R.id.id_previous_button);
             bPlay = (ImageView) findViewById(R.id.id_play_button);
         }
+
+        if (mainMenu != null) {
+            mainMenu.loadTheme();
+        }
+        if (nowPlayingFragment != null) {
+            nowPlayingFragment.loadTheme();
+        }
+
         //Using Picasso here since we are allow user using their creativity.
         int size = getResources().getDimensionPixelSize(R.dimen.button_width);
         Picasso.with(this).load("file://" + theme.getMenuIcon()).fit().centerInside()
