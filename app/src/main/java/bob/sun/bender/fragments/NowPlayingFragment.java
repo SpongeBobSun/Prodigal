@@ -1,6 +1,5 @@
 package bob.sun.bender.fragments;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import bob.sun.bender.controller.OnTickListener;
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SelectionDetail;
 import bob.sun.bender.model.SongBean;
-import bob.sun.bender.service.PlayerService;
 import bob.sun.bender.utils.AIDLDumper;
 import bob.sun.bender.utils.VolumeUtil;
 
