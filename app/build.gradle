@@ -50,7 +50,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'link.fls:swipestack:0.3.0'
     compile 'com.anthonycr.grant:permissions:1.0'
-    compile 'com.daimajia.numberprogressbar:library:1.2@aar'
+    compile 'com.daimajia.numberprogressbar:library:1.4@aar'
     compile project(':coverflow')
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;

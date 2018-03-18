@@ -4,12 +4,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.support.v7.widget.AppCompatTextView;
 
 /**
  * Created by bobsun on 15-5-25.
  */
-public class FocusedTextView extends TextView {
+public class FocusedTextView extends AppCompatTextView {
 
     public FocusedTextView(Context context) {
         super(context);
@@ -21,11 +21,6 @@ public class FocusedTextView extends TextView {
 
     public FocusedTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FocusedTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override
