@@ -1,3 +1,0 @@
-include ':app', ':coverflow', ':material-intro'
-project(':coverflow').projectDir = new File('libraries/coverflow')
-project(':material-intro').projectDir = new File('libraries/material-intro')
