@@ -53,3 +53,16 @@ Icons in this app are brought you by [Icons8.com](https://icons8.com)
 [Android-Coverflow](https://github.com/crosswall/Android-Coverflow)
 
 [Material-Intro](https://github.com/HeinrichReimer/material-intro)
+
+
+### Pillar of Shame
+
+You can take my source & add ADs to it then pretent it's your own APP but this is NOT cool.
+
+If you want to do it anyway, you MUST distribute a copy of Apache license and copyright notice along with your software.
+
+Or I WILL add your work to this pillar of shame.
+
+[Eyepod](https://play.google.com/store/apps/details?id=com.free.musicplayer.eyepod)
+
+
