@@ -63,6 +63,10 @@ If you want to do it anyway, you MUST distribute a copy of Apache license and co
 
 Or I WILL add your work to this pillar of shame.
 
-[Eyepod](https://play.google.com/store/apps/details?id=com.free.musicplayer.eyepod)
+👎
+
+Author: androspot007@gmail.com 
+
+Software: [Eyepod](https://play.google.com/store/apps/details?id=com.free.musicplayer.eyepod)
 
 
