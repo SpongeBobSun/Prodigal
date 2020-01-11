@@ -1,10 +1,8 @@
 package bob.sun.bender.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by bobsun on 15-5-25.

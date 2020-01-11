@@ -9,6 +9,7 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
 repositories {
@@ -21,16 +22,16 @@ gradle.projectsEvaluated {
 
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "bob.sun.prodigal"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 4
         versionName "1.1.0"
         resConfigs "en", "zh"
-        renderscriptTargetApi 25
+        renderscriptTargetApi 26
         renderscriptSupportModeEnabled true
     }
     buildTypes {
@@ -39,7 +40,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            applicationIdSuffix ".debug"
+//            applicationIdSuffix ".debug"
         }
     }
 }
@@ -51,16 +52,16 @@ dependencies {
     implementation 'com.anthonycr.grant:permissions:1.0'
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
     implementation project(':coverflow')
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
-    }
     implementation project(':material-intro')
-    implementation 'com.android.support:cardview-v7:25.3.1'
-    implementation 'com.android.support:appcompat-v7:25.3.1'
-    implementation 'com.android.support:support-v4:25.3.1'
-    implementation 'com.android.support:design:25.3.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation 'jp.wasabeef:blurry:2.1.1'
+
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
 
 task zipThemes(type: Zip) {

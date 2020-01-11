@@ -1,7 +1,7 @@
 package bob.sun.bender.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import java.util.Iterator;
 
 import bob.sun.bender.model.MediaLibrary;
 import bob.sun.bender.model.SongBean;
-import bob.sun.bender.theme.Theme;
 
 import static bob.sun.bender.adapters.VHImageListItem.Status.ListItemHighlighted;
 import static bob.sun.bender.adapters.VHImageListItem.Status.ListItemNormal;

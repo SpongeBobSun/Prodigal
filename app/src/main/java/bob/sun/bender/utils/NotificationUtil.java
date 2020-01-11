@@ -1,30 +1,30 @@
 package bob.sun.bender.utils;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.NotificationManagerCompat;
+
+import androidx.core.app.NotificationCompat;
+import androidx.media.app.NotificationCompat.MediaStyle;
+import androidx.core.app.NotificationManagerCompat;
+
+import android.os.Build;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaButtonReceiver;
+import androidx.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import bob.sun.bender.MainActivity;
 import bob.sun.bender.R;
-import bob.sun.bender.model.MediaLibrary;
-import bob.sun.bender.model.SongBean;
 import bob.sun.bender.service.PlayerService;
 
 /**
@@ -33,6 +33,8 @@ import bob.sun.bender.service.PlayerService;
 public class NotificationUtil {
 
     public static final int NOTIFICATION_ID = 0x5020;
+
+    public static final String NOTIFICATION_CHANNEL = "prodigal_notification_channel";
 
 
     private static NotificationUtil staticInstance;
@@ -51,7 +53,22 @@ public class NotificationUtil {
         notificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
         init();
 
-        builder = new NotificationCompat.Builder(appContext);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, "now_playing",
+                    importance);
+            channel.setDescription("");
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviours after this
+            NotificationManager notificationManager =
+                    context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            builder = new NotificationCompat.Builder(appContext, channel.getId());
+        } else {
+            builder = new NotificationCompat.Builder(appContext, null);
+        }
+
+
         builder.setCustomBigContentView(bigView)
                 .setCustomContentView(normalView)
                 .setSmallIcon(R.drawable.pod_notification)
@@ -114,7 +131,7 @@ public class NotificationUtil {
 
         builder.setOngoing(true);
 
-        builder.setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(1).setMediaSession(session.getSessionToken()));
+        builder.setStyle(new MediaStyle().setShowActionsInCompactView(1).setMediaSession(session.getSessionToken()));
         builder.setSmallIcon(R.mipmap.ic_launcher);
         NotificationManagerCompat.from(service).notify(NOTIFICATION_ID, builder.build());
     }

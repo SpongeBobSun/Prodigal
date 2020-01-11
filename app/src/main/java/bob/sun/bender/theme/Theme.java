@@ -2,7 +2,7 @@ package bob.sun.bender.theme;
 
 import android.graphics.Color;
 import android.os.Environment;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 

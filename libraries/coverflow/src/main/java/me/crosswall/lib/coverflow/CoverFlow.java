@@ -1,10 +1,10 @@
 package me.crosswall.lib.coverflow;
 
-import android.support.v4.view.LinkagePager;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 
 import me.crosswall.lib.coverflow.core.CoverTransformer;
 import me.crosswall.lib.coverflow.core.LinkageCoverTransformer;
+import me.crosswall.lib.coverflow.core.LinkagePager;
 
 /**
  * Created by yuweichen on 16/4/29.

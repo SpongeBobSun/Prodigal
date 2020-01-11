@@ -1,7 +1,7 @@
 package bob.sun.bender.fragments;
 
-import android.support.v4.app.Fragment;
-import android.support.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;

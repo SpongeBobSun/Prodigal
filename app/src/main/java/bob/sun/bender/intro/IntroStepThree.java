@@ -1,6 +1,6 @@
 package bob.sun.bender.intro;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.heinrichreimersoftware.materialintro.slide.Slide;
 

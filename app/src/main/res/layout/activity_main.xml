@@ -24,7 +24,7 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/id_main_card"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -64,7 +64,7 @@
                 android:id="@+id/id_screen_fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></FrameLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:id="@+id/id_wheel_container"

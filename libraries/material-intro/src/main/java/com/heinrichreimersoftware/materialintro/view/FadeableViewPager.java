@@ -3,8 +3,10 @@ package com.heinrichreimersoftware.materialintro.view;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ public class FadeableViewPager extends SwipeBlockableViewPager {
     @SuppressWarnings("deprecation")
     @Deprecated
     @Override
-    public void setOnPageChangeListener(OnPageChangeListener listener) {
+    public void setOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
         super.setOnPageChangeListener(new OnPageChangeListenerWrapper(listener));
     }
 

@@ -3,9 +3,10 @@ package me.crosswall.lib.coverflow.core;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

@@ -1,7 +1,7 @@
 package bob.sun.bender.model;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import bob.sun.bender.R;
 import bob.sun.bender.adapters.VHSetting;
 import bob.sun.bender.utils.ResUtil;
-import bob.sun.bender.adapters.VHListItem;
 import bob.sun.bender.utils.UserDefaults;
 
 /**
