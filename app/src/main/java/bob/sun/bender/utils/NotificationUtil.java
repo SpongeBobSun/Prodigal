@@ -79,6 +79,9 @@ public class NotificationUtil {
     }
 
     private void init() {
+        normalView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification);
+        bigView = new RemoteViews(appContext.getPackageName(), R.layout.layout_notification_big);
+
         Intent intentMain = new Intent(appContext, MainActivity.class);
         intentMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         clickIntent = PendingIntent.getActivity(appContext, 1, intentMain, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -98,6 +101,14 @@ public class NotificationUtil {
         Intent intentPrev = new Intent(appContext, PlayerService.class);
         intentPrev.putExtra("CMD", PlayerService.cmdPrev);
         prevIntent = PendingIntent.getService(appContext, PlayerService.cmdPrev, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_pause, playIntent);
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_prev, prevIntent);
+        normalView.setOnClickPendingIntent(R.id.id_button_notification_next, nextIntent);
+
+        bigView.setOnClickPendingIntent(R.id.id_button_notification_pause, playIntent);
+        bigView.setOnClickPendingIntent(R.id.id_button_notification_prev, prevIntent);
+        bigView.setOnClickPendingIntent(R.id.id_button_notification_next, nextIntent);
     }
 
     public static NotificationUtil getStaticInstance(Context context){
@@ -141,7 +152,19 @@ public class NotificationUtil {
         MediaMetadataCompat mediaMetadata = controller.getMetadata();
         MediaDescriptionCompat description = mediaMetadata.getDescription();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL, "now_playing",
+                    importance);
+            channel.setDescription(description.toString());
+            NotificationManager notificationManager =
+                    context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            builder = new NotificationCompat.Builder(appContext, channel.getId());
+        } else {
+            builder = new NotificationCompat.Builder(appContext, null);
+        }
         builder
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
